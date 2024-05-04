@@ -37,7 +37,7 @@ export function TableApp({ data }: { data: any[] }) {
                             <Table.Td key={index}>{_.keys(item)[index] === "name" ?
                                 <Anchor href={`/admin/app/${value}`} >{value}</Anchor> :
                                 _.keys(item)[index] === "status" ? <Badge w={100} bg={value === "online" ? "green" : value === "stopped" ? "orange" : "red"}>{value}</Badge> :
-                                    _.keys(item)[index] === "memory" ? <Pill>{+value / (1024 * 1024)} MB</Pill> :
+                                    _.keys(item)[index] === "memory" ? <Pill>{Math.round((+value / (1024 * 1024)))} MB</Pill> :
                                         _.keys(item)[index] === "created_at" ? moment(value).format("YYYY-MM-DD HH:mm:ss") : value}
                             </Table.Td>)}
                     </Table.Tr>)}
