@@ -21,7 +21,7 @@ export async function GET() {
 
     const list_data = list.map((item) => ({
         name: item.name,
-        pid: item.pid,
+        // pid: item.pid,
         status: item.pm2_env.status,
         memory: item.monit.memory,
         restart_time: item.pm2_env.restart_time,
