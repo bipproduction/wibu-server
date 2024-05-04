@@ -26,7 +26,7 @@ export async function GET(req: Request) {
             port: ls.split('_')[1],
             server_name: serverNames[0],
             ssl: hasSSLListen,
-            proxy_pass: proxyPassLine,
+            proxy_pass: proxyPassLine?.replace(';', '')
         }
 
         list_data.push(data)

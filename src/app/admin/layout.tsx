@@ -16,12 +16,14 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
     if (user.status !== 200) return <Login />
     if (!token) return <Login />
-    return <Stack  pos={"relative"} p={0} gap={0} >
+    return <Stack pos={"relative"} p={0} gap={0} >
         <Flex p={"sm"} justify={"space-between"} align={"center"} pos={"sticky"} top={0} bg={"black"} style={{
             zIndex: 99
         }}>
             <Flex gap={"lg"} align={"center"}>
-                <Title order={3} c={"white"}>Wibu Server</Title>
+                <Anchor href='/'>
+                    <Title order={3} c={"white"}>Wibu Server</Title>
+                </Anchor>
                 <Anchor href='/admin'>
                     <Text>Admin</Text>
                 </Anchor>
