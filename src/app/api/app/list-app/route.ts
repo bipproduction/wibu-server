@@ -1,5 +1,6 @@
 import { MODEL_PM2 } from '@/model/MODEL_PM2'
 import { spawn } from 'child_process'
+import _ from 'lodash'
 
 export async function GET() {
     const list: MODEL_PM2[] = await new Promise((resolve, reject) => {
@@ -30,5 +31,5 @@ export async function GET() {
         cpu: item.monit.cpu
     }))
     
-    return Response.json(list_data)
+    return Response.json(_.orderBy(list_data, ['status'], ['asc']))
 }
