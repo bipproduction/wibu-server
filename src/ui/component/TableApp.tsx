@@ -1,6 +1,6 @@
 'use client'
 
-import { Anchor, Badge, Button, Center, Loader, Skeleton, Stack, Table } from "@mantine/core"
+import { Anchor, Badge, Button, Center, Loader, Pill, Skeleton, Stack, Table } from "@mantine/core"
 import { useShallowEffect } from "@mantine/hooks"
 import { useState } from "react"
 import _ from 'lodash'
@@ -35,7 +35,8 @@ export function TableApp({ data }: { data: any[] }) {
                         {_.values(item).map((value, index) =>
                             <Table.Td key={index}>{_.keys(item)[index] === "name" ?
                                 <Anchor href={`/admin/app/${value}`} >{value}</Anchor> :
-                                _.keys(item)[index] === "status" ? <Badge w={100} bg={value === "online" ? "green" : value === "stopped" ? "orange" : "red"}>{value}</Badge> : value}
+                                _.keys(item)[index] === "status" ? <Badge w={100} bg={value === "online" ? "green" : value === "stopped" ? "orange" : "red"}>{value}</Badge> :
+                                _.keys(item)[index] === "memory" ? <Pill>{+value / (1024 * 1024)} MB</Pill>: value}
                             </Table.Td>)}
                     </Table.Tr>)}
             </Table.Tbody>
