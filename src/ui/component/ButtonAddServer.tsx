@@ -56,6 +56,7 @@ export function NavServer({ listServer }: { listServer: any[] }) {
 
             setLoading(false)
         }
+        
 
         return <Modal title="Add Server" opened={openDialog} onClose={() => setOpendialog(false)}>
             <Stack>
