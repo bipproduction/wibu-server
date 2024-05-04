@@ -5,6 +5,7 @@ import { useShallowEffect } from "@mantine/hooks"
 import { useState } from "react"
 import _ from 'lodash'
 import streamFetch from "@/bin/stream_fetch"
+import moment from "moment"
 
 export function TableApp({ data }: { data: any[] }) {
     const [listApp, setlistApp] = useState<any[] | null>(data)
@@ -36,7 +37,8 @@ export function TableApp({ data }: { data: any[] }) {
                             <Table.Td key={index}>{_.keys(item)[index] === "name" ?
                                 <Anchor href={`/admin/app/${value}`} >{value}</Anchor> :
                                 _.keys(item)[index] === "status" ? <Badge w={100} bg={value === "online" ? "green" : value === "stopped" ? "orange" : "red"}>{value}</Badge> :
-                                _.keys(item)[index] === "memory" ? <Pill>{+value / (1024 * 1024)} MB</Pill>: value}
+                                    _.keys(item)[index] === "memory" ? <Pill>{+value / (1024 * 1024)} MB</Pill> :
+                                        _.keys(item)[index] === "memory" ? moment(value).format("YYYY-MM-DD HH:mm:ss") : value}
                             </Table.Td>)}
                     </Table.Tr>)}
             </Table.Tbody>
