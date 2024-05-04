@@ -28,7 +28,7 @@ export async function GET() {
         restart_time: item.pm2_env.restart_time,
         created_at: item.pm2_env.created_at,
         instances: item.pm2_env.instances,
-        cpu: item.monit.cpu
+        // cpu: item.monit.cpu
     }))
     
     return Response.json(_.orderBy(list_data, ['status'], ['asc']))
