@@ -3,7 +3,7 @@
 import { Badge, Box, Button, Code, Flex, Group, Modal, NumberInput, Pill, PinInput, Stack, Table, Text, TextInput, Title } from "@mantine/core"
 import _ from 'lodash'
 import { useState } from "react"
-import { MdBuild, MdDataSaverOn, MdDownload, MdInstallDesktop, MdNumbers, MdPlayCircle } from "react-icons/md"
+import { MdBuild, MdDataSaverOn, MdDataset, MdDownload, MdInstallDesktop, MdNumbers, MdPlayCircle } from "react-icons/md"
 import { TerminalLog } from "./TerminalLog"
 import streamFetch from "@/bin/stream_fetch"
 import { useInputState } from "@mantine/hooks"
@@ -35,6 +35,14 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
         setShowLog(true)
         setTextLog("")
         await streamFetch({ url: '/api/bin/project/db-push', body: { name: title }, onTextLog: (text) => setTextLog(prev => prev + text) })
+        setLoading(false)
+    }
+
+    const onDbSeed = async () => {
+        setLoading(true)
+        setShowLog(true)
+        setTextLog("")
+        await streamFetch({ url: '/api/bin/project/seed', body: { name: title }, onTextLog: (text) => setTextLog(prev => prev + text) })
         setLoading(false)
     }
 
@@ -128,6 +136,7 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
             <Button onClick={onPull} leftSection={<MdDownload />} size="compact-xs" w={100}>pull</Button>
             <Button onClick={onInstall} leftSection={<MdInstallDesktop />} size="compact-xs" w={100}>install</Button>
             <Button onClick={onDbPush} leftSection={<MdDataSaverOn />} size="compact-xs" w={100}>db push</Button>
+            <Button onClick={onDbSeed} leftSection={<MdDataset />} size="compact-xs" w={100}>db seed</Button>
             <Button disabled={data?.type !== "nextjs"} onClick={onBuild} leftSection={<MdBuild />} size="compact-xs" w={100}>build</Button>
             <Button disabled={data?.type === "none"} onClick={onStart} leftSection={<MdPlayCircle />} size="compact-xs" w={100}>start</Button>
         </Button.Group>
