@@ -1,0 +1,65 @@
+import fs from 'fs'
+const root_path = process.cwd()
+import path from 'path'
+import { spawn } from 'child_process'
+import _ from 'lodash'
+export async function GET(req: Request, { params }: { params: { name: string } }) {
+
+    const git_current_branch: string = await new Promise((resolve, reject) => {
+        let log = ""
+        const child = spawn('git', ['branch', '--show-current'])
+        child.stdout.on('data', (data) => {
+            log += data.toString()
+        })
+
+        child.stderr.on('data', (data) => {
+            log += data.toString()
+        })
+
+        child.on('close', (code) => {
+            resolve(log)
+        })
+    })
+
+    const pkg: any = async () => {
+        try {
+            const p = await fs.promises.readFile(path.join(root_path, './..', params.name, 'package.json'), 'utf8')
+            return JSON.parse(p)
+        } catch (error) {
+            return null
+        }
+    }
+
+    const readme: string | null = await new Promise((resolve, reject) => {
+        fs.readFile(path.join(root_path, './..', params.name, 'README.md'), 'utf8', (err, data) => {
+            if (err) {
+                resolve(null)
+            } else {
+                resolve(data)
+            }
+        })
+    })
+
+    const data_pkg = await pkg()
+    const prisma = async () => {
+        try {
+            const p = await fs.promises.readFile(path.join(root_path, './..', params.name, 'prisma', 'schema.prisma'), 'utf8')
+            return p
+        } catch (error) {
+            return null
+        }
+    }
+    const data_prisma = await prisma()
+
+    const data = {
+        branch: git_current_branch.trim(),
+        app: (data_pkg && data_pkg.name != null) ? "true" : "false",
+        type: (data_pkg === null) ? "none" : (data_pkg.scripts && data_pkg.scripts.start && data_pkg.scripts.start.includes("next")) ? "nextjs" : "node",
+        prisma: (data_prisma === null) ? "false" : "true",
+        seed: (data_pkg && data_pkg.prisma && data_pkg.prisma.seed) ? "true" : "false",
+        package: _.omit(data_pkg, ['devDependencies', 'private', 'license', 'repository', 'author']),
+        readme
+    }
+
+    return Response.json(data)
+}
