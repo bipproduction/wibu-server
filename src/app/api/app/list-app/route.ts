@@ -27,6 +27,7 @@ export async function GET() {
         memory: item.monit.memory,
         restart_time: item.pm2_env.restart_time,
         created_at: item.pm2_env.created_at,
+        pwd: item.pm2_env.PWD,
         // instances: item.pm2_env.instances,
         // cpu: item.monit.cpu
     }))
