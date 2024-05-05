@@ -55,7 +55,7 @@ export function TableProject({ list }: { list: any[] }) {
 
             <Table striped highlightOnHover border={1}>
                 <Table.Thead>
-                    <Table.Tr bg={"dark"} c={"white"}>
+                    <Table.Tr bg={"dark"} c={"white"} >
                         <Table.Th>#</Table.Th>
                         {_.keys(listProject[0]).map(key => <Table.Th key={key}>{key === "name" ? <Flex justify={"space-between"}>
                             <Text>name</Text>

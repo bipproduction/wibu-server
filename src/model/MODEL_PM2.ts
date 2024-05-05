@@ -13,7 +13,7 @@ export interface Pm2Env {
     unstable_restarts: number
     restart_time: number
     pm_id: number
-    created_at: number
+    created_at: any
     axm_dynamic: AxmDynamic
     axm_options: AxmOptions
     axm_monitor: AxmMonitor
@@ -23,64 +23,86 @@ export interface Pm2Env {
     unique_id: string
     PM2_HOME: string
     PM2_USAGE: string
-    _: string
+    RUST_MIN_STACK: string
+    DATABASE_URL: string
+    __NEXT_PROCESSED_ENV: string
+    _CE_M: string
+    VSCODE_GIT_ASKPASS_EXTRA_ARGS: string
+    _CE_CONDA: string
+    NVM_CD_FLAGS: string
+    __NEXT_PRIVATE_RUNTIME_TYPE: string
+    __NEXT_PRIVATE_ORIGIN: string
+    PORT: string
+    NODE_OPTIONS: string
+    NEXT_PRIVATE_WORKER: string
+    NEXT_RUNTIME: string
+    NODE_ENV: string
     COLORTERM: string
-    SECURITYSESSIONID: string
+    npm_node_execpath: string
     RUBY_VERSION: string
-    INFOPATH: string
-    HOMEBREW_CELLAR: string
-    GIT_ASKPASS: string
+    SECURITYSESSIONID: string
     VSCODE_GIT_ASKPASS_NODE: string
-    CONDA_DEFAULT_ENV: string
+    GIT_ASKPASS: string
+    HOMEBREW_CELLAR: string
+    INFOPATH: string
+    npm_config_user_agent: string
+    BUN_INSTALL: string
     NVM_BIN: string
-    GEM_PATH: string
+    CONDA_DEFAULT_ENV: string
     VSCODE_GIT_IPC_HANDLE: string
-    LOGNAME: string
+    LC_CTYPE: string
+    GEM_PATH: string
     CONDA_PYTHON_EXE: string
+    LOGNAME: string
     HOMEBREW_PREFIX: string
     VSCODE_GIT_ASKPASS_MAIN: string
-    HOME: string
-    PYENV_SHELL: string
     SHLVL: string
+    PYENV_SHELL: string
+    HOME: string
     rvm_version: string
     XPC_SERVICE_NAME: string
-    _CE_M: string
+    npm_package_version: string
     XPC_FLAGS: string
-    VSCODE_GIT_ASKPASS_EXTRA_ARGS: string
     LANG: string
+    npm_package_name: string
     EDITOR: string
+    npm_lifecycle_event: string
     PWD: string
-    __CFBundleIdentifier: string
     CONDA_PREFIX: string
-    LaunchInstanceID: string
+    __CFBundleIdentifier: string
     XML_CATALOG_FILES: string
+    LaunchInstanceID: string
+    _: string
+    npm_package_json: string
     PATH: string
     rvm_prefix: string
-    _CE_CONDA: string
+    npm_execpath: string
     __CF_USER_TEXT_ENCODING: string
     SSH_AUTH_SOCK: string
     rvm_path: string
     CONDA_EXE: string
     COMMAND_MODE: string
-    USER: string
     NVM_DIR: string
+    USER: string
+    npm_config_local_prefix: string
+    TERM_SESSION_ID: string
     MY_RUBY_HOME: string
-    MallocNanoZone: string
     ORIGINAL_XDG_CURRENT_DESKTOP: string
-    CONDA_PROMPT_MODIFIER: string
+    MallocNanoZone: string
     TERM_PROGRAM_VERSION: string
+    CONDA_PROMPT_MODIFIER: string
     CONDA_SHLVL: string
-    TMPDIR: string
     IRBRC: string
     HOMEBREW_REPOSITORY: string
-    SHELL: string
+    TMPDIR: string
     TERM: string
+    SHELL: string
     ANDROID_HOME: string
-    GEM_HOME: string
-    NVM_CD_FLAGS: string
     PYENV_ROOT: string
-    rvm_bin_path: string
+    GEM_HOME: string
+    NODE: string
     TERM_PROGRAM: string
+    rvm_bin_path: string
     MANPATH: string
     NVM_INC: string
     NODE_APP_INSTANCE: number
@@ -111,7 +133,7 @@ export interface Pm2Env {
     username: string
     windowsHide: boolean
     kill_retry_time: number
-}
+  }
 
 export interface AxmDynamic { }
 
