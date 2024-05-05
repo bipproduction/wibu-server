@@ -10,6 +10,7 @@ import { useShallowEffect } from "@mantine/hooks"
 export function TableServer({ data }: { data: any[] }) {
     const [listData, setListData] = useState<any[]>(data)
     const [listDataClone, setListDataClone] = useState<any[]>(data)
+    const [loading, setLoading] = useState<boolean>(false)
 
     useShallowEffect(() => {
         onLoadData()
@@ -21,9 +22,11 @@ export function TableServer({ data }: { data: any[] }) {
     }
 
     const onLoadData = async () => {
+        setLoading(true)
         const res = await fetch('/api/app/list-server', { cache: "no-store" }).then(res => res.json())
         setListData(res)
         setListDataClone(res)
+        setLoading(false)
     }
 
 
@@ -32,7 +35,7 @@ export function TableServer({ data }: { data: any[] }) {
         <Stack>
             <Flex justify={"flex-end"} gap={"md"} >
                 <TextInput placeholder="Search" leftSection={<MdSearch />} onChange={(e) => onSearch(e.target.value)} />
-                <ActionIcon onClick={onLoadData}>
+                <ActionIcon onClick={onLoadData} loading={loading}>
                     <MdRestartAlt />
                 </ActionIcon>
             </Flex>

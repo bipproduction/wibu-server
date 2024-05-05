@@ -17,9 +17,11 @@ export function TableApp({ data }: { data: any[] }) {
     }, [])
 
     const loadListApp = async () => {
+        setLoading(true)
         const res = await fetch('/api/app/list-app', { cache: "no-store" }).then(res => res.json())
         setlistApp(res)
         setlistAppClone(res)
+        setLoading(false)
     }
 
     const onSearch = async (text: string) => {
@@ -31,7 +33,7 @@ export function TableApp({ data }: { data: any[] }) {
     return <Stack >
         <Flex justify={"end"} gap={"md"} p={"sm"}>
             <TextInput size="xs" leftSection={<MdSearch />} placeholder="search" onChange={(e) => onSearch(e.target.value)} />
-            <ActionIcon onClick={loadListApp}>
+            <ActionIcon onClick={loadListApp} loading={loading}>
                 <MdRestartAlt />
             </ActionIcon>
         </Flex>

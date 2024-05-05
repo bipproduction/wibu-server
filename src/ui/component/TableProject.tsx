@@ -10,6 +10,7 @@ export function TableProject({ list }: { list: any[] }) {
     const [listProject, setListProject] = useState<any[] | null>(list)
     const [listProjectClone, setListProjectClone] = useState<any[] | null>(list)
     const [sort_asc, setSort_asc] = useState<boolean>(true)
+    const [loading, setLoading] = useState<boolean>(false)
 
     useShallowEffect(() => {
         loadList()
@@ -19,9 +20,11 @@ export function TableProject({ list }: { list: any[] }) {
     }, [])
 
     const loadList = async () => {
+        setLoading(true)
         const res: any[] = await fetch('/api/app/list-project', { cache: "no-store" }).then(res => res.json())
         setListProject(res)
         setListProjectClone(res)
+        setLoading(false)
     }
 
     const onSearch = (value: string) => {
@@ -45,7 +48,7 @@ export function TableProject({ list }: { list: any[] }) {
         <Flex justify="end" gap={"md"} p={"sm"} align={"center"}>
             {/* <Checkbox defaultChecked={true} label="package" /> */}
             <TextInput size="xs" leftSection={<MdSearch />} placeholder="search" onChange={(e) => onSearch(e.target.value)} />
-            <ActionIcon onClick={onRestart}>
+            <ActionIcon onClick={onRestart} loading={loading}>
                 <MdRestartAlt />
             </ActionIcon>
         </Flex>
