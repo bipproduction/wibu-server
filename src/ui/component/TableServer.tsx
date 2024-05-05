@@ -21,7 +21,7 @@ export function TableServer({ data }: { data: any[] }) {
     }
 
     const onLoadData = async () => {
-        const res = await fetch('/api/app/list-server', { cache: "no-cache" }).then(res => res.json())
+        const res = await fetch('/api/app/list-server', { cache: "no-store" }).then(res => res.json())
         setListData(res)
         setListDataClone(res)
     }

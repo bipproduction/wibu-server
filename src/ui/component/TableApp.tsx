@@ -17,7 +17,7 @@ export function TableApp({ data }: { data: any[] }) {
     }, [])
 
     const loadListApp = async () => {
-        const res = await fetch('/api/app/list-app').then(res => res.json())
+        const res = await fetch('/api/app/list-app', { cache: "no-store" }).then(res => res.json())
         setlistApp(res)
         setlistAppClone(res)
     }

@@ -19,7 +19,7 @@ export function TableProject({ list }: { list: any[] }) {
     }, [])
 
     const loadList = async () => {
-        const res: any[] = await fetch('/api/app/list-project').then(res => res.json())
+        const res: any[] = await fetch('/api/app/list-project', { cache: "no-store" }).then(res => res.json())
         setListProject(res)
         setListProjectClone(res)
     }
