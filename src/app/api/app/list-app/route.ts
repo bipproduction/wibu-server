@@ -2,6 +2,7 @@ import { MODEL_PM2 } from '@/model/MODEL_PM2'
 import { spawn } from 'child_process'
 import _ from 'lodash'
 
+export const dynamic = 'force-dynamic'
 export async function GET() {
     const list: MODEL_PM2[] = await new Promise((resolve, reject) => {
         let log = ""
