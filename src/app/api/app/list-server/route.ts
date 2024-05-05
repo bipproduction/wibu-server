@@ -1,6 +1,8 @@
 import fs from 'fs'
 import _ from 'lodash'
 import path from 'path'
+
+export const dynamic = 'force-dynamic'
 export async function GET(req: Request) {
     const list_server = await fs.promises.readdir(path.join('/etc', 'nginx', 'sites-enabled'))
     const list_data: any[] = []

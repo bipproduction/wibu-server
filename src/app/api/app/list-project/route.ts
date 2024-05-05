@@ -4,6 +4,7 @@ import path from 'path'
 import { spawn } from 'child_process'
 import _ from 'lodash'
 
+export const dynamic = 'force-dynamic'
 export async function GET() {
     let list_result = []
     const list = await fs.promises.readdir(path.join(root_path, './..'))
