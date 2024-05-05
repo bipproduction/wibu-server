@@ -9,7 +9,9 @@ export default function Home() {
           <Title order={4}>Wibu Server</Title>
           <Anchor href="/admin">Admin</Anchor>
         </Flex>
-        <Text p={"lg"} bg={"dark"} c={"white"} maw={800} size={"lg"}>
+        <Text p={"lg"} bg={"dark"} c={"white"} maw={500} size={"lg"} style={{
+          overflow: "auto"
+        }}>
           黒崎一護（くろさき・いちご）は、日々の生活で普通の高校生として振る舞いながら、霊感が強く、霊界とつながる力を持っています。彼は突然死神の力を得て、霊魂の世界での戦いに巻き込まれます。そこで、彼は多くの仲間と出会います。
 
           最初に彼と出会うのは、朽木ルキア（くちき・るきあ）です。彼女は一護の霊力に注目し、彼に死神の力を授けることになります。彼女は強い意志と冷静な判断力を持ち、一護の旅における重要な指導者となります。
