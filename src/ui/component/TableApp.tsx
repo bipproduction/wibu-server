@@ -1,14 +1,16 @@
 'use client'
 
-import { Anchor, Badge, Button, Center, Loader, Pill, Skeleton, Stack, Table } from "@mantine/core"
+import { ActionIcon, Anchor, Badge, Button, Center, Flex, Loader, Pill, Skeleton, Stack, Table, TextInput } from "@mantine/core"
 import { useShallowEffect } from "@mantine/hooks"
 import { useState } from "react"
 import _ from 'lodash'
 import streamFetch from "@/bin/stream_fetch"
 import moment from "moment"
+import { MdRestartAlt, MdSearch } from "react-icons/md"
 
 export function TableApp({ data }: { data: any[] }) {
     const [listApp, setlistApp] = useState<any[] | null>(data)
+    const [listAppClone, setlistAppClone] = useState<any[] | null>(data)
     const [loading, setLoading] = useState<boolean>(false)
     useShallowEffect(() => {
         loadListApp()
@@ -17,10 +19,22 @@ export function TableApp({ data }: { data: any[] }) {
     const loadListApp = async () => {
         const res = await fetch('/api/app/list-app').then(res => res.json())
         setlistApp(res)
+        setlistAppClone(res)
+    }
+
+    const onSearch = async (text: string) => {
+        const listSearch = listAppClone!.filter(item => _.values(item)[0].toLowerCase().includes(text.toLowerCase()))
+        setlistApp(listSearch)
     }
 
     if (!listApp) return <Center p={"lg"}><Loader /></Center>
     return <Stack>
+        <Flex justify={"end"} gap={"md"} p={"sm"}>
+            <TextInput size="xs" leftSection={<MdSearch />} placeholder="search" onChange={(e) => onSearch(e.target.value)} />
+            <ActionIcon onClick={loadListApp}>
+                <MdRestartAlt />
+            </ActionIcon>
+        </Flex>
         <Table striped highlightOnHover border={1}>
             <Table.Thead>
                 <Table.Tr>
