@@ -18,7 +18,7 @@ export function TableApp({ data }: { data: any[] }) {
 
     const loadListApp = async () => {
         setLoading(true)
-        const res = await fetch('/api/app/list-app', { cache: "no-store" }).then(res => res.json())
+        const res = await fetch('/api/app/list-app', { cache: "no-store", next: { revalidate: 0 } }).then(res => res.json())
         setlistApp(res)
         setlistAppClone(res)
         setLoading(false)
