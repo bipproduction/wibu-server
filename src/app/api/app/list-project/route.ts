@@ -45,6 +45,30 @@ export async function GET() {
             }
         }
 
+        const remote_branch = await new Promise((resolve, reject) => {
+            try {
+                let log = ""
+                const child = spawn('git', ['ls-remote', '--heads', 'origin'])
+                child.stdout.on('data', (data) => {
+                    const output = data.toString().trim();
+                    const remoteBranches = output.split('\n').map((line: any) => {
+                        return line.split('\t')[1].replace('refs/heads/', '');
+                    });
+                    // branches = branches.concat(remoteBranches);
+                })
+
+                child.stderr.on('data', (data) => {
+                    log += data.toString()
+                })
+
+                child.on('close', (code) => {
+                    resolve(log)
+                })
+            } catch (error) {
+                resolve([])
+            }
+        })
+
         const data_pkg = await pkg()
         const data_prisma = await prisma()
         // devDependencies

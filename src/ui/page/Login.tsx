@@ -22,7 +22,11 @@ export function Login() {
             body: JSON.stringify(dataLogin)
         })
 
-        if (res.status !== 200) return alert('wrong email or password')
+        if (res.status !== 200) {
+            alert('wrong email or password')
+            setLoading(false)
+            return
+        }
 
         window.location.reload()
     }
