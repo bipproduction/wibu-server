@@ -1,12 +1,13 @@
 'use client'
 
-import { Badge, Box, Button, Code, Flex, Group, Modal, NumberInput, Pill, PinInput, Stack, Table, Text, TextInput, Title, Tooltip } from "@mantine/core"
+import { Badge, Box, Button, Code, Flex, Group, Modal, NumberInput, Pill, PinInput, SimpleGrid, Stack, Table, Text, TextInput, Title, Tooltip } from "@mantine/core"
 import _ from 'lodash'
 import { useState } from "react"
 import { MdBuild, MdDataSaverOn, MdDataset, MdDownload, MdInstallDesktop, MdNumbers, MdPlayCircle } from "react-icons/md"
 import { TerminalLog } from "./TerminalLog"
 import streamFetch from "@/bin/stream_fetch"
 import { useInputState } from "@mantine/hooks"
+import toast from "react-simple-toasts"
 
 export function TableProjectDetail({ data, title }: { data: any, title: string }) {
     const [textLog, setTextLog] = useState("")
@@ -68,11 +69,17 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
         <Table.Tbody>
             <Table.Tr>
                 {_.values(_.omit(data, "readme")).map((value, index) =>
-                    <Table.Td key={index}>{_.isArray(value) ? <Flex wrap={"wrap"} gap={"sm"}>
-                        {value.map((value, index) => <Tooltip label={value} key={index}>
-                            <Pill w={100} >{value}</Pill>
-                        </Tooltip>)}
-                    </Flex> : typeof value === "object" ? <Table striped highlightOnHover border={1}>
+                    <Table.Td key={index}>{_.isArray(value) ? <SimpleGrid cols={2} mah={300} style={{
+                        overflowY: "auto"
+                    }}>
+                        {value.map((value, index) => <Box key={index}><Tooltip component="button" label={value}>
+                            <Text onClick={() => {
+                                navigator.clipboard.writeText(value)
+                                toast("Copied!")
+                            }} style={{
+                                cursor: "pointer"
+                            }} size={"sm"} lineClamp={1}>{value}</Text></Tooltip></Box>)}
+                    </SimpleGrid> : typeof value === "object" ? <Table striped highlightOnHover border={1}>
                         <Table.Thead>
                             <Table.Tr bg={"gray"}>
                                 {_.keys(value).map(key => <Table.Th key={key}>{key}</Table.Th>)}
