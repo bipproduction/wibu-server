@@ -18,9 +18,9 @@ export async function GET() {
                 log += data.toString()
             })
 
-            child.stderr.on('data', (data) => {
-                log += data.toString()
-            })
+            // child.stderr.on('data', (data) => {
+            //     log += data.toString()
+            // })
 
             child.on('close', (code) => {
                 resolve(log)
@@ -45,29 +45,7 @@ export async function GET() {
             }
         }
 
-        const remote_branch = await new Promise((resolve, reject) => {
-            try {
-                let log = ""
-                const child = spawn('git', ['ls-remote', '--heads', 'origin'])
-                child.stdout.on('data', (data) => {
-                    const output = data.toString().trim();
-                    const remoteBranches = output.split('\n').map((line: any) => {
-                        return line.split('\t')[1].replace('refs/heads/', '');
-                    });
-                    // branches = branches.concat(remoteBranches);
-                })
-
-                child.stderr.on('data', (data) => {
-                    log += data.toString()
-                })
-
-                child.on('close', (code) => {
-                    resolve(log)
-                })
-            } catch (error) {
-                resolve([])
-            }
-        })
+        
 
         const data_pkg = await pkg()
         const data_prisma = await prisma()
@@ -75,6 +53,7 @@ export async function GET() {
         const data = {
             name: ls,
             branch: git_current_branch.trim(),
+            // remote_branch,
             app: (data_pkg && data_pkg.name != null) ? "true" : "false",
             type: (data_pkg === null) ? "none" : (data_pkg.scripts && data_pkg.scripts.start && data_pkg.scripts.start.includes("next")) ? "nextjs" : "node",
             prisma: (data_prisma === null) ? "false" : "true",

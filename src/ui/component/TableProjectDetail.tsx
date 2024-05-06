@@ -1,6 +1,6 @@
 'use client'
 
-import { Badge, Box, Button, Code, Flex, Group, Modal, NumberInput, Pill, PinInput, Stack, Table, Text, TextInput, Title } from "@mantine/core"
+import { Badge, Box, Button, Code, Flex, Group, Modal, NumberInput, Pill, PinInput, Stack, Table, Text, TextInput, Title, Tooltip } from "@mantine/core"
 import _ from 'lodash'
 import { useState } from "react"
 import { MdBuild, MdDataSaverOn, MdDataset, MdDownload, MdInstallDesktop, MdNumbers, MdPlayCircle } from "react-icons/md"
@@ -68,7 +68,11 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
         <Table.Tbody>
             <Table.Tr>
                 {_.values(_.omit(data, "readme")).map((value, index) =>
-                    <Table.Td key={index}>{typeof value === "object" ? <Table striped highlightOnHover border={1}>
+                    <Table.Td key={index}>{_.isArray(value) ? <Flex wrap={"wrap"} gap={"sm"}>
+                        {value.map((value, index) => <Tooltip label={value} key={index}>
+                            <Pill w={100} >{value}</Pill>
+                        </Tooltip>)}
+                    </Flex> : typeof value === "object" ? <Table striped highlightOnHover border={1}>
                         <Table.Thead>
                             <Table.Tr bg={"gray"}>
                                 {_.keys(value).map(key => <Table.Th key={key}>{key}</Table.Th>)}
@@ -81,7 +85,7 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
                                         overflowX: "auto"
                                     }}>
                                         {_.keys(value).map(key => <Pill key={key}>{key + " : " + value[key]}</Pill>)}
-                                    </Flex> : <Box>
+                                    </Flex> : <Box >
                                         {value}
                                     </Box>}</Table.Td>)}
                             </Table.Tr>
@@ -119,7 +123,6 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
             <Stack>
                 <Title order={3}>START SERVER</Title>
                 <Title order={5}>PORT</Title>
-                {/* <NumberInput error={port.toString().length !== 4} placeholder="port" label="port" leftSection={<MdNumbers />} value={port} onChange={setPort as any} /> */}
                 <PinInput title="port" placeholder="port" length={4} value={port + ""} onChange={setPort as any} />
                 <Text c={"red"}>{errorText}</Text>
                 <Group gap={"md"} justify="end">

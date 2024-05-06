@@ -1,0 +1,6 @@
+- kumpul / berangkat jam 10
+- makan siang disana trus ke uspem
+- pake zenik
+- update meeting dengan pak sekda, presentasi tidak dilihat , konsen duit turun , konsen project keberlangsungan , mumpung ada ordal, 
+- badung satu data , sistem pencatatan mirip dukcapil tidak dikerjakan , project pemerintah tidak boleh ada yang sama sampe kebawah, pelaporan masih boleh , pelayanan , minta bantuan untuk mengekplorasi masalah sampah bisa beda project
+- seleksi audit aplikasi diintregasikan

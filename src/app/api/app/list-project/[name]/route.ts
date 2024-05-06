@@ -3,7 +3,9 @@ const root_path = process.cwd()
 import path from 'path'
 import { spawn } from 'child_process'
 import _ from 'lodash'
+export const dynamic = 'force-dynamic'
 export async function GET(req: Request, { params }: { params: { name: string } }) {
+
 
     const git_current_branch: string = await new Promise((resolve, reject) => {
         let log = ""
@@ -51,8 +53,30 @@ export async function GET(req: Request, { params }: { params: { name: string } }
     }
     const data_prisma = await prisma()
 
+    const remote_branch: string = await new Promise((resolve, reject) => {
+        try {
+            let log = ""
+            const child = spawn('git', ['ls-remote', '--heads', 'origin'], {
+                cwd: path.join(root_path, './..', params.name)
+            })
+            child.stdout.on('data', (data) => {
+                log += data.toString()
+            })
+
+            child.on('close', (code) => {
+                resolve(log)
+            })
+        } catch (error) {
+            resolve("")
+        }
+    })
+
+
+    const list_remote = remote_branch.split('\n').map((item) => item.trim().split("\t")[1]).filter((item) => item !== undefined).map((item) => item.replace('refs/heads/', ''))
+
     const data = {
         branch: git_current_branch.trim(),
+        remote_branch: list_remote,
         app: (data_pkg && data_pkg.name != null) ? "true" : "false",
         type: (data_pkg === null) ? "none" : (data_pkg.scripts && data_pkg.scripts.start && data_pkg.scripts.start.includes("next")) ? "nextjs" : "node",
         prisma: (data_prisma === null) ? "false" : "true",
