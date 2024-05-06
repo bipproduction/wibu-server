@@ -8,19 +8,25 @@ export async function GET(req: Request, { params }: { params: { name: string } }
 
 
     const git_current_branch: string = await new Promise((resolve, reject) => {
-        let log = ""
-        const child = spawn('git', ['branch', '--show-current'])
-        child.stdout.on('data', (data) => {
-            log += data.toString()
-        })
+        try {
+            let log = ""
+            const child = spawn('git', ['branch', '--show-current'], {
+                cwd: path.join(root_path, './..', params.name)
+            })
+            child.stdout.on('data', (data) => {
+                log += data.toString()
+            })
 
-        child.stderr.on('data', (data) => {
-            log += data.toString()
-        })
+            // child.stderr.on('data', (data) => {
+            //     log = data.toString()
+            // })
 
-        child.on('close', (code) => {
-            resolve(log)
-        })
+            child.on('close', (code) => {
+                resolve(log)
+            })
+        } catch (error) {
+            resolve("null")
+        }
     })
 
     const pkg: any = async () => {

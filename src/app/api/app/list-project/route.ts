@@ -12,19 +12,21 @@ export async function GET() {
 
     for (let ls of list_data) {
         const git_current_branch: string = await new Promise((resolve, reject) => {
-            let log = ""
-            const child = spawn('git', ['branch', '--show-current'])
-            child.stdout.on('data', (data) => {
-                log += data.toString()
-            })
+            try {
+                let log = ""
+                const child = spawn('git', ['branch', '--show-current'], {
+                    cwd: path.join(root_path, './..', ls)
+                })
+                child.stdout.on('data', (data) => {
+                    log = data.toString()
+                })
 
-            // child.stderr.on('data', (data) => {
-            //     log += data.toString()
-            // })
-
-            child.on('close', (code) => {
-                resolve(log)
-            })
+                child.on('close', (code) => {
+                    resolve(log)
+                })
+            } catch (error) {
+                resolve("null")
+            }
         })
 
         const pkg: any = async () => {
@@ -45,7 +47,7 @@ export async function GET() {
             }
         }
 
-        
+
 
         const data_pkg = await pkg()
         const data_prisma = await prisma()
