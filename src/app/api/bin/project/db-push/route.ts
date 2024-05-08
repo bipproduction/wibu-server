@@ -7,7 +7,8 @@ export async function POST(req: Request, res: Response) {
     const body = await req.json()
     if (!body && !body.name) return new Response('Bad Request', { status: 400 })
     const root_path = path.join(process.cwd(), '..', body.name)
-    const child = exec(`cd ${root_path} && npx prisma db push`, {
+    const child = exec(`source ${root_path}/.env && npx prisma db push`, {
+        cwd: root_path,
         env: {
             ...process.env,
             NODE_ENV: 'production',
