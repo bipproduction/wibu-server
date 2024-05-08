@@ -1,9 +1,39 @@
 import streamResponse from "@/bin/stream_response"
+import { exec } from "child_process";
+import path from "path";
 
 export async function POST(req: Request, res: Response) {
     const body = await req.json()
-    if (!body && !body.name ) return new Response('Bad Request', { status: 400 })
+    if (!body && !body.name) return new Response('Bad Request', { status: 400 })
 
-    const stream = streamResponse({ cmd: 'yarn', list: ['install'], path: body.name })
-    return stream
+    const root_path = path.join(process.cwd(), './../', body.name)
+    const child = exec(`cd ${root_path} && yarn install`);
+    const tream = new ReadableStream({
+        start(controller) {
+            child?.stdout?.on('data', (data) => {
+                // Push data into the stream
+                controller.enqueue(data);
+            });
+
+            child?.stderr?.on('data', (data) => {
+                // Push data into the stream
+                controller.enqueue(data);
+            })
+
+            child?.on('close', () => {
+                // Close the stream
+                controller.close();
+            })
+
+        }
+    })
+
+    return new Response(tream, {
+        headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+            'Transfer-Encoding': 'chunked'
+        }
+    })
 }
