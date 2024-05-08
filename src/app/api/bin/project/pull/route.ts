@@ -11,7 +11,6 @@ export async function POST(req: Request, res: Response) {
     const tream = new ReadableStream({
         start(controller) {
 
-
             child?.stdout?.on('data', (data) => {
                 // Push data into the stream
                 controller.enqueue(data);
