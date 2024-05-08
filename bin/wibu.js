@@ -21,11 +21,11 @@ async function version(argv) {
     // console.log(argv.p, "hahahahahha")
     if (argv.c) {
         try {
-            const ls = execSync(argv.c)
+            const ls = execSync("yarn build")
             console.log(ls.toString())
         } catch (error) {
             console.log("=== ERROR ===")
-        }   
+        }
     }
 
 }

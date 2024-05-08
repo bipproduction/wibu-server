@@ -72,12 +72,12 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
     const TableView = () => <Table striped highlightOnHover border={1} >
         <Table.Thead>
             <Table.Tr bg={"black"} c={"white"}>
-                {_.keys(_.omit(data, "readme")).map(key => <Table.Th key={key}>{key}</Table.Th>)}
+                {_.keys(_.omit(data, ["readme", "prisma_schema", "env_text"])).map(key => <Table.Th key={key}>{key}</Table.Th>)}
             </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
             <Table.Tr>
-                {_.values(_.omit(data, "readme")).map((value, index) =>
+                {_.values(_.omit(data, ["readme", "prisma_schema", "env_text"])).map((value, index) =>
                     <Table.Td key={index}>{_.isArray(value) ? <SimpleGrid cols={2} mah={300} style={{
                         overflowY: "auto"
                     }}>
@@ -191,6 +191,30 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
                 position: "relative",
 
             }}>{data.readme}</pre>
+        </Code>
+        <Title>ENV</Title>
+        <Code>
+            <pre style={{
+                wordWrap: "break-word",
+                whiteSpace: "pre-wrap",
+                overflowX: "auto",
+                maxHeight: 500,
+                overflowY: "auto",
+                position: "relative",
+
+            }}>{data.env_text}</pre>
+        </Code>
+        <Title>PRISMA SCHEMA</Title>
+        <Code>
+            <pre style={{
+                wordWrap: "break-word",
+                whiteSpace: "pre-wrap",
+                overflowX: "auto",
+                maxHeight: 500,
+                overflowY: "auto",
+                position: "relative",
+
+            }}>{data.prisma_schema}</pre>
         </Code>
     </Stack>
 

@@ -73,6 +73,22 @@ export async function GET(req: Request, { params }: { params: { name: string } }
         }
     })
 
+    const prisma_schema = await (async () => {
+        try {
+            return await fs.promises.readFile(path.join(root_path, './..', params.name, 'prisma', 'schema.prisma'), 'utf8')
+        } catch (error) {
+            return null
+        }
+    })()
+
+    const env_text = await (async () => {
+        try {
+            return await fs.promises.readFile(path.join(root_path, './..', params.name, '.env'), 'utf8')
+        } catch (error) {
+            return null
+        }
+    })()
+
 
     const list_remote = remote_branch.split('\n').map((item) => item.trim().split("\t")[1]).filter((item) => item !== undefined).map((item) => item.replace('refs/heads/', ''))
 
@@ -84,7 +100,9 @@ export async function GET(req: Request, { params }: { params: { name: string } }
         prisma: (data_prisma === null) ? "false" : "true",
         seed: (data_pkg && data_pkg.prisma && data_pkg.prisma.seed) ? "true" : "false",
         package: _.omit(data_pkg, ['devDependencies', 'private', 'license', 'repository', 'author']),
-        readme
+        readme,
+        prisma_schema,
+        env_text
     }
 
     return Response.json(data)
