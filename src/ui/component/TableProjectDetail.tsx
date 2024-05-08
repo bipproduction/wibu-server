@@ -1,6 +1,6 @@
 'use client'
 
-import { Badge, Box, Button, Code, Flex, Group, Modal, NumberInput, Pill, PinInput, SimpleGrid, Stack, Table, Text, TextInput, Title, Tooltip } from "@mantine/core"
+import { Badge, Box, Button, Card, Code, Flex, Group, Modal, NumberInput, Paper, Pill, PinInput, Select, SimpleGrid, Stack, Table, Text, TextInput, Title, Tooltip } from "@mantine/core"
 import _ from 'lodash'
 import { useState } from "react"
 import { MdBuild, MdDataSaverOn, MdDataset, MdDownload, MdInstallDesktop, MdNumbers, MdPlayCircle } from "react-icons/md"
@@ -14,6 +14,7 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
     const [loading, setLoading] = useState<boolean>(false)
     const [showLog, setShowLog] = useState<boolean>(false)
     const [openStart, setOpenStart] = useState<boolean>(false)
+    const [selectedBranch, setSelectedBranch] = useInputState(data.branch)
 
     const onPull = async () => {
         setLoading(true)
@@ -58,6 +59,14 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
     const onStart = () => {
         setOpenStart(true)
 
+    }
+
+    const onUpdateBranch = async () => {
+        setLoading(true)
+        setShowLog(true)
+        setTextLog("")
+        await streamFetch({ url: '/api/bin/project/update-branch', body: { name: title, branch: selectedBranch }, onTextLog: (text) => setTextLog(prev => prev + text) })
+        setLoading(false)
     }
 
     const TableView = () => <Table striped highlightOnHover border={1} >
@@ -142,6 +151,21 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
 
     return <Stack pos={"relative"} w={"100%"}>
         <Title>{title}</Title>
+        <Group>
+            <Card withBorder shadow="xs">
+                <Flex align={"end"} gap={"md"} >
+                    <Select
+                        value={selectedBranch}
+                        variant="filled"
+                        label={"select Branch"}
+                        placeholder="select branch"
+                        data={[...data.remote_branch]}
+                        onChange={setSelectedBranch}
+                    />
+                    <Button onClick={onUpdateBranch} >UPDATE</Button>
+                </Flex>
+            </Card>
+        </Group>
         <Button.Group>
             <Button onClick={onPull} leftSection={<MdDownload />} size="compact-xs" w={100}>pull</Button>
             <Button onClick={onInstall} leftSection={<MdInstallDesktop />} size="compact-xs" w={100}>install</Button>

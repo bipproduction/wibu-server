@@ -17,10 +17,6 @@ export async function GET(req: Request, { params }: { params: { name: string } }
                 log += data.toString()
             })
 
-            // child.stderr.on('data', (data) => {
-            //     log = data.toString()
-            // })
-
             child.on('close', (code) => {
                 resolve(log)
             })

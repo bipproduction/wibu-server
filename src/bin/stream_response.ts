@@ -1,12 +1,14 @@
 import { spawn } from 'child_process'
 const root_path = process.cwd()
 import path from 'path'
-const streamResponse = ({ cmd, list, name }: { cmd: string, list: string[], name: string }) => {
+const streamResponse = ({ cmd, list, path: name }: { cmd: string, list: string[], path: string }) => {
+    const cwd = path.join(root_path, '..', name)
+    console.log(cwd)
     const stream = new ReadableStream({
         start(controller) {
             try {
                 const child = spawn(cmd, list, {
-                    cwd: path.join(root_path, './..', name)
+                    cwd: `./../${name}`
                 });
                 // Handle stdout data from the child process
                 child.stdout.on('data', (data) => {
@@ -32,7 +34,7 @@ const streamResponse = ({ cmd, list, name }: { cmd: string, list: string[], name
                     // Push data into the stream
                     controller.enqueue(data);
                 });
-    
+
                 child.stderr.on('data', (data) => {
                     // Push data into the stream
                     controller.enqueue(data);

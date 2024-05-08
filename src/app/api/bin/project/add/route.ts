@@ -7,8 +7,8 @@ export async function POST(req: Request) {
     console.log(body.url)
 
     if (body.name === "") {
-        return streamResponse({ cmd: 'git', list: ['clone', body.url], name: "/" })
+        return streamResponse({ cmd: 'git', list: ['clone', body.url], path: "/" })
     }
 
-    return streamResponse({ cmd: 'git', list: ['clone', body.url, body.name], name: "/" })
+    return streamResponse({ cmd: 'git', list: ['clone', body.url, body.name], path: "/" })
 }
