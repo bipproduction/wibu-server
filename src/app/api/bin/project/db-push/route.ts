@@ -7,7 +7,7 @@ export async function POST(req: Request, res: Response) {
     const body = await req.json()
     if (!body && !body.name) return new Response('Bad Request', { status: 400 })
     const root_path = path.join(process.cwd(), '..', body.name)
-    const child = exec(`cd ${root_path} && source .env && npx prisma db push`);
+    const child = exec(`cd ${root_path} && ls -a`);
     const tream = new ReadableStream({
         start(controller) {
 
