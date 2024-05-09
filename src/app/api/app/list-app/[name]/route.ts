@@ -33,7 +33,7 @@ export async function GET(req: Request, { params }: { params: { name: string } }
         unstable_restarts: app.pm2_env.unstable_restarts,
         pm_id: app.pm_id,
         monit: app.monit,
-        args: app.pm2_env.args,
+        // args: app.pm2_env.args,
         instance: app.pm2_env.instances,
         kill_retry_time : app.pm2_env.kill_retry_time,
         exec_mode: app.pm2_env.exec_mode,

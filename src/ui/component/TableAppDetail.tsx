@@ -80,7 +80,7 @@ export function TableAppDetail({ data, title }: { data: { [key: string]: any | n
         overflow: "auto"
     }}>
         <Title order={3}>{title}</Title>
-        <NavDetailApp status={appData?.status} onRestart={onRestart} onStop={onStop} onDelete={onDelete} loading={loading} />
+        <NavDetailApp name={title} status={appData?.status} onRestart={onRestart} onStop={onStop} onDelete={onDelete} loading={loading} />
         {showLog ? <TerminalLog loading={loading} text={textLog} onclose={() => setShowLog(false)} /> : <DisplayTable target_data={appData} />}
     </Stack>
 }

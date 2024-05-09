@@ -1,7 +1,9 @@
 import { spawn } from "child_process"
+import _ from "lodash"
 
-export async function GET(req: Request, res: Response) {
-    const port = new URL(req.url).searchParams.get('port')
+export async function GET(req: Request) {
+    const name = new URL(req.url).searchParams.get('name')
+    if (!name) return new Response('Bad Request', { status: 400 })
 
     const list_app: any[] = await new Promise((resolve, reject) => {
         try {
@@ -12,19 +14,22 @@ export async function GET(req: Request, res: Response) {
             })
 
             child.stderr.on('data', (data) => {
-                log += data.toString()
+                log = "[]"
             })
 
             child.on('close', (code) => {
                 resolve(JSON.parse(log))
             })
+
         } catch (error) {
             resolve([])
         }
     })
 
-    const available = list_app.filter((item) => item.name.split('_').includes(port)).length === 0
+    const result = list_app.filter((item) => item.name.includes(name)).map((item) => ({
+        name: item.name,
+        port: item.name.split('_')[1],
+    }))
 
-    return Response.json({ available })
-
+    return Response.json(result)
 }

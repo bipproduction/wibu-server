@@ -1,13 +1,15 @@
 'use client'
 
-import { Badge, Box, Button, Card, Code, Flex, Group, Modal, NumberInput, Paper, Pill, PinInput, Select, SimpleGrid, Stack, Table, Text, TextInput, Title, Tooltip } from "@mantine/core"
+import { Badge, Box, Button, Card, Code, Flex, Group, List, ListItem, Modal, NumberInput, Paper, Pill, PinInput, Portal, SegmentedControl, Select, SimpleGrid, Stack, Table, Text, TextInput, Title, Tooltip } from "@mantine/core"
 import _ from 'lodash'
 import { useState } from "react"
-import { MdBuild, MdDataSaverOn, MdDataset, MdDownload, MdInstallDesktop, MdNumbers, MdPlayCircle } from "react-icons/md"
+import { MdBuild, MdDataSaverOn, MdDataset, MdDownload, MdInstallDesktop, MdNumbers, MdPlayCircle, MdShare } from "react-icons/md"
 import { TerminalLog } from "./TerminalLog"
 import streamFetch from "@/bin/stream_fetch"
-import { useInputState } from "@mantine/hooks"
+import { useInputState, useShallowEffect } from "@mantine/hooks"
 import toast from "react-simple-toasts"
+import { read } from "fs"
+import api_path from "@/util/api_path"
 
 export function TableProjectDetail({ data, title }: { data: any, title: string }) {
     const [textLog, setTextLog] = useState("")
@@ -69,6 +71,104 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
         setLoading(false)
     }
 
+
+    const ButtonStudio = () => {
+        const [loadingStudio, setLoadingStudio] = useState<boolean>(false)
+        const [logText, setLogText] = useState<string>("")
+        const [openLog, seTOpenLog] = useState<boolean>(false)
+
+        const onCheckName = async () => {
+            // console.log(port)
+            setLoadingStudio(true)
+            const res: any[] = await fetch('/api/app/list-app/search?name=' + title).then(res => res.json())
+            // console.log(res)
+            if (res.length === 0) {
+                setLoadingStudio(false)
+                alert("app belum berjalan , jalankan terlebih dahulu!")
+                return
+            }
+            const result = res.find(item => _.startsWith(item.port, "5"))
+
+            if (result) {
+                setLoadingStudio(false)
+                // alert(`Already running on ${result.port}`)
+                return
+            }
+
+            const port = res[0].port.split("")
+            port[0] = "5"
+
+            seTOpenLog(true)
+            fetch(api_path.bin.projectStudio, {
+                method: "POST",
+                body: JSON.stringify({ name: title, port: port.join("") }),
+            }).then(res => {
+                const reader = res.body?.getReader();
+                const decoder = new TextDecoder();
+
+                reader?.read().then(function processText({ done, value }): any {
+                    if (done) {
+                        // console.log("done")
+                        // alert("done")
+                        return
+                    }
+                    setLogText(prev => prev + decoder.decode(value))
+                    return reader?.read().then(processText)
+                })
+
+            })
+
+            setLoadingStudio(false)
+
+        }
+
+        return <Stack>
+            <Button loading={loadingStudio} leftSection={<MdInstallDesktop />} size="compact-xs" onClick={onCheckName}>Studio</Button>
+            <Portal>
+                <Modal size={"lg"} opened={openLog} onClose={() => seTOpenLog(false)}>
+                    <Stack>
+                        <Code bg={"black"} c={"green"}>
+                            <pre style={{
+                                backgroundColor: "black",
+                                color: "green",
+                            }}>{logText}</pre>
+                        </Code>
+                    </Stack>
+                </Modal>
+            </Portal>
+        </Stack>
+    }
+
+    const TableActiveApp = () => {
+        const [activeApp, setActiveApp] = useState<any[]>([])
+        useShallowEffect(() => {
+            fetch('/api/app/list-project/app', {
+                method: "POST",
+                body: JSON.stringify({ name: title }),
+            }).then(res => res.json()).then(setActiveApp)
+        }, [])
+        return <Card withBorder>
+            <Stack>
+                <Title order={3}>App Status</Title>
+                <Table striped highlightOnHover border={1} >
+                    <Table.Thead>
+                        <Table.Tr bg={"black"} c={"white"}>
+                            {_.keys(activeApp[0]).map(key => <Table.Th key={key}>{key}</Table.Th>)}
+                        </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                        {activeApp.map((target_data, index) => <Table.Tr key={index}>
+                            {_.values(target_data).map((value, index) => <Table.Td key={index}>
+                                {typeof value === "boolean" ? value.toString() : value}
+                            </Table.Td>)}
+                        </Table.Tr>)}
+                    </Table.Tbody>
+                </Table>
+            </Stack>
+        </Card>
+
+    }
+
     const TableView = () => <Table striped highlightOnHover border={1} >
         <Table.Thead>
             <Table.Tr bg={"black"} c={"white"}>
@@ -78,17 +178,17 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
         <Table.Tbody>
             <Table.Tr>
                 {_.values(_.omit(data, ["readme", "prisma_schema", "env_text"])).map((value, index) =>
-                    <Table.Td key={index}>{_.isArray(value) ? <SimpleGrid cols={2} mah={300} style={{
+                    <Table.Td key={index}>{_.isArray(value) ? <List icon={<MdShare />} mah={300} style={{
                         overflowY: "auto"
                     }}>
-                        {value.map((value, index) => <Box key={index}><Tooltip component="button" label={value}>
+                        {value.map((value, index) => <List.Item key={index}><Tooltip component="button" label={value}>
                             <Text onClick={() => {
                                 navigator.clipboard.writeText(value)
                                 toast("Copied!")
                             }} style={{
                                 cursor: "pointer"
-                            }} size={"sm"} lineClamp={1}>{value}</Text></Tooltip></Box>)}
-                    </SimpleGrid> : typeof value === "object" ? <Table striped highlightOnHover border={1}>
+                            }} size={"sm"} lineClamp={1}>{value}</Text></Tooltip></List.Item>)}
+                    </List> : typeof value === "object" ? <Table striped highlightOnHover border={1}>
                         <Table.Thead>
                             <Table.Tr bg={"gray"}>
                                 {_.keys(value).map(key => <Table.Th key={key}>{key}</Table.Th>)}
@@ -115,8 +215,6 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
         </Table.Tbody>
     </Table>
 
-
-
     const ModalStart = function ({ opened, onclose }: { opened: boolean, onclose: () => void }) {
         const [port, setPort] = useInputState<number>(3000)
         const [loading, setLoading] = useState(false)
@@ -125,7 +223,7 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
             setLoading(true)
 
             const res = await fetch('/api/app/list-app/port-available?port=' + port).then(res => res.json())
-            if (res.available) {
+            if (!res.available) {
                 setLoading(false)
                 setErrorText("port already in use")
                 return
@@ -149,74 +247,138 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
         </Modal>
     }
 
+
+
+    const SegmentView = () => {
+        const [segment, setSegment] = useState("Readme")
+        const ReadmeView = () => {
+            return <Stack>
+                <Title>README</Title>
+                <Code>
+                    <pre style={{
+                        wordWrap: "break-word",
+                        whiteSpace: "pre-wrap",
+                        overflowX: "auto",
+                        maxHeight: 500,
+                        overflowY: "auto",
+                        position: "relative",
+
+                    }}>{data.readme}</pre>
+                </Code>
+            </Stack>
+        }
+
+        const PrismaSchemaView = () => {
+
+            return <Stack>
+                <Title>PRISMA SCHEMA</Title>
+                <Code>
+                    <pre style={{
+                        wordWrap: "break-word",
+                        whiteSpace: "pre-wrap",
+                        overflowX: "auto",
+                        maxHeight: 500,
+                        overflowY: "auto",
+                        position: "relative",
+
+                    }}>{data.prisma_schema}</pre>
+                </Code>
+            </Stack>
+        }
+
+        const EnvView = () => {
+            return <Stack>
+                <Title>ENV</Title>
+                <Code>
+                    <pre style={{
+                        wordWrap: "break-word",
+                        whiteSpace: "pre-wrap",
+                        overflowX: "auto",
+                        maxHeight: 500,
+                        overflowY: "auto",
+                        position: "relative",
+
+                    }}>{data.env_text}</pre>
+                </Code>
+            </Stack>
+        }
+
+        const list_bottom_view = [
+            {
+                "name": "Readme",
+                "view": ReadmeView
+            },
+            {
+                "name": "Prisma Schema",
+                "view": PrismaSchemaView
+            },
+            {
+                "name": "Env",
+                "view": EnvView
+            }
+        ]
+
+        return <Stack>
+            <Group>
+                <SegmentedControl title="Segment" color={"blue"} value={segment} data={[...list_bottom_view.map(item => item.name)]} onChange={setSegment} />
+            </Group>
+            {list_bottom_view.filter(item => item.name === segment)[0].view()}
+
+        </Stack>
+    }
+
+    const UpdateBranchView = () => {
+        return <Stack>
+            <Group>
+                <Card withBorder >
+                    <Flex align={"end"} gap={"md"} >
+                        <Select
+                            value={selectedBranch}
+                            variant="filled"
+                            label={"select Branch"}
+                            placeholder="select branch"
+                            data={[...data.remote_branch]}
+                            onChange={setSelectedBranch}
+                        />
+                        <Button onClick={onUpdateBranch} >UPDATE</Button>
+                    </Flex>
+                </Card>
+            </Group>
+        </Stack>
+    }
+
+    const NavView = () => {
+
+        return <Stack>
+            <Button.Group>
+                <Button onClick={onPull} leftSection={<MdDownload />} size="compact-xs" w={100}>pull</Button>
+                <Button onClick={onInstall} leftSection={<MdInstallDesktop />} size="compact-xs" w={100}>install</Button>
+                <Button disabled={data?.prisma === "false"} onClick={onDbPush} leftSection={<MdDataSaverOn />} size="compact-xs" w={100}>db push</Button>
+                <Button disabled={data?.seed === "false"} onClick={onDbSeed} leftSection={<MdDataset />} size="compact-xs" w={100}>db seed</Button>
+                <Button disabled={data?.type !== "nextjs"} onClick={onBuild} leftSection={<MdBuild />} size="compact-xs" w={100}>build</Button>
+                <Button disabled={data?.type === "none"} onClick={onStart} leftSection={<MdPlayCircle />} size="compact-xs" w={100}>start</Button>
+                <ButtonStudio />
+                {/* <Button disabled={data.prisma === "false"} onClick={onStudio} leftSection={<MdDataset />} size="compact-xs" w={100}>studio</Button> */}
+            </Button.Group>
+        </Stack>
+    }
+
     return <Stack pos={"relative"} w={"100%"}>
         <Title>{title}</Title>
-        <Group>
-            <Card withBorder shadow="xs">
-                <Flex align={"end"} gap={"md"} >
-                    <Select
-                        value={selectedBranch}
-                        variant="filled"
-                        label={"select Branch"}
-                        placeholder="select branch"
-                        data={[...data.remote_branch]}
-                        onChange={setSelectedBranch}
-                    />
-                    <Button onClick={onUpdateBranch} >UPDATE</Button>
-                </Flex>
-            </Card>
-        </Group>
-        <Button.Group>
-            <Button onClick={onPull} leftSection={<MdDownload />} size="compact-xs" w={100}>pull</Button>
-            <Button onClick={onInstall} leftSection={<MdInstallDesktop />} size="compact-xs" w={100}>install</Button>
-            <Button onClick={onDbPush} leftSection={<MdDataSaverOn />} size="compact-xs" w={100}>db push</Button>
-            <Button onClick={onDbSeed} leftSection={<MdDataset />} size="compact-xs" w={100}>db seed</Button>
-            <Button disabled={data?.type !== "nextjs"} onClick={onBuild} leftSection={<MdBuild />} size="compact-xs" w={100}>build</Button>
-            <Button disabled={data?.type === "none"} onClick={onStart} leftSection={<MdPlayCircle />} size="compact-xs" w={100}>start</Button>
-        </Button.Group>
+        <TableActiveApp />
+        <UpdateBranchView />
+        <NavView />
         <Box pos={"relative"} style={{
             overflowX: "auto"
         }}>
             {showLog ? <TerminalLog loading={loading} text={textLog} onclose={() => setShowLog(false)} /> : <TableView />}
         </Box>
         <ModalStart opened={openStart} onclose={() => setOpenStart(false)} />
-        <Title>README</Title>
-        <Code>
-            <pre style={{
-                wordWrap: "break-word",
-                whiteSpace: "pre-wrap",
-                overflowX: "auto",
-                maxHeight: 500,
-                overflowY: "auto",
-                position: "relative",
-
-            }}>{data.readme}</pre>
-        </Code>
-        <Title>ENV</Title>
-        <Code>
-            <pre style={{
-                wordWrap: "break-word",
-                whiteSpace: "pre-wrap",
-                overflowX: "auto",
-                maxHeight: 500,
-                overflowY: "auto",
-                position: "relative",
-
-            }}>{data.env_text}</pre>
-        </Code>
-        <Title>PRISMA SCHEMA</Title>
-        <Code>
-            <pre style={{
-                wordWrap: "break-word",
-                whiteSpace: "pre-wrap",
-                overflowX: "auto",
-                maxHeight: 500,
-                overflowY: "auto",
-                position: "relative",
-
-            }}>{data.prisma_schema}</pre>
-        </Code>
+        {/* <ButtonStudio /> */}
+        <SegmentView />
     </Stack>
+
+
 
 
 }

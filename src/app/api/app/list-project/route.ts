@@ -10,12 +10,12 @@ export async function GET() {
     const list = await fs.promises.readdir(path.join(root_path, './..'))
     const list_data = list.filter((item) => !item.includes('.DS_Store'))
 
-    for (let ls of list_data) {
+    for (let file_name of list_data) {
         const git_current_branch: string = await new Promise((resolve, reject) => {
             try {
                 let log = ""
                 const child = spawn('git', ['branch', '--show-current'], {
-                    cwd: path.join(root_path, './..', ls)
+                    cwd: path.join(root_path, './..', file_name)
                 })
                 child.stdout.on('data', (data) => {
                     log = data.toString()
@@ -31,7 +31,7 @@ export async function GET() {
 
         const pkg: any = async () => {
             try {
-                const p = await fs.promises.readFile(path.join(root_path, './..', ls, 'package.json'), 'utf8')
+                const p = await fs.promises.readFile(path.join(root_path, './..', file_name, 'package.json'), 'utf8')
                 return JSON.parse(p)
             } catch (error) {
                 return null
@@ -40,7 +40,7 @@ export async function GET() {
 
         const prisma = async () => {
             try {
-                const p = await fs.promises.readFile(path.join(root_path, './..', ls, 'prisma', 'schema.prisma'), 'utf8')
+                const p = await fs.promises.readFile(path.join(root_path, './..', file_name, 'prisma', 'schema.prisma'), 'utf8')
                 return p
             } catch (error) {
                 return null
@@ -53,7 +53,7 @@ export async function GET() {
         const data_prisma = await prisma()
         // devDependencies
         const data = {
-            name: ls,
+            name: file_name,
             branch: git_current_branch.trim(),
             // remote_branch,
             app: (data_pkg && data_pkg.name != null) ? "true" : "false",

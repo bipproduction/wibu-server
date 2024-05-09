@@ -6,6 +6,8 @@ import toasts from "react-simple-toasts"
 
 
 const text_template = ({ name, port, server }: { name: string, port: string, server: string }) => `
+# filename: ${name}_${port}
+
 server {
     server_name ${name}.${server};
 
@@ -56,7 +58,6 @@ export function NavServer({ listServer }: { listServer: any[] }) {
 
             setLoading(false)
         }
-        
 
         return <Modal title="Add Server" opened={openDialog} onClose={() => setOpendialog(false)}>
             <Stack>
@@ -66,7 +67,10 @@ export function NavServer({ listServer }: { listServer: any[] }) {
                 <Text>PORT</Text>
                 <PinInput type={"number"} title="port" placeholder="0" length={4} value={dataText.port} onChange={(e) => setDataText({ ...dataText, port: e })} />
                 <Button onClick={onSubmit} loading={loading}>Submit</Button>
-                {resultText !== "" && <Code><pre>{resultText}</pre></Code>}
+                {resultText !== "" && <Stack>
+                    <Text>Result</Text>
+                    <Code><pre>{resultText}</pre></Code>
+                </Stack>}
             </Stack>
         </Modal>
     }

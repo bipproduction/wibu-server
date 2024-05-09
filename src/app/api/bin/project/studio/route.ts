@@ -1,23 +1,20 @@
-import streamResponse from "@/bin/stream_response"
-import { spawn } from "child_process"
-import path from "path"
+import { spawn } from 'child_process'
+import path from 'path'
+export async function POST(req: Request) {
+    const body: { [key: string]: any } = await req.json()
 
-export async function POST(req: Request, res: Response) {
-    const body = await req.json()
-    if (!body && !body.name) return new Response('Bad Request', { status: 400 })
-    // const stream = streamResponse({ cmd: 'pm2', list: ['start', `\"yarn start --port ${body.port}\"`, '--name', `${body.name}_${body.port}`], path: body.name })
-    // return stream
+    if (!body.name || !body.port) return new Response("required", { status: 400 })
     const root_path = path.join(process.cwd(), '..', body.name)
     const stream = new ReadableStream({
         start(controll) {
-            const child = spawn('/bin/bash', ['-c', `source .env && pm2 start "yarn start --port ${body.port}" --name ${body.name}_${body.port}`], {
+            const child = spawn('/bin/bash', ['-c', `source .env && pm2 start "npx prisma studio --port ${body.port}" --name ${body.name}-studio_${body.port}`], {
                 cwd: root_path,
                 env: {
                     ...process.env,
                     NODE_ENV: 'production',
                 }
             })
-
+            
             child.stdout.on("data", (data) => {
                 controll.enqueue(data.toString())
             })
