@@ -1,6 +1,6 @@
 'use client'
 
-import { ActionIcon, Anchor, Badge, Button, Center, Code, Flex, Loader, Pill, Skeleton, Stack, Table, TextInput, Tooltip } from "@mantine/core"
+import { ActionIcon, Anchor, Badge, Button, Center, Code, Flex, Loader, Pill, Skeleton, Stack, Table, Text, TextInput, Tooltip } from "@mantine/core"
 import { useShallowEffect } from "@mantine/hooks"
 import { useState } from "react"
 import _ from 'lodash'
@@ -19,7 +19,7 @@ export function TableApp({ data }: { data: any[] }) {
 
     const loadListApp = async () => {
         setLoading(true)
-        const res = await fetch('/api/app/list-app', { cache: "no-store"}).then(res => res.json())
+        const res = await fetch('/api/app/list-app', { cache: "no-store" }).then(res => res.json())
         setlistApp(res)
         setlistAppClone(res)
         setLoading(false)
@@ -49,7 +49,8 @@ export function TableApp({ data }: { data: any[] }) {
                                 <Anchor href={`/admin/app/${value}`} >{value}</Anchor> :
                                 _.keys(item)[index] === "status" ? <Badge w={100} bg={value === "online" ? "green" : value === "stopped" ? "orange" : "red"}>{value}</Badge> :
                                     _.keys(item)[index] === "memory" ? <Pill>{Math.round((+value / (1024 * 1024)))} MB</Pill> :
-                                        _.keys(item)[index] === "created_at" ? moment(value).format("YYYY-MM-DD HH:mm:ss") : value}
+                                        _.keys(item)[index] === "created_at" ? moment(value).format("YYYY-MM-DD HH:mm:ss") :
+                                            _.keys(item)[index] === "server_name" && value !== "none" ? <Anchor href={value} >{value}</Anchor> : <Text>{value}</Text>}
                             </Table.Td>)}
                     </Table.Tr>)}
             </Table.Tbody>
