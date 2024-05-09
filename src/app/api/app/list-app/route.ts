@@ -24,7 +24,7 @@ export async function GET() {
 
     const list_server = await fs.promises.readdir('/etc/nginx/sites-enabled')
     let list_server_name: any[] = []
-    for (let file_name of list_server.filter((item) => !item.includes('_'))) {
+    for (let file_name of list_server.filter((item) => item.includes('_'))) {
         const text = await fs.promises.readFile(`/etc/nginx/sites-enabled/${file_name}`, 'utf8')
         const regexPattern = /server_name\s+([^;]+)/g;
         const serverNames = [];
