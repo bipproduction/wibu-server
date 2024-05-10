@@ -10,6 +10,7 @@ import { useInputState, useShallowEffect } from "@mantine/hooks"
 import toast from "react-simple-toasts"
 import { read } from "fs"
 import api_path from "@/util/api_path"
+import Markdown from "react-markdown"
 
 export function TableProjectDetail({ data, title }: { data: any, title: string }) {
     const [textLog, setTextLog] = useState("")
@@ -252,19 +253,11 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
     const SegmentView = () => {
         const [segment, setSegment] = useState("Readme")
         const ReadmeView = () => {
-            return <Stack>
+            return <Stack >
                 <Title>README</Title>
-                <Code>
-                    <pre style={{
-                        wordWrap: "break-word",
-                        whiteSpace: "pre-wrap",
-                        overflowX: "auto",
-                        maxHeight: 500,
-                        overflowY: "auto",
-                        position: "relative",
-
-                    }}>{data.readme}</pre>
-                </Code>
+                <Card bg={"#F8F9FA"} withBorder  c={"dark"}>
+                    <Markdown>{data.readme}</Markdown>
+                </Card>
             </Stack>
         }
 

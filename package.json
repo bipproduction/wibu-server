@@ -15,6 +15,8 @@
     "seed": "node prisma/seed.js"
   },
   "dependencies": {
+    "@caldwell619/react-kanban": "^0.0.11",
+    "@hello-pangea/dnd": "^16.6.0",
     "@mantine/core": "^7.8.1",
     "@mantine/hooks": "^7.8.1",
     "@prisma/client": "^5.13.0",
@@ -31,6 +33,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.2.0",
+    "react-markdown": "^9.0.1",
     "react-simple-toasts": "^5.10.0",
     "react-terminal-command": "^2.0.3",
     "react-terminal-ui": "^1.2.0",
