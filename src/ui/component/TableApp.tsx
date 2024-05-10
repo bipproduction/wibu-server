@@ -50,7 +50,7 @@ export function TableApp({ data }: { data: any[] }) {
                                 _.keys(item)[index] === "status" ? <Badge w={100} bg={value === "online" ? "green" : value === "stopped" ? "orange" : "red"}>{value}</Badge> :
                                     _.keys(item)[index] === "memory" ? <Pill>{Math.round((+value / (1024 * 1024)))} MB</Pill> :
                                         _.keys(item)[index] === "created_at" ? moment(value).format("YYYY-MM-DD HH:mm:ss") :
-                                            _.keys(item)[index] === "server_name" && value !== "none" ? <Anchor href={"https://"+value} target="_blank">{value}</Anchor> : <Text>{value}</Text>}
+                                            _.keys(item)[index] === "server_name" && value !== "none" ? <Anchor href={value} target="_blank">{value}</Anchor> : <Text>{value}</Text>}
                             </Table.Td>)}
                     </Table.Tr>)}
             </Table.Tbody>

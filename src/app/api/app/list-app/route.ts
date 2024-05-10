@@ -45,7 +45,7 @@ export async function GET(req: Request) {
 
     const list_data = list.map((item) => ({
         name: item.name,
-        server_name: _.startsWith(item.name.split('_')[1], '5') ? `wibu-server.wibudev.com:${item.name.split('_')[1]}` : list_server_name.find((itm) => itm.name == item.name)?.server_name ?? "none",
+        server_name: _.startsWith(item.name.split('_')[1], '5') ? `http://wibu-server.wibudev.com:${item.name.split('_')[1]}` : "https://" + list_server_name.find((itm) => itm.name == item.name)?.server_name ?? "none",
         port: item.name.split('_')[1],
         // pid: item.pid,
         status: item.pm2_env.status,
