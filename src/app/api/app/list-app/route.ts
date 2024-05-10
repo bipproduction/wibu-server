@@ -5,7 +5,7 @@ import fs from 'fs'
 
 export const dynamic = 'force-dynamic'
 export async function GET(req: Request) {
-
+    const url = new URL(req.url)
     const list: MODEL_PM2[] = await new Promise((resolve, reject) => {
         let log = ""
         const child = spawn('pm2', ['jlist'])
@@ -45,7 +45,7 @@ export async function GET(req: Request) {
 
     const list_data = list.map((item) => ({
         name: item.name,
-        server_name: _.startsWith(item.name.split('_')[1], '5') ? `${req.url}:${item.name.split('_')[1]}` : list_server_name.find((itm) => itm.name == item.name)?.server_name ?? "none",
+        server_name: _.startsWith(item.name.split('_')[1], '5') ? `${url.hostname}:${item.name.split('_')[1]}` : list_server_name.find((itm) => itm.name == item.name)?.server_name ?? "none",
         port: item.name.split('_')[1],
         // pid: item.pid,
         status: item.pm2_env.status,
