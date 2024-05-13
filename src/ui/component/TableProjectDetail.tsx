@@ -11,6 +11,7 @@ import toast from "react-simple-toasts"
 import { read } from "fs"
 import routePath from "@/util/route_path"
 import Markdown from "react-markdown"
+import moment from "moment"
 
 export function TableProjectDetail({ data, title }: { data: any, title: string }) {
     const [textLog, setTextLog] = useState("")
@@ -18,6 +19,7 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
     const [showLog, setShowLog] = useState<boolean>(false)
     const [openStart, setOpenStart] = useState<boolean>(false)
     const [selectedBranch, setSelectedBranch] = useInputState(data.branch)
+
 
     const onPull = async () => {
         setLoading(true)
@@ -252,6 +254,23 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
 
     const SegmentView = () => {
         const [segment, setSegment] = useState("Readme")
+        const [listGitLog, setListGitLog] = useState<any[]>([])
+
+        useShallowEffect(() => {
+            loadGitLog()
+        }, [])
+
+        const loadGitLog = async () => {
+            const res = await fetch(routePath.bin.project.gitLog.path, {
+                body: JSON.stringify({ name: title }),
+                method: routePath.bin.project.gitLog.method,
+                cache: 'no-store'
+            })
+
+            const a = await res.json()
+            setListGitLog(a)
+
+        }
         const ReadmeView = () => {
             return <Stack >
                 <Title>README</Title>
@@ -296,6 +315,29 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
             </Stack>
         }
 
+        const GitLogView = () => {
+
+            return <Stack >
+                <Title>GIT LOG</Title>
+                <Table highlightOnHover border={1}>
+                    <Table.Thead bg={"dark"} c={"white"}>
+                        <Table.Tr>
+                            {_.keys(listGitLog[0]).map((key, i) => <Table.Th key={i}>{key}</Table.Th>)}
+                        </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                        {
+                            listGitLog.map((item, index) => {
+                                return <Table.Tr key={index}>
+                                    {_.keys(item).map((key, i) => <Table.Td key={i}>{item[key]}</Table.Td>)}
+                                </Table.Tr>
+                            })
+                        }
+                    </Table.Tbody>
+                </Table>
+            </Stack>
+        }
+
         const list_bottom_view = [
             {
                 "name": "Readme",
@@ -308,14 +350,22 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
             {
                 "name": "Env",
                 "view": EnvView
+            },
+            {
+                "name": "Git Log",
+                "view": GitLogView
             }
         ]
 
-        return <Stack>
+        return <Stack  >
             <Group>
                 <SegmentedControl title="Segment" color={"blue"} value={segment} data={[...list_bottom_view.map(item => item.name)]} onChange={setSegment} />
             </Group>
-            {list_bottom_view.filter(item => item.name === segment)[0].view()}
+            <Card h={"100vh" } style={{
+                overflow: "auto"
+            }}>
+                {list_bottom_view.filter(item => item.name === segment)[0].view()}
+            </Card>
 
         </Stack>
     }
@@ -358,6 +408,7 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
 
     return <Stack pos={"relative"} w={"100%"}>
         <Title>{title}</Title>
+        {/* {JSON.stringify(listGitLog)} */}
         <TableActiveApp />
         <UpdateBranchView />
         <NavView />

@@ -34,6 +34,13 @@ const routePath = {
     },
     bin: {
         studio: "/api/bin/project/studio",
+        project: {
+            gitLog: {
+                path: "/api/bin/project/git-log",
+                method: "POST",
+                route: "src/app/api/bin/project/git-log"
+            }
+        }
     },
     page: {
         projectBoard: {
