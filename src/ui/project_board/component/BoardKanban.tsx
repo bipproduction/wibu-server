@@ -1,139 +1,67 @@
 'use client'
-import { useMemo, useState } from 'react'
-import _ from 'lodash'
-import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd'
-import { ActionIcon, Avatar, Badge, Box, Button, Card, Flex, Group, Modal, MultiSelect, Pill, Portal, Select, Stack, Text, TextInput, Title } from '@mantine/core';
-import { MdAccountCircle, MdAddCircle, MdEdit, MdRemoveRedEye } from 'react-icons/md';
-import toast from 'react-simple-toasts';
-import tos from '@/util/tos';
-import { useShallowEffect } from '@mantine/hooks';
+import { Project } from "@/util/project_board_template";
+import tos from "@/util/tos";
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import { ActionIcon, Avatar, Box, Button, Card, Flex, Group, Modal, MultiSelect, Pill, Portal, Stack, Text, TextInput, Title } from "@mantine/core";
+import { useShallowEffect } from "@mantine/hooks";
+import _ from "lodash";
+import { useState } from "react";
+import { MdAddCircle, MdEdit, MdRemoveRedEye } from "react-icons/md";
 
-const board = {
-    "id": "q",
-    "title": "project A",
-    "status": "active", // active , inactive,  archived, trashed, completed, onhold, suspended, inprogress, delayed, canceled, 
-    "description": "project A description",
-    "createdAt": "2022-03-01T00:00:00.000Z",
-    "conclusionAt": "2022-03-01T00:00:00.000Z",
-    "task": [
-        {
-            "id": 'todo',
-            "title": 'Todo',
-            "items": [
-                {
-                    "id": '1',
-                    "title": "judul 1",
-                    "description": '1.1',
-                    "archived": {
-                        "date": "2022-03-01T00:00:00.000Z",
-                        "explain": "reason"
-                    },
-                    "assigned": [
-                        {
-                            "id": '1',
-                            "title": "user 1",
-                        }
-                    ]
-                },
-                {
-                    "id": '2',
-                    "title": "judul 1",
-                    "description": '1.2',
-                    "assigned": [
-                        {
-                            "id": '1',
-                            "title": "user 1",
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "id": 'progress',
-            "title": 'Progress',
-            "items": [
-                {
-                    "id": '3',
-                    "title": "judul 1",
-                    "description": '2.1',
-                    "assigned": [
-                        {
-                            "id": '1',
-                            "title": "user 1",
-                        }
-                    ]
-                },
-                {
-                    "id": '4',
-                    "title": "judul 1",
-                    "description": '2.2',
-                    "assigned": [
-                        {
-                            "id": '1',
-                            "title": "user 1",
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "id": 'done',
-            "title": 'done',
-            "items": [
-                {
-                    "id": "gfgfgdfsds",
-                    "title": "judul 1",
-                    "description": "_.uniqueId() 1"
-                },
-                {
-                    "id": "gthgj",
-                    "title": "judul 1",
-                    "description": "_.uniqueId() 2"
-                }
-            ]
-        },
-        {
-            "id": 'pending',
-            "title": 'pending',
-            "items": []
-        },
-        {
-            "id": 'archived',
-            "title": 'archived',
-            "items": [
-                {
-                    "id": "dsdsdsdsds",
-                    "title": "judul 1",
-                    "description": "archived 1"
-                },
-                {
-                    "id": "dsdsds",
-                    "title": "judul 1",
-                    "description": "archived 2"
-                }
-            ]
-        },
-        {
-            "id": 'trash',
-            "title": 'trash',
-            "items": [
-                {
-                    "id": "ddsdsdsds",
-                    "title": "judul 1",
-                    "description": "trash 1"
-                },
-                {
-                    "id": "eewewew",
-                    "title": "judul 1",
-                    "description": "trash 2 dsdlfjkfdasfvkjsdmasjvkndamsjvknsdakjsdkvnamjskvdf"
-                }
-            ]
-        }
-    ]
+const colors = [
+    {
+        id: "backlog",
+        bg: "#FF6666", // Warna latar belakang
+        text: "#333333" // Warna teks
+    },
+    {
+        id: "todo",
+        bg: "#66FF66",
+        text: "#333333"
+    },
+    {
+        id: "inprogress",
+        bg: "#6699FF",
+        text: "#FFFFFF"
+    },
+    {
+        id: "review",
+        bg: "#FFCC66",
+        text: "#333333"
+    },
+    {
+        id: "done",
+        bg: "#FF66CC",
+        text: "#333333"
+    },
+    {
+        id: "onhold",
+        bg: "#66CCCC",
+        text: "#333333"
+    },
+    {
+        id: "trash",
+        bg: "#666666",
+        text: "#FFFFFF"
+    },
+    {
+        id: "archive",
+        bg: "#999999",
+        text: "#333333"
+    }
+];
+
+
+type FormCreate = {
+    id: string
+    title: string
+    description: string
+    assigned: string[]
 }
 
-export default function Page() {
-    const [users, setUsers] = useState([])
+
+export default function KanbanBoard({ board }: { board: Project }) {
+    const [users, setUsers] = useState<any[]>([])
     const [initial, setInitial] = useState(board);
 
     useShallowEffect(() => {
@@ -153,30 +81,24 @@ export default function Page() {
         }
 
         const newState = initial;
-        const sourceListIndex = initial.task.findIndex((list) => list.id === source.droppableId);
-        const destinationListIndex = initial.task.findIndex((list) => list.id === destination.droppableId);
+        const sourceListIndex = initial.columns.findIndex((list) => list.id === source.droppableId);
+        const destinationListIndex = initial.columns.findIndex((list) => list.id === destination.droppableId);
 
-        const [removed] = newState.task[sourceListIndex].items.splice(source.index, 1);
-        newState.task[destinationListIndex].items.splice(destination.index, 0, removed);
+        const [removed] = newState.columns[sourceListIndex].items.splice(source.index, 1);
+        newState.columns[destinationListIndex].items.splice(destination.index, 0, removed);
 
         setInitial(newState);
     }
 
-    const ButtonCreateNew = ({ onValue }: { onValue: (value: { title: string, description: string }) => void }) => {
+    const ButtonCreateNew = ({ onValue }:
+        { onValue: (value: { title: string, description: string, assigned: string[] }) => void }) => {
         const [openModal, setOpenModal] = useState(false)
-        const [formTex, setFormTex] = useState({
+        const [formTex, setFormTex] = useState<FormCreate>({
             id: "",
             title: "",
             description: "",
             assigned: []
         })
-        const list_status = [
-            "todo",
-            "progress",
-            "done",
-            "trash",
-            "archive"
-        ]
 
         const onCreate = () => {
             if (formTex.title == "" || formTex.description == "") {
@@ -198,9 +120,7 @@ export default function Page() {
                         <TextInput placeholder='title' label={"title"} onChange={(e) => setFormTex({ ...formTex, title: e.target.value })} />
                         <TextInput placeholder='description' label={"description"} onChange={(e) => setFormTex({ ...formTex, description: e.target.value })} />
                         <MultiSelect placeholder='assigned' label={"assigned"} data={users.map((user: any) => ({ label: user.name, value: user.id }))} onChange={(e) => {
-                            // console.log(e)
-                            // const assigned = _.cloneDeep(formTex.assigned)
-                            // assigned.push(e)
+                            setFormTex({ ...formTex, assigned: e })
                         }} />
                         <Button onClick={onCreate}>Create</Button>
                     </Stack>
@@ -261,32 +181,29 @@ export default function Page() {
                                 >
                                     <Card
                                         withBorder
-                                        c={"white"}
+                                        c={colors.find((c) => c.id == id)?.text}
                                         p={"xs"}
-                                        bg={id === "todo" ?
-                                            "blue" : id === "progress" ?
-                                                "green" : id === "done" ?
-                                                    "orange" : id === "archived" ?
-                                                        "gray" : "red"} >
+                                        bg={colors.find((c) => c.id == id)?.bg} >
                                         <Stack gap={"xs"}>
                                             <Flex align={"center"} gap={"xs"}>
                                                 <Avatar size={"sm"} bg={"dark"}>
                                                     {index + 1}
                                                 </Avatar>
-                                                <Text>Title</Text>
+                                                <Text>{item.title}</Text>
                                             </Flex>
-                                            <Pill>
+
+                                            {/* <Pill>
                                                 <Text fz={"xs"}>{item.description}</Text>
-                                            </Pill>
+                                            </Pill> */}
                                             <Flex justify={"space-between"} align={"center"} >
                                                 <ButtonEditShow item={item} statusId={id} />
+                                                {/* {JSON.stringify(item.assigned)} */}
                                                 <Avatar.Group>
-                                                    <Avatar size={"sm"} bg={"indigo"} color={"white"}>
-                                                        MK
-                                                    </Avatar>
-                                                    <Avatar size={"sm"} bg={"indigo"} color={"white"}>
-                                                        MK
-                                                    </Avatar>
+                                                    {item.assigned.map((usr: string, index: number) => (
+                                                        <Avatar bg={"dark"} color={"white"} size={"sm"} key={index} >
+                                                            {users.find((u) => u.id == usr)?.name.toString().substring(0, 2)}
+                                                        </Avatar>
+                                                    ))}
                                                 </Avatar.Group>
                                             </Flex>
                                         </Stack>
@@ -303,34 +220,40 @@ export default function Page() {
     }
 
     return (
-        <Stack p={"md"} gap={"xs"} bg={"gray"}  pos={"relative"} >
+        <Stack p={"md"} gap={"xs"} bg={"gray"} pos={"relative"} >
             <Title>{initial.title}</Title>
             <Text>{initial.description}</Text>
             {/* {JSON.stringify(users)} */}
             <ButtonCreateNew onValue={(v) => {
                 const newState = _.clone(initial)
-                const index = newState.task.findIndex((list) => list.id === "todo")
-                newState.task[index].items.push({
+                const index = newState.columns.findIndex((list) => list.id === "backlog")
+                newState.columns[index].items.push({
                     id: _.uniqueId(_.random(10, 100).toString()),
-                    title: "sssdss",
+                    title: v.title,
                     description: v.title,
-                    assigned: []
+                    assigned: v.assigned,
+                    progress: 0,
+                    createdAt: new Date().toISOString(),
+                    estimationAt: "",
+                    note: ""
                 })
 
                 setInitial(newState)
             }} />
+
+
             <Group >
                 <DragDropContext onDragEnd={onDragEnd}>
-                    {initial.task.map((list, i) => (
+                    {initial.columns.map((item, i) => (
                         <Card key={i} withBorder bg={"dark"} c={"white"}>
                             <Stack w={200} h={500} >
                                 <Flex justify={"space-between"}>
-                                    <Title order={4}>{list.title}</Title>
+                                    <Title c={colors.find((c) => c.id == item.id)?.bg} order={4}>{item.title}</Title>
                                 </Flex>
                                 <Box style={{
                                     overflowY: "auto"
                                 }}>
-                                    <Board key={list.id} list={list.items} droppableId={list.id} id={list.id} />
+                                    <Board key={item.id} list={item.items} droppableId={item.id} id={item.id} />
                                 </Box>
                             </Stack>
                         </Card>

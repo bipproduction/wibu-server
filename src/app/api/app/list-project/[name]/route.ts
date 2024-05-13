@@ -88,29 +88,6 @@ export async function GET(req: Request, { params }: { params: { name: string } }
         }
     })()
 
-    // const list_app = await (async () => {
-    //     try {
-    //         const ls = await new Promise((resolve, reject) => {
-    //             let log = ""
-    //             const child = spawn('/bin/bash', ['-c', 'pm2 jlist'], {
-    //                 cwd: path.join(root_path, './..', params.name)
-    //             })
-    //             child.stdout.on('data', (data) => {
-    //                 log += data.toString()
-    //             })
-    //             child.on('close', (code) => {
-    //                 if (typeof log === 'object') {
-    //                     resolve(JSON.parse(log))
-    //                 }
-    //             })
-    //         })
-    //     } catch (error) {
-    //         return []
-    //     }
-    // })()
-
-    // console.log(list_app)
-
     const list_remote = remote_branch.split('\n').map((item) => item.trim().split("\t")[1]).filter((item) => item !== undefined).map((item) => item.replace('refs/heads/', ''))
 
     const data = {

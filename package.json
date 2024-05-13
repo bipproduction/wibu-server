@@ -24,6 +24,7 @@
     "@types/lodash": "^4.17.0",
     "@types/moment": "^2.13.0",
     "@types/react-icons": "^3.0.0",
+    "@types/uuid": "^9.0.8",
     "@xterm/xterm": "^5.5.0",
     "colors": "^1.4.0",
     "crypto-js": "^4.2.0",
@@ -39,6 +40,7 @@
     "react-terminal-ui": "^1.2.0",
     "simple-git": "^3.24.0",
     "strip-ansi": "^7.1.0",
+    "uuid": "^9.0.1",
     "wrap-ansi": "^9.0.0",
     "yargs": "^17.7.2"
   },

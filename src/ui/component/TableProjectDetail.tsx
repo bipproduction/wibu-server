@@ -9,7 +9,7 @@ import streamFetch from "@/bin/stream_fetch"
 import { useInputState, useShallowEffect } from "@mantine/hooks"
 import toast from "react-simple-toasts"
 import { read } from "fs"
-import api_path from "@/util/api_path"
+import routePath from "@/util/route_path"
 import Markdown from "react-markdown"
 
 export function TableProjectDetail({ data, title }: { data: any, title: string }) {
@@ -100,7 +100,7 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
             port[0] = "5"
 
             seTOpenLog(true)
-            fetch(api_path.bin.projectStudio, {
+            fetch(routePath.bin.studio, {
                 method: "POST",
                 body: JSON.stringify({ name: title, port: port.join("") }),
             }).then(res => {
@@ -255,7 +255,7 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
         const ReadmeView = () => {
             return <Stack >
                 <Title>README</Title>
-                <Card bg={"#F8F9FA"} withBorder  c={"dark"}>
+                <Card bg={"#F8F9FA"} withBorder c={"dark"}>
                     <Markdown>{data.readme}</Markdown>
                 </Card>
             </Stack>

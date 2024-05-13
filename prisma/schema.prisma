@@ -16,17 +16,31 @@ model User {
   name       String
   email      String    @unique
   password   String
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   UserRole   UserRole? @relation(fields: [userRoleId], references: [id])
   userRoleId String?
 }
 
 model UserRole {
-  id         String   @id @default(cuid())
-  name       String
+  id        String   @id @default(cuid())
+  name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User       User[]
+  User      User[]
+}
+
+model ProjectBoard {
+  id            String   @id @default(cuid())
+  title         String
+  parentProject String
+  status        String
+  description   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  initiatedAt   DateTime
+  conclusionAt  DateTime
+  columns       Json
+  isActive      Boolean  @default(true)
 }
