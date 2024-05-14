@@ -37,6 +37,11 @@ const routePath = {
                 path: "/api/project-board/update",
                 method: "POST",
                 route: "src/app/api/project-board/update"
+            },
+            delete: {
+                path: "/api/project-board/delete",
+                method: "POST",
+                route: "src/app/api/project-board/delete"
             }
         },
     },

@@ -7,8 +7,9 @@ import { useShallowEffect } from "@mantine/hooks";
 import moment from "moment";
 import { useState } from "react";
 import { revalidatePath } from "next/cache";
+import { MdAdd } from "react-icons/md";
 
-export function CreateProjectView() {
+export function ButtonCreateProject() {
     const [openModal, setOpenModal] = useState(false);
     const [listProject, setlistProject] = useState<any[] | null>(null)
 
@@ -70,7 +71,7 @@ export function CreateProjectView() {
 
     return <Stack>
         <Group>
-            <Button onClick={() => setOpenModal(true)}>Create Projct</Button>
+            <Button size="compact-xs" leftSection={<MdAdd />} onClick={() => setOpenModal(true)}>Create Projct</Button>
         </Group>
         <Portal>
             <Modal title={"CREATE NEW"} opened={openModal} onClose={() => setOpenModal(false)} >

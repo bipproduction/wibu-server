@@ -1,14 +1,17 @@
 'use client'
+import { eventAddAssignee } from "@/util/event";
 import { Project } from "@/util/project_board_template";
 import routePath from "@/util/route_path";
 import tos from "@/util/tos";
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { ActionIcon, Avatar, Box, Button, Card, Flex, Group, Modal, MultiSelect, Pill, Portal, Stack, Text, TextInput, Title } from "@mantine/core";
+import { DragDropContext, Draggable, Droppable, OnDragEndResponder } from "@hello-pangea/dnd";
+import { ActionIcon, Avatar, Badge, Box, Button, Card, Flex, Group, Modal, MultiSelect, Pill, Portal, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import _ from "lodash";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MdAddCircle, MdArrowBackIos, MdEdit, MdRemoveRedEye } from "react-icons/md";
+import toast from "react-simple-toasts";
+import { v4 } from "uuid";
 
 
 const colors = [
@@ -63,13 +66,15 @@ type FormCreate = {
 }
 
 
-export function KanbanBoard({ board }: { board: Project }) {
+export function KanbanBoard({ board, id }: { board: Project, id: string }) {
     const [users, setUsers] = useState<any[]>([])
     const [initial, setInitial] = useState(board);
+    const [openModalAssigne, setOpenModalAssigne] = useState(false)
     const router = useRouter()
 
     useShallowEffect(() => {
         loadUser()
+        loadBoard()
     }, [])
 
     const loadUser = async () => {
@@ -78,8 +83,17 @@ export function KanbanBoard({ board }: { board: Project }) {
         setUsers(data)
     }
 
-    const onDragEnd = (result: any) => {
-        const { destination, source } = result;
+    const loadBoard = async () => {
+        try {
+            const res = await fetch(routePath.api.projectBoard.byId(id).path, { method: routePath.api.projectBoard.byId(id).method, cache: 'no-store' }).then(res => res.json())
+            setInitial(res)
+        } catch (error) {
+
+        }
+    }
+
+    const onDragEnd = async (result: any) => {
+        const { combine, destination, draggableId, mode, source, reason, type } = result;
         if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) {
             return;
         }
@@ -91,7 +105,35 @@ export function KanbanBoard({ board }: { board: Project }) {
         const [removed] = newState.columns[sourceListIndex].items.splice(source.index, 1);
         newState.columns[destinationListIndex].items.splice(destination.index, 0, removed);
 
+
+        if (destination.droppableId == "todo") {
+            const item = newState.columns[destinationListIndex].items.find((item: any) => item.id == draggableId)
+            const index = newState.columns[destinationListIndex].items.findIndex((item: any) => item.id == draggableId)
+            if (item.assigned.length == 0) {
+                setOpenModalAssigne(true)
+                const success: boolean = await new Promise((resolve) => {
+                    eventAddAssignee.on("success", (data) => {
+                        newState.columns[destinationListIndex].items[index].assigned = data
+                        setOpenModalAssigne(false)
+                        resolve(true)
+                    })
+
+                    eventAddAssignee.on("cancel", () => {
+                        loadBoard()
+                        resolve(false)
+                    })
+                })
+
+                if (!success) {
+                    loadBoard()
+                    return
+                }
+            }
+
+        }
+
         setInitial(newState);
+        updateBoardProject()
     }
 
     const ButtonCreateNew = ({ onValue }:
@@ -172,6 +214,7 @@ export function KanbanBoard({ board }: { board: Project }) {
 
 
     const Board = ({ list, droppableId, id }: { list: any[], droppableId: string, id: string }) => {
+
         return (<Droppable droppableId={droppableId} direction="vertical" >
             {(provided) => (
                 <Stack ref={provided.innerRef} {...provided.droppableProps} gap={4} bg={"dark"} h={500}>
@@ -224,10 +267,22 @@ export function KanbanBoard({ board }: { board: Project }) {
     }
 
 
+    const updateBoardProject = async () => {
+        const res = await fetch(routePath.api.projectBoard.update.path, { method: routePath.api.projectBoard.update.method, body: JSON.stringify(initial) })
+        if (res.status !== 200) return tos(await res.text(), "error")
+        return toast(await res.text(), {
+            render: (message) => <div style={{
+                color: "white",
+                backgroundColor: "green",
+                padding: "10px",
+            }}>{message}</div>
+        })
+
+    }
 
     const ButtonUpdateBoard = () => {
         const [loadingUpdate, setLoadingUpdate] = useState(false)
-        const onUpdate = async () => {
+        const onUpdateBoard = async () => {
             setLoadingUpdate(true)
             // console.log(JSON.stringify(initial))
             const res = await fetch(routePath.api.projectBoard.update.path, { method: routePath.api.projectBoard.update.method, body: JSON.stringify(initial) })
@@ -238,8 +293,37 @@ export function KanbanBoard({ board }: { board: Project }) {
 
         }
         return <Stack>
-            <Button onClick={onUpdate} size="compact-sm">UPDATE</Button>
+            <Button onClick={onUpdateBoard} size="compact-sm">UPDATE</Button>
         </Stack>
+    }
+
+    const ModalAssignee = () => {
+        const [listUsser, setListuser] = useState<any[]>([])
+        const onSelected = () => {
+            if (listUsser.length === 0) {
+                tos("select user please", "warning")
+                return
+            }
+            eventAddAssignee.emit("success", listUsser)
+        }
+        return <Portal>
+            <Modal title="Assignee" opened={openModalAssigne} onClose={() => {
+                eventAddAssignee.emit("cancel")
+                setOpenModalAssigne(false)
+            }}>
+                <Stack>
+                    <MultiSelect
+                        placeholder='assigned'
+                        label={"assigned"}
+                        data={users.map((user: any) => ({ label: user.name, value: user.id }))}
+                        onChange={(v) => {
+                            setListuser(v)
+                        }}
+                    />
+                    <Button onClick={onSelected}>Create</Button>
+                </Stack>
+            </Modal>
+        </Portal>
     }
 
     return (
@@ -258,7 +342,7 @@ export function KanbanBoard({ board }: { board: Project }) {
                     const newState = _.clone(initial)
                     const index = newState.columns.findIndex((list) => list.id === "backlog")
                     newState.columns[index].items.push({
-                        id: _.uniqueId(_.random(10, 100).toString()),
+                        id: v4(),
                         title: v.title,
                         description: v.title,
                         assigned: v.assigned,
@@ -272,7 +356,6 @@ export function KanbanBoard({ board }: { board: Project }) {
                 }} />
                 <ButtonUpdateBoard />
             </Flex>
-
 
             <Group >
                 <DragDropContext onDragEnd={onDragEnd}>
@@ -292,6 +375,7 @@ export function KanbanBoard({ board }: { board: Project }) {
                     ))}
                 </DragDropContext>
             </Group>
+            <ModalAssignee />
         </Stack>
     );
 }

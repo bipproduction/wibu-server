@@ -12,6 +12,6 @@ export default async function Page({ params }: { params: { id: string } }) {
     </Stack>
 
     return <Stack>
-        <KanbanBoard board={res} />
+        <KanbanBoard board={res} id={params.id}/>
     </Stack>
 }
