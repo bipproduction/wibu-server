@@ -26,6 +26,7 @@
     "@types/react-icons": "^3.0.0",
     "@types/uuid": "^9.0.8",
     "@xterm/xterm": "^5.5.0",
+    "boxen": "^7.1.1",
     "colors": "^1.4.0",
     "crypto-js": "^4.2.0",
     "lodash": "^4.17.21",

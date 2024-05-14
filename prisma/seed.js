@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
+
 const user_role = [
     {
         id: "admin",
@@ -51,8 +52,8 @@ const list_user = [
 ];
 
 ; (async () => {
-
-    //seed user role
+    const boxen = (await import('boxen')).default
+    //seed user role    
     for (let ur of user_role) {
         await prisma.userRole.upsert({
             where: { id: ur.id },
@@ -60,23 +61,31 @@ const list_user = [
             create: ur
         })
     }
-    console.log('seed user role success')
+    console.log(boxen('seed user role success', { padding: 1, margin: 1, borderStyle: 'round' }))
 
     // seed user
     for (let u of list_user) {
-        await prisma.user.delete({
-            where: {
-                id: u.id
-            }
-        })
-        
-        await prisma.user.upsert({
-            where: { id: u.id },
-            update: u,
-            create: u
-        })
+        try {
+            await prisma.user.delete({
+                where: {
+                    id: u.id
+                }
+            })
+        } catch (error) {
+            console.log(boxen(error.message, { padding: 1, margin: 1, borderStyle: 'round' }))
+        }
+
+        try {
+            await prisma.user.upsert({
+                where: { id: u.id },
+                update: u,
+                create: u
+            })
+        } catch (error) {
+            console.log(boxen(error.message, { padding: 1, margin: 1, borderStyle: 'round' }))
+        }
     }
-    console.log('seed user success')
+    console.log(boxen('seed user success', { padding: 1, margin: 1, borderStyle: 'round' }))
 
 })().then(() => prisma.$disconnect()).catch(e => {
     console.error(e)
