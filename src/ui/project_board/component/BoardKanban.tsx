@@ -118,7 +118,7 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
                         resolve(true)
                     })
 
-                    
+
                     eventAddAssignee.on("cancel", () => {
                         loadBoard()
                         resolve(false)
@@ -147,13 +147,16 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
             assigned: []
         })
 
-        const onCreate = () => {
+        const onCreate = async () => {
             if (formTex.title == "" || formTex.description == "") {
                 tos("title and description is required", "warning")
                 return
             }
+
+            await updateBoardProject()
             onValue(formTex)
             setOpenModal(false)
+            
         }
         return <Stack>
             <Group>
