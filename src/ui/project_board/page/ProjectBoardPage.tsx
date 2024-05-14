@@ -3,13 +3,13 @@ import routePath from "@/util/route_path";
 import { ActionIcon, Anchor, Badge, Button, Card, Center, Flex, Loader, Pill, Stack, Table, Text, Title } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import moment from "moment";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import { useState } from "react";
 import { MdArrowBackIos, MdRemoveRedEye } from "react-icons/md";
 
 export function ProjectBoardPage() {
     const [listProjectBoard, setlistProjectBoard] = useState<any[] | null>(null)
-    const route = useRouter()
+    // const route = useRouter()
 
     useShallowEffect(() => {
         loadListProjectBoard()
@@ -20,9 +20,9 @@ export function ProjectBoardPage() {
     }
     return <Stack p={"md"}>
         <Flex gap={"md"}>
-            <ActionIcon onClick={() => route.back()}>
+            {/* <ActionIcon onClick={() => route.back()}>
                 <MdArrowBackIos />
-            </ActionIcon>
+            </ActionIcon> */}
             <Title>Project Board</Title>
         </Flex>
         <Table highlightOnHover border={1} >
