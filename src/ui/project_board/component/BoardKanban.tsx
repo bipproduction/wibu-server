@@ -118,6 +118,7 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
                         resolve(true)
                     })
 
+                    
                     eventAddAssignee.on("cancel", () => {
                         loadBoard()
                         resolve(false)
