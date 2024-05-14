@@ -1,1 +1,4 @@
-export { ButtonCreateProject } from "./ButtonCreateProject";
+export { KanbanBoard } from "./BoardKanban";
+export { CreateProjectView } from "./CreateProjectView";
+
+

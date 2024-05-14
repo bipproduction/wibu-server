@@ -64,6 +64,12 @@ const list_user = [
 
     // seed user
     for (let u of list_user) {
+        await prisma.user.delete({
+            where: {
+                id: u.id
+            }
+        })
+        
         await prisma.user.upsert({
             where: { id: u.id },
             update: u,

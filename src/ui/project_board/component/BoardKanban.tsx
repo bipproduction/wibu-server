@@ -60,7 +60,7 @@ type FormCreate = {
 }
 
 
-export default function KanbanBoard({ board }: { board: Project }) {
+export function KanbanBoard({ board }: { board: Project }) {
     const [users, setUsers] = useState<any[]>([])
     const [initial, setInitial] = useState(board);
 

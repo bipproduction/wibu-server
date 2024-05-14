@@ -1,3 +1,4 @@
+
 import routePath from "@/util/route_path";
 import { ModelProject, boardTemplate } from "@/util/project_board_template";
 import tos from "@/util/tos";
@@ -5,11 +6,12 @@ import { Button, Group, Loader, Modal, Portal, Select, Stack, TextInput } from "
 import { useShallowEffect } from "@mantine/hooks";
 import moment from "moment";
 import { useState } from "react";
+import { revalidatePath } from "next/cache";
 
-export function ButtonCreateProject() {
+export function CreateProjectView() {
     const [openModal, setOpenModal] = useState(false);
     const [listProject, setlistProject] = useState<any[] | null>(null)
-    
+
     const [loadingCreate, setLoadingCreate] = useState(false)
     const [projectForm, setProjectForm] = useState<ModelProject>({
         title: "",
@@ -29,7 +31,7 @@ export function ButtonCreateProject() {
         setlistProject(res)
     }
 
-    
+
 
     const onCreate = async () => {
         // ? setLoading
@@ -65,8 +67,8 @@ export function ButtonCreateProject() {
             tos("create project success", "success")
         }
     }
+
     return <Stack>
-        {/* {JSON.stringify(listProject)} */}
         <Group>
             <Button onClick={() => setOpenModal(true)}>Create Projct</Button>
         </Group>

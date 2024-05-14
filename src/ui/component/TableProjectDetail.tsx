@@ -1,9 +1,9 @@
 'use client'
 
-import { Badge, Box, Button, Card, Code, Flex, Group, List, ListItem, Modal, NumberInput, Paper, Pill, PinInput, Portal, SegmentedControl, Select, SimpleGrid, Stack, Table, Text, TextInput, Title, Tooltip } from "@mantine/core"
+import { Anchor, Badge, Box, Button, Card, Code, Flex, Group, List, ListItem, Modal, NumberInput, Paper, Pill, PinInput, Portal, SegmentedControl, Select, SimpleGrid, Stack, Table, Text, TextInput, Title, Tooltip } from "@mantine/core"
 import _ from 'lodash'
 import { useState } from "react"
-import { MdBuild, MdDataSaverOn, MdDataset, MdDownload, MdInstallDesktop, MdNumbers, MdPlayCircle, MdShare } from "react-icons/md"
+import { MdBuild, MdDataSaverOn, MdDataset, MdDownload, MdInstallDesktop, MdKeyboardArrowRight, MdNumbers, MdPlayCircle, MdShare } from "react-icons/md"
 import { TerminalLog } from "./TerminalLog"
 import streamFetch from "@/bin/stream_fetch"
 import { useInputState, useShallowEffect } from "@mantine/hooks"
@@ -361,7 +361,7 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
             <Group>
                 <SegmentedControl title="Segment" color={"blue"} value={segment} data={[...list_bottom_view.map(item => item.name)]} onChange={setSegment} />
             </Group>
-            <Card h={"100vh" } style={{
+            <Card h={"100vh"} style={{
                 overflow: "auto"
             }}>
                 {list_bottom_view.filter(item => item.name === segment)[0].view()}
@@ -406,9 +406,11 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
         </Stack>
     }
 
+
+    // main view
     return <Stack pos={"relative"} w={"100%"}>
         <Title>{title}</Title>
-        {/* {JSON.stringify(listGitLog)} */}
+        <Anchor href={routePath.page.projectBoard.byName(title).path}><Badge rightSection={<MdKeyboardArrowRight />}>PROJECT BOARD</Badge></Anchor>
         <TableActiveApp />
         <UpdateBranchView />
         <NavView />
