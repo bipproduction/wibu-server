@@ -1,5 +1,3 @@
-import path from "path"
-
 const routePath = {
     api: {
         app: {
@@ -29,7 +27,17 @@ const routePath = {
                 path: `/api/project-board/${id}`,
                 method: "GET",
                 route: "src/app/api/project-board/[id]"
-            })
+            }),
+            search: (name: string) => ({
+                path: `/api/project-board/search?name=${name}`,
+                route: "src/app/api/project-board/search",
+                method: "GET"
+            }),
+            update: {
+                path: "/api/project-board/update",
+                method: "POST",
+                route: "src/app/api/project-board/update"
+            }
         },
     },
     bin: {
@@ -44,9 +52,9 @@ const routePath = {
     },
     page: {
         projectBoard: {
-            byName: (name: string) => ({
-                path: `/project-board/${name}`,
-                route: "src/ui/project_board/page/ProjectBoardPage"
+            byId: (id: string) => ({
+                path: `/admin/project-board/${id}`,
+                route: "src/app/admin/project-board/[id]",
             }),
         }
     }

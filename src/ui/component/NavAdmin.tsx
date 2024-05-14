@@ -18,6 +18,11 @@ const list_menu = [
         "id": "server",
         "name": "List Server",
         "path": "/admin/server"
+    },
+    {
+        "id": "project-board",
+        "name": "Project Board",
+        "path": "/admin/project-board"
     }
 ]
 

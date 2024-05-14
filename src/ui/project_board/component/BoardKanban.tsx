@@ -1,12 +1,15 @@
 'use client'
 import { Project } from "@/util/project_board_template";
+import routePath from "@/util/route_path";
 import tos from "@/util/tos";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { ActionIcon, Avatar, Box, Button, Card, Flex, Group, Modal, MultiSelect, Pill, Portal, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import _ from "lodash";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { MdAddCircle, MdEdit, MdRemoveRedEye } from "react-icons/md";
+import { MdAddCircle, MdArrowBackIos, MdEdit, MdRemoveRedEye } from "react-icons/md";
+
 
 const colors = [
     {
@@ -63,6 +66,7 @@ type FormCreate = {
 export function KanbanBoard({ board }: { board: Project }) {
     const [users, setUsers] = useState<any[]>([])
     const [initial, setInitial] = useState(board);
+    const router = useRouter()
 
     useShallowEffect(() => {
         loadUser()
@@ -219,27 +223,55 @@ export function KanbanBoard({ board }: { board: Project }) {
         );
     }
 
-    return (
-        <Stack p={"md"} gap={"xs"} bg={"gray"} pos={"relative"} >
-            <Title>{initial.title}</Title>
-            <Text>{initial.description}</Text>
-            {/* {JSON.stringify(users)} */}
-            <ButtonCreateNew onValue={(v) => {
-                const newState = _.clone(initial)
-                const index = newState.columns.findIndex((list) => list.id === "backlog")
-                newState.columns[index].items.push({
-                    id: _.uniqueId(_.random(10, 100).toString()),
-                    title: v.title,
-                    description: v.title,
-                    assigned: v.assigned,
-                    progress: 0,
-                    createdAt: new Date().toISOString(),
-                    estimationAt: "",
-                    note: ""
-                })
 
-                setInitial(newState)
-            }} />
+
+    const ButtonUpdateBoard = () => {
+        const [loadingUpdate, setLoadingUpdate] = useState(false)
+        const onUpdate = async () => {
+            setLoadingUpdate(true)
+            // console.log(JSON.stringify(initial))
+            const res = await fetch(routePath.api.projectBoard.update.path, { method: routePath.api.projectBoard.update.method, body: JSON.stringify(initial) })
+            if (res.status !== 200) return tos(await res.text(), "error")
+            setLoadingUpdate(false)
+            return tos(await res.text(), "success")
+
+
+        }
+        return <Stack>
+            <Button onClick={onUpdate} size="compact-sm">UPDATE</Button>
+        </Stack>
+    }
+
+    return (
+        <Stack p={"md"} gap={"xs"} bg={"#fff9"} pos={"relative"} >
+            <Flex gap={"md"} align={"center"} >
+                <ActionIcon onClick={() => router.back()}>
+                    <MdArrowBackIos />
+                </ActionIcon>
+                <Title>{initial.title}</Title>
+            </Flex>
+
+            <Text>{initial.description}</Text>
+
+            <Flex justify={"space-between"}>
+                <ButtonCreateNew onValue={(v) => {
+                    const newState = _.clone(initial)
+                    const index = newState.columns.findIndex((list) => list.id === "backlog")
+                    newState.columns[index].items.push({
+                        id: _.uniqueId(_.random(10, 100).toString()),
+                        title: v.title,
+                        description: v.title,
+                        assigned: v.assigned,
+                        progress: 0,
+                        createdAt: new Date().toISOString(),
+                        estimationAt: "",
+                        note: ""
+                    })
+
+                    setInitial(newState)
+                }} />
+                <ButtonUpdateBoard />
+            </Flex>
 
 
             <Group >

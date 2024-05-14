@@ -1,9 +1,9 @@
 'use client'
 
-import { Anchor, Badge, Box, Button, Card, Code, Flex, Group, List, ListItem, Modal, NumberInput, Paper, Pill, PinInput, Portal, SegmentedControl, Select, SimpleGrid, Stack, Table, Text, TextInput, Title, Tooltip } from "@mantine/core"
+import { Anchor, Badge, Box, Button, Card, Code, Flex, Group, List, ListItem, Loader, Modal, NumberInput, Paper, Pill, PinInput, Portal, SegmentedControl, Select, SimpleGrid, Stack, Table, Text, TextInput, Title, Tooltip } from "@mantine/core"
 import _ from 'lodash'
 import { useState } from "react"
-import { MdBuild, MdDataSaverOn, MdDataset, MdDownload, MdInstallDesktop, MdKeyboardArrowRight, MdNumbers, MdPlayCircle, MdShare } from "react-icons/md"
+import { MdBuild, MdDataSaverOn, MdDataset, MdDownload, MdFolder, MdInstallDesktop, MdKeyboardArrowRight, MdNumbers, MdPlayCircle, MdShare } from "react-icons/md"
 import { TerminalLog } from "./TerminalLog"
 import streamFetch from "@/bin/stream_fetch"
 import { useInputState, useShallowEffect } from "@mantine/hooks"
@@ -406,11 +406,33 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
         </Stack>
     }
 
+    const ProjectBoardView = () => {
+        const [listProjectBoard, setlistProjectBoard] = useState<any[] | null>(null)
+        useShallowEffect(() => {
+            loadList()
+        }, [])
+
+        const loadList = async () => {
+            const res = await fetch(routePath.api.projectBoard.search(title).path, { method: routePath.api.projectBoard.search(title).method }).then(res => res.json())
+            setlistProjectBoard(res)
+        }
+        return <Card withBorder>
+            <Stack gap={0}>
+                <Title order={3}>Project Board</Title>
+                <Flex gap={"md"} >
+                    {!listProjectBoard ? <Loader size={"sm"} /> : listProjectBoard.map((itm, i) => <Anchor key={i.toString()} href={routePath.page.projectBoard.byId(itm.id).path}>
+                        <Text>{itm.title}</Text>
+                    </Anchor>)}
+                </Flex>
+            </Stack>
+        </Card>
+    }
+
 
     // main view
     return <Stack pos={"relative"} w={"100%"}>
         <Title>{title}</Title>
-        <Anchor href={routePath.page.projectBoard.byName(title).path}><Badge rightSection={<MdKeyboardArrowRight />}>PROJECT BOARD</Badge></Anchor>
+        <ProjectBoardView />
         <TableActiveApp />
         <UpdateBranchView />
         <NavView />

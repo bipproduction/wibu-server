@@ -15,14 +15,14 @@ const user_role = [
 
 const list_user = [
     {
-        id: "1",
+        id: "admin",
         name: 'admin',
         email: 'admin@wibudev.com',
         password: 'admin',
         userRoleId: 'admin'
     },
     {
-        id: "2",
+        id: "user",
         name: 'user',
         email: 'user@wibudev.com',
         password: 'user',

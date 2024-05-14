@@ -3,11 +3,13 @@ import routePath from "@/util/route_path";
 import { ActionIcon, Anchor, Badge, Button, Card, Center, Flex, Loader, Pill, Stack, Table, Text, Title } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import moment from "moment";
+import { useRouter } from "next/router";
 import { useState } from "react";
-import { MdRemoveRedEye } from "react-icons/md";
+import { MdArrowBackIos, MdRemoveRedEye } from "react-icons/md";
 
 export function ProjectBoardPage() {
     const [listProjectBoard, setlistProjectBoard] = useState<any[] | null>(null)
+    const route = useRouter()
 
     useShallowEffect(() => {
         loadListProjectBoard()
@@ -17,7 +19,12 @@ export function ProjectBoardPage() {
         setlistProjectBoard(res)
     }
     return <Stack p={"md"}>
-        <Title>Project Board</Title>
+        <Flex gap={"md"}>
+            <ActionIcon onClick={() => route.back()}>
+                <MdArrowBackIos />
+            </ActionIcon>
+            <Title>Project Board</Title>
+        </Flex>
         <Table highlightOnHover border={1} >
             <Table.Thead bg={"dark"} c={"white"}>
                 <Table.Tr>
@@ -44,7 +51,7 @@ export function ProjectBoardPage() {
                             <Table.Td>{moment(item.initiatedAt).format("DD MMM YYYY")}</Table.Td>
                             <Table.Td>{moment(item.conclusionAt).format("DD MMM YYYY")}</Table.Td>
                             <Table.Td>
-                                <Anchor href={`/project-board/${item.id}`}>
+                                <Anchor href={routePath.page.projectBoard.byId(item.id).path}>
                                     <ActionIcon>
                                         <MdRemoveRedEye />
                                     </ActionIcon>
