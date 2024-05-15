@@ -4,9 +4,10 @@ import { Project } from "@/util/project_board_template";
 import routePath from "@/util/route_path";
 import tos from "@/util/tos";
 import { DragDropContext, Draggable, Droppable, OnDragEndResponder } from "@hello-pangea/dnd";
-import { ActionIcon, Avatar, Badge, Box, Button, Card, Flex, Group, Modal, MultiSelect, Pill, Portal, Stack, Text, TextInput, Title } from "@mantine/core";
+import { ActionIcon, Avatar, Badge, Box, Button, Card, Flex, Group, Loader, Modal, MultiSelect, Pill, Portal, Stack, Table, Text, TextInput, Title } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import _ from "lodash";
+import moment from "moment";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MdAddCircle, MdArrowBackIos, MdEdit, MdRemoveRedEye } from "react-icons/md";
@@ -70,6 +71,7 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
     const [users, setUsers] = useState<any[]>([])
     const [initial, setInitial] = useState(board);
     const [openModalAssigne, setOpenModalAssigne] = useState(false)
+    const [loadingUpdate, setLoadingUpdate] = useState(false)
     const router = useRouter()
 
     useShallowEffect(() => {
@@ -106,7 +108,7 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
         newState.columns[destinationListIndex].items.splice(destination.index, 0, removed);
 
 
-        if (destination.droppableId == "todo") {
+        if (destination.droppableId !== "backlog") {
             const item = newState.columns[destinationListIndex].items.find((item: any) => item.id == draggableId)
             const index = newState.columns[destinationListIndex].items.findIndex((item: any) => item.id == draggableId)
             if (item.assigned.length == 0) {
@@ -133,6 +135,29 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
 
         }
 
+        // console.log(destination)
+        const index = newState.columns[destinationListIndex].items.findIndex((item: any) => item.id == draggableId)
+        // [destination.droppableId]
+        const des = (newState.columns[destinationListIndex].items[index]['history']) ?? null
+        if (!des) {
+
+
+            newState.columns[destinationListIndex].items[index]['history'] = {}
+            // [destination.droppableId]
+
+        }
+
+        if(!newState.columns[destinationListIndex].items[index]['history'][destination.droppableId]){
+
+            newState.columns[destinationListIndex].items[index]['history'][destination.droppableId] = []
+        }
+
+        newState.columns[destinationListIndex].items[index]['history'][destination.droppableId].push({
+            id: v4(),
+            date: new Date().toISOString(),
+            note: ""
+        })
+
         setInitial(newState);
         updateBoardProject()
     }
@@ -153,10 +178,28 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
                 return
             }
 
-            await updateBoardProject()
-            onValue(formTex)
+            const newState = _.clone(initial)
+            const index = newState.columns.findIndex((list) => list.id === "backlog")
+            newState.columns[index].items.push({
+                id: v4(),
+                title: formTex.title,
+                description: formTex.title,
+                assigned: formTex.assigned,
+                createdAt: new Date().toISOString(),
+                sttartAt: "",
+                estimationAt: "",
+                note: "",
+                progress: 0,
+                backlog: {
+                    date: new Date().toISOString(),
+                    note: ""
+                }
+            })
+
+            setInitial(newState)
+            updateBoardProject()
             setOpenModal(false)
-            
+
         }
         return <Stack>
             <Group>
@@ -183,11 +226,11 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
         const [openedit, setOpenedit] = useState(false)
         const [openShow, setOpenShow] = useState(false)
         return <Stack>
-            <ActionIcon.Group >
-                <ActionIcon onClick={() => setOpenedit(true)} color={"violet"} radius={'lg'}>
+            <ActionIcon.Group  >
+                <ActionIcon variant="gradient" onClick={() => setOpenedit(true)} color={"violet"} radius={'lg'}>
                     <MdEdit />
                 </ActionIcon>
-                <ActionIcon onClick={() => setOpenShow(true)} color={"violet"} radius={'lg'}>
+                <ActionIcon variant="gradient" onClick={() => setOpenShow(true)} color={"violet"} radius={'lg'}>
                     <MdRemoveRedEye />
                 </ActionIcon>
             </ActionIcon.Group>
@@ -218,10 +261,11 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
 
 
     const Board = ({ list, droppableId, id }: { list: any[], droppableId: string, id: string }) => {
-
         return (<Droppable droppableId={droppableId} direction="vertical" >
             {(provided) => (
-                <Stack ref={provided.innerRef} {...provided.droppableProps} gap={4} bg={"dark"} h={500}>
+                <Stack ref={provided.innerRef} {...provided.droppableProps} gap={4} bg={"dark"} h={500} style={{
+                    overflowY: "auto"
+                }}>
                     {list.map((item, index) => (
                         <Draggable key={item.id} draggableId={item.id} index={index} >
                             {(provided) => (
@@ -240,19 +284,21 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
                                                 <Avatar size={"sm"} bg={"dark"}>
                                                     {index + 1}
                                                 </Avatar>
-                                                <Text>{item.title}</Text>
+                                                <Text fw={"bold"} lineClamp={2}>{item.title}</Text>
                                             </Flex>
 
                                             {/* <Pill>
                                                 <Text fz={"xs"}>{item.description}</Text>
                                             </Pill> */}
-                                            <Flex justify={"space-between"} align={"center"} >
+                                            <Flex justify={"space-between"} align={"center"} gap={"md"}>
                                                 <ButtonEditShow item={item} statusId={id} />
-                                                {/* {JSON.stringify(item.assigned)} */}
+                                                <Badge>
+                                                    <Text fz={"sm"}>{moment(item.createdAt).diff(moment(), 'days') + " days ago"}</Text>
+                                                </Badge>
                                                 <Avatar.Group>
                                                     {item.assigned.map((usr: string, index: number) => (
                                                         <Avatar bg={"dark"} color={"white"} size={"sm"} key={index} >
-                                                            {users.find((u) => u.id == usr)?.name.toString().substring(0, 2)}
+                                                            {_.upperCase(users.find((u) => u.id == usr)?.name.toString().substring(0, 2))}
                                                         </Avatar>
                                                     ))}
                                                 </Avatar.Group>
@@ -272,34 +318,32 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
 
 
     const updateBoardProject = async () => {
+        setLoadingUpdate(true)
         const res = await fetch(routePath.api.projectBoard.update.path, { method: routePath.api.projectBoard.update.method, body: JSON.stringify(initial) })
-        if (res.status !== 200) return tos(await res.text(), "error")
-        return toast(await res.text(), {
-            render: (message) => <div style={{
-                color: "white",
-                backgroundColor: "green",
-                padding: "10px",
-            }}>{message}</div>
-        })
-
-    }
-
-    const ButtonUpdateBoard = () => {
-        const [loadingUpdate, setLoadingUpdate] = useState(false)
-        const onUpdateBoard = async () => {
-            setLoadingUpdate(true)
-            // console.log(JSON.stringify(initial))
-            const res = await fetch(routePath.api.projectBoard.update.path, { method: routePath.api.projectBoard.update.method, body: JSON.stringify(initial) })
-            if (res.status !== 200) return tos(await res.text(), "error")
+        if (res.status !== 200) {
             setLoadingUpdate(false)
-            return tos(await res.text(), "success")
-
-
+            return tos(await res.text(), "error")
         }
-        return <Stack>
-            <Button onClick={onUpdateBoard} size="compact-sm">UPDATE</Button>
-        </Stack>
+        setLoadingUpdate(false)
+
     }
+
+    // const ButtonUpdateBoard = () => {
+    //     const [loadingUpdate, setLoadingUpdate] = useState(false)
+    //     const onUpdateBoard = async () => {
+    //         setLoadingUpdate(true)
+    //         // console.log(JSON.stringify(initial))
+    //         const res = await fetch(routePath.api.projectBoard.update.path, { method: routePath.api.projectBoard.update.method, body: JSON.stringify(initial) })
+    //         if (res.status !== 200) return tos(await res.text(), "error")
+    //         setLoadingUpdate(false)
+    //         return tos(await res.text(), "success")
+
+
+    //     }
+    //     return <Stack>
+    //         <Button onClick={onUpdateBoard} size="compact-sm">UPDATE</Button>
+    //     </Stack>
+    // }
 
     const ModalAssignee = () => {
         const [listUsser, setListuser] = useState<any[]>([])
@@ -330,6 +374,11 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
         </Portal>
     }
 
+    // createdAt
+    // updatedAt
+    // conclusionAt
+
+
     return (
         <Stack p={"md"} gap={"xs"} bg={"#fff9"} pos={"relative"} >
             <Flex gap={"md"} align={"center"} >
@@ -338,40 +387,70 @@ export function KanbanBoard({ board, id }: { board: Project, id: string }) {
                 </ActionIcon>
                 <Title>{initial.title}</Title>
             </Flex>
-
+            <Table highlightOnHover border={1}>
+                <Table.Thead bg={"dark"} c={"white"}>
+                    <Table.Tr>
+                        <Table.Th>created At</Table.Th>
+                        <Table.Th>initiated At</Table.Th>
+                        <Table.Th>conclusion At</Table.Th>
+                    </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                    <Table.Tr>
+                        <Table.Td>
+                            <Group>
+                                {moment(initial.createdAt).format("DD MMM YYYY")}
+                                <Badge>{Math.abs(moment(initial.createdAt).diff(moment(), 'days')) + " days ago"}</Badge>
+                            </Group>
+                        </Table.Td>
+                        <Table.Td>
+                            <Group>
+                                {moment(initial.initiatedAt).format("DD MMM YYYY")}
+                                <Badge>{Math.abs(moment(initial.initiatedAt).diff(moment(), 'days')) + " days ago"}</Badge>
+                            </Group>
+                        </Table.Td>
+                        <Table.Td>
+                            <Group>
+                                {moment(initial.conclusionAt).format("DD MMM YYYY")}
+                                <Badge>{Math.abs(moment().diff(moment(initial.conclusionAt), 'days')) + "days more"}</Badge>
+                            </Group>
+                        </Table.Td>
+                    </Table.Tr>
+                </Table.Tbody>
+            </Table>
             <Text>{initial.description}</Text>
 
             <Flex justify={"space-between"}>
                 <ButtonCreateNew onValue={(v) => {
-                    const newState = _.clone(initial)
-                    const index = newState.columns.findIndex((list) => list.id === "backlog")
-                    newState.columns[index].items.push({
-                        id: v4(),
-                        title: v.title,
-                        description: v.title,
-                        assigned: v.assigned,
-                        progress: 0,
-                        createdAt: new Date().toISOString(),
-                        estimationAt: "",
-                        note: ""
-                    })
+                    // const newState = _.clone(initial)
+                    // const index = newState.columns.findIndex((list) => list.id === "backlog")
+                    // newState.columns[index].items.push({
+                    //     id: v4(),
+                    //     title: v.title,
+                    //     description: v.title,
+                    //     assigned: v.assigned,
+                    //     progress: 0,
+                    //     createdAt: new Date().toISOString(),
+                    //     estimationAt: "",
+                    //     note: ""
+                    // })
 
-                    setInitial(newState)
+                    // setInitial(newState)
+                    // updateBoardProject()
                 }} />
-                <ButtonUpdateBoard />
+                {/* <ButtonUpdateBoard /> */}
+                {loadingUpdate && <Loader size="xs" />}
             </Flex>
 
             <Group >
                 <DragDropContext onDragEnd={onDragEnd}>
                     {initial.columns.map((item, i) => (
-                        <Card key={i} withBorder bg={"dark"} c={"white"}>
-                            <Stack w={200} h={500} >
+                        <Card key={i} withBorder bg={"dark"} c={"white"} shadow="sm">
+                            <Stack miw={100} maw={300} h={500} >
                                 <Flex justify={"space-between"}>
                                     <Title c={colors.find((c) => c.id == item.id)?.bg} order={4}>{item.title}</Title>
                                 </Flex>
-                                <Box style={{
-                                    overflowY: "auto"
-                                }}>
+                                <Box >
                                     <Board key={item.id} list={item.items} droppableId={item.id} id={item.id} />
                                 </Box>
                             </Stack>

@@ -63,7 +63,7 @@ export function ProjectBoardPage({ listData }: { listData: any[] }) {
     }
     return <Stack p={"md"}>
         <Title>Project Board</Title>
-        <CreateProjectView />
+        <CreateProjectView onSuccess={loadListProjectBoard} />
         <Table highlightOnHover border={1} >
             <Table.Thead bg={"dark"} c={"white"}>
                 <Table.Tr>

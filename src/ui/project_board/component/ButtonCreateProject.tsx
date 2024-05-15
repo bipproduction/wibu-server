@@ -9,7 +9,7 @@ import { useState } from "react";
 import { revalidatePath } from "next/cache";
 import { MdAdd } from "react-icons/md";
 
-export function ButtonCreateProject() {
+export function ButtonCreateProject({onSuccess}: {onSuccess: () => void}) {
     const [openModal, setOpenModal] = useState(false);
     const [listProject, setlistProject] = useState<any[] | null>(null)
 
@@ -66,6 +66,7 @@ export function ButtonCreateProject() {
             setOpenModal(false)
             setLoadingCreate(false)
             tos("create project success", "success")
+            onSuccess()
         }
     }
 

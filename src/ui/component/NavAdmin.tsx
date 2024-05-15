@@ -33,7 +33,8 @@ export function NavAdmin() {
         setLocation(window.location.pathname)
     }, [])
 
-    return <Flex gap={"lg"}>
+    
+    return <Flex gap={"lg"} wrap={"wrap"} align={"center"}>
         {list_menu.map((item) => (
             <Anchor href={item.path} key={item.id}><Badge bg={location === item.path ? "yellow" : "gray"}>{item.name}</Badge></Anchor>
         ))}

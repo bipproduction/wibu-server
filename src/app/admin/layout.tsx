@@ -3,7 +3,7 @@ import { NavAdmin } from '@/ui/component/NavAdmin';
 import { LayoutAdmin } from '@/ui/layout/LayoutAdmin';
 import { Login } from '@/ui/page/Login';
 import app_config from '@/util/app_config';
-import { Anchor, Button, Divider, Flex, Stack, Text, Title } from '@mantine/core';
+import { Anchor, Badge, Button, Divider, Flex, Stack, Text, Title } from '@mantine/core';
 import { cookies } from 'next/headers'
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -16,16 +16,29 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
     if (user.status !== 200) return <Login />
     if (!token) return <Login />
-    return <Stack pos={"relative"} p={0} gap={0} >
-        <Flex p={"sm"} justify={"space-between"} align={"center"} pos={"sticky"} top={0} bg={"black"} style={{
+    return <Stack  gap={0} w={"100%"}  style={{
+        // overflow: "auto"
+    }} >
+        <Flex p={"sm"} 
+        justify={"space-between"} 
+        align={"center"} 
+        pos={"sticky"} 
+        top={0} 
+        wrap={"wrap"}
+        style={{
+            backdropFilter: "blur(5px)",
+            WebkitBackdropFilter: "blur(5px)",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
             zIndex: 99
         }}>
-            <Flex gap={"lg"} align={"center"}>
+            <Flex gap={"lg"} align={"center"} wrap={"wrap"}>
                 <Anchor href='/'>
                     <Title order={3} c={"white"}>Wibu Server</Title>
                 </Anchor>
                 <Anchor href='/admin'>
+                    <Badge>
                     <Text>Admin</Text>
+                    </Badge>
                 </Anchor>
             </Flex>
             <NavAdmin />

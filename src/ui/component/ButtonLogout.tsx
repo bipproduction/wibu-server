@@ -1,5 +1,5 @@
 'use client'
-import { Button } from "@mantine/core";
+import { Badge, Button } from "@mantine/core";
 import { useState } from "react";
 
 export function ButtonLogout() {
@@ -11,5 +11,5 @@ export function ButtonLogout() {
         if (res.status === 200) window.location.href = '/admin'
     }
 
-    return <Button loading={loading} size='compact-sm' variant='subtle' onClick={logout}>Logout</Button>
+    return <Button loading={loading} size='compact-sm' variant='subtle' onClick={logout}><Badge>Logout</Badge></Button>
 }
