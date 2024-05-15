@@ -16,9 +16,9 @@ const user_role = [
 const list_user = [
     {
         id: "admin",
-        name: 'admin',
-        email: 'admin@wibudev.com',
-        password: 'admin',
+        name: 'admin2',
+        email: 'admin2@wibudev.com',
+        password: 'admin2',
         userRoleId: 'admin'
     },
     {
