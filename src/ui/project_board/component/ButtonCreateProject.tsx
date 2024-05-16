@@ -9,17 +9,19 @@ import { useState } from "react";
 import { revalidatePath } from "next/cache";
 import { MdAdd } from "react-icons/md";
 
-export function ButtonCreateProject({onSuccess}: {onSuccess: () => void}) {
+export function ButtonCreateProject({ onSuccess }: { onSuccess: () => void }) {
     const [openModal, setOpenModal] = useState(false);
     const [listProject, setlistProject] = useState<any[] | null>(null)
 
     const [loadingCreate, setLoadingCreate] = useState(false)
-    const [projectForm, setProjectForm] = useState<ModelProject>({
+    const [projectForm, setProjectForm] = useState<any>({
         title: "",
         description: "",
         parentProject: "",
         initiatedAt: "",
-        conclusionAt: ""
+        conclusionAt: "",
+        status: "active",
+        history: []
 
     })
 
@@ -35,6 +37,7 @@ export function ButtonCreateProject({onSuccess}: {onSuccess: () => void}) {
 
 
     const onCreate = async () => {
+
         // ? setLoading
         setLoadingCreate(true)
 
@@ -43,7 +46,7 @@ export function ButtonCreateProject({onSuccess}: {onSuccess: () => void}) {
             description: projectForm.description,
             parentProject: projectForm.parentProject,
             initiatedAt: new Date(projectForm.initiatedAt).toISOString(),
-            conclusionAt: new Date(projectForm.conclusionAt).toISOString()
+            conclusionAt: new Date(projectForm.conclusionAt).toISOString(),
         })
 
 
@@ -67,7 +70,10 @@ export function ButtonCreateProject({onSuccess}: {onSuccess: () => void}) {
             setLoadingCreate(false)
             tos("create project success", "success")
             onSuccess()
+            return
         }
+        tos(await res.text(), "error")
+        setLoadingCreate(false)
     }
 
     return <Stack>
@@ -83,7 +89,7 @@ export function ButtonCreateProject({onSuccess}: {onSuccess: () => void}) {
                     <TextInput onChange={(e) => setProjectForm({ ...projectForm, initiatedAt: e.target.value })} type="date" label={"Initiated"} placeholder="Initiated" />
                     <TextInput onChange={(e) => setProjectForm({ ...projectForm, conclusionAt: e.target.value })} type="date" label={"conclusion at"} placeholder="conclusion at" />
                     <Group gap={"lg"} justify="end">
-                        <Button onClick={onCreate}>Create</Button>
+                        <Button loading={loadingCreate} onClick={onCreate}>Create</Button>
                         <Button bg={"red"} onClick={() => setOpenModal(false)}>Cancel</Button>
                     </Group>
                 </Stack>

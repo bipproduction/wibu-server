@@ -2,6 +2,7 @@ import prisma from "@/util/prisma"
 
 export async function POST(req: Request) {
     const body = await req.json()
+    // console.log(body)
     if (!body && !body.title) return new Response('Bad Request', { status: 400 })
 
     try {

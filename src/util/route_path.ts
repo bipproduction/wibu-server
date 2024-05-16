@@ -1,32 +1,73 @@
+import app_config from "./app_config"
+
 const routePath = {
     api: {
         app: {
             listApp: {
                 path: "/api/app/list-app",
                 method: "GET",
-                route: "src/app/api/app/list-app"
+                route: "src/app/api/app/list-app",
+                server() {
+                    this.path = app_config.host + "/api/app/list-app"
+                    return this
+                },
+                async data() {
+                    return fetch(routePath.api.app.listApp.path, { method: routePath.api.app.listApp.method, cache: 'no-store' }).then(res => res.json())
+                }
             },
             listProject: {
                 path: "/api/app/list-project",
                 method: "GET",
-                route: "src/app/api/app/list-project"
+                route: "src/app/api/app/list-project",
+                server() {
+                    this.path = app_config.host + "/api/app/list-project"
+                    return this
+                },
+                async data() {
+                    return fetch(routePath.api.app.listProject.path, { method: routePath.api.app.listProject.method, cache: 'no-store' }).then(res => res.json())
+                }
+            },
+            listServer: {
+                path: "/api/app/list-server",
+                method: "GET",
+                route: "src/app/api/app/list-server",
+                server() {
+                    this.path = app_config.host + "/api/app/list-server"
+                    return this
+                },
+                async data() {
+                    return fetch(routePath.api.app.listServer.path, { method: routePath.api.app.listServer.method, cache: 'no-store' }).then(res => res.json())
+                }
             }
         },
         projectBoard: {
             create: {
                 path: "/api/project-board/create",
                 method: "POST",
-                route: "src/app/api/project-board/create"
+                route: "src/app/api/project-board/create",
+                async data(body: string) {
+                    return fetch(routePath.api.projectBoard.create.path, { method: routePath.api.projectBoard.create.method, cache: 'no-store', body }).then(res => res.json())
+                }
             },
             list: {
                 path: "/api/project-board/list",
                 method: "GET",
-                route: "src/app/api/project-board/list"
+                route: "src/app/api/project-board/list",
+                server() {
+                    this.path = app_config.host + "/api/project-board/list"
+                    return this
+                },
+                async data() {
+                    return fetch(routePath.api.projectBoard.list.path, { method: routePath.api.projectBoard.list.method, cache: 'no-store' }).then(res => res.json())
+                }
             },
             byId: (id: string) => ({
                 path: `/api/project-board/${id}`,
                 method: "GET",
-                route: "src/app/api/project-board/[id]"
+                route: "src/app/api/project-board/[id]",
+                async data(id: string) {
+                    return fetch(routePath.api.projectBoard.byId(id).path, { method: routePath.api.projectBoard.byId(id).method, cache: 'no-store' }).then(res => res.json())
+                }
             }),
             search: (name: string) => ({
                 path: `/api/project-board/search?name=${name}`,

@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 interface ModelColumn {
     id: string;
     title: string;
+    display: boolean;
     items: any[]; // Ganti any[] dengan tipe data yang sesuai untuk item-item
 }
 
@@ -37,6 +38,7 @@ export interface Project {
     conclusionAt: string; // Tanggal dalam format ISO string, opsional
     columns: ModelColumn[];
     isActive?: boolean;
+    history: []
 }
 
 interface Item {
@@ -45,6 +47,64 @@ interface Item {
     description: string;
     assigned: any[]; // Ganti any[] dengan tipe data yang sesuai untuk assigned
 }
+
+export const listColumn = [
+    {
+        id: "backlog",
+        title: "Backlog",
+        display: true,
+        items: []
+    },
+    {
+        id: "todo",
+        title: "To Do",
+        display: true,
+        items: []
+    },
+    {
+        id: "inprogress",
+        title: "In Progress",
+        display: true,
+        items: []
+
+    },
+    {
+        id: "review",
+        title: "Review",
+        display: false,
+        items: []
+    },
+    {
+        id: "done",
+        title: "Done",
+        display: false,
+        items: []
+    },
+    {
+        id: "onhold",
+        title: "On Hold",
+        display: false,
+        items: []
+    },
+    {
+        id: "trash",
+        title: "Trash",
+        display: false,
+        items: []
+    },
+    {
+        id: "archive",
+        title: "Archive",
+        display: false,
+        items: []
+    },
+    {
+        id: "extend",
+        title: "Extend",
+        display: false,
+        items: []
+    }
+]
 
 export const boardTemplate: ModelBoardTemplate = {
     project: ({ title, parentProject, description, initiatedAt, conclusionAt }: ModelProject) => {
@@ -56,48 +116,8 @@ export const boardTemplate: ModelBoardTemplate = {
             isActive: true,
             initiatedAt: initiatedAt,
             conclusionAt: conclusionAt,
-            columns: [
-                {
-                    id: "backlog",
-                    title: "Backlog",
-                    items: []
-                },
-                {
-                    id: "todo",
-                    title: "To Do",
-                    items: []
-                },
-                {
-                    id: "inprogress",
-                    title: "In Progress",
-                    items: []
-                },
-                {
-                    id: "review",
-                    title: "Review",
-                    items: []
-                },
-                {
-                    id: "done",
-                    title: "Done",
-                    items: []
-                },
-                {
-                    id: "onhold",
-                    title: "On Hold",
-                    items: []
-                },
-                {
-                    id: "trash",
-                    title: "Trash",
-                    items: []
-                },
-                {
-                    id: "archive",
-                    title: "Archive",
-                    items: []
-                }
-            ]
+            history: [],
+            columns: listColumn
         };
     },
     item: ({ title, description, assigned }: ModelItem) => {
