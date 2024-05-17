@@ -39,6 +39,7 @@
     "react-simple-toasts": "^5.10.0",
     "react-terminal-command": "^2.0.3",
     "react-terminal-ui": "^1.2.0",
+    "remark-gfm": "^4.0.0",
     "simple-git": "^3.24.0",
     "strip-ansi": "^7.1.0",
     "uuid": "^9.0.1",

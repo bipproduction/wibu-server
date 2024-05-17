@@ -12,6 +12,7 @@ import { read } from "fs"
 import routePath from "@/util/route_path"
 import Markdown from "react-markdown"
 import moment from "moment"
+import remarkGfm from 'remark-gfm'
 
 export function TableProjectDetail({ data, title }: { data: any, title: string }) {
     const [textLog, setTextLog] = useState("")
@@ -275,7 +276,7 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
             return <Stack >
                 <Title>README</Title>
                 <Card bg={"#F8F9FA"} withBorder c={"dark"}>
-                    <Markdown>{data.readme}</Markdown>
+                    <Markdown remarkPlugins={[remarkGfm]}>{data.readme}</Markdown>
                 </Card>
             </Stack>
         }
