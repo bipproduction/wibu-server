@@ -38,7 +38,8 @@ const routePath = {
                 async data() {
                     return fetch(routePath.api.app.listServer.path, { method: routePath.api.app.listServer.method, cache: 'no-store' }).then(res => res.json())
                 }
-            }
+            },
+
         },
         projectBoard: {
             create: {
@@ -93,6 +94,18 @@ const routePath = {
                 path: "/api/bin/project/git-log",
                 method: "POST",
                 route: "src/app/api/bin/project/git-log"
+            },
+            clean: {
+                path: "/api/bin/project/clean",
+                method: "POST",
+                route: "src/app/api/bin/project/clean",
+                server() {
+                    this.path = app_config.host + "/api/bin/list-project/clean"
+                    return this
+                },
+                async data({ body }: { body: string }) {
+                    return fetch(this.path, { method: this.method, body }).then(res => res.json())
+                }
             }
         }
     },

@@ -391,6 +391,13 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
         </Stack>
     }
 
+    const onClean = async () => {
+        setLoading(true)
+        const res = await routePath.bin.project.clean.data({ body: JSON.stringify({ name: title }) })
+        console.log(res)
+        setLoading(false)
+    }
+
     const NavView = () => {
 
         return <Stack>
@@ -398,6 +405,7 @@ export function TableProjectDetail({ data, title }: { data: any, title: string }
                 <Button onClick={onPull} leftSection={<MdDownload />} size="compact-xs" w={100}>pull</Button>
                 <Button onClick={onInstall} leftSection={<MdInstallDesktop />} size="compact-xs" w={100}>install</Button>
                 <Button disabled={data?.prisma === "false"} onClick={onDbPush} leftSection={<MdDataSaverOn />} size="compact-xs" w={100}>db push</Button>
+                <Button disabled={data?.type === "none"} onClick={onClean} leftSection={<MdPlayCircle />} size="compact-xs" w={100}>clean</Button>
                 <Button disabled={data?.seed === "false"} onClick={onDbSeed} leftSection={<MdDataset />} size="compact-xs" w={100}>db seed</Button>
                 <Button disabled={data?.type !== "nextjs"} onClick={onBuild} leftSection={<MdBuild />} size="compact-xs" w={100}>build</Button>
                 <Button disabled={data?.type === "none"} onClick={onStart} leftSection={<MdPlayCircle />} size="compact-xs" w={100}>start</Button>

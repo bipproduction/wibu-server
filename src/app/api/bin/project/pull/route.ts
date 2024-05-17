@@ -7,7 +7,7 @@ export async function POST(req: Request, res: Response) {
     if (!body && !body.name || !body.branch) return new Response('Bad Request', { status: 400 })
 
     const root_path = path.join(process.cwd(), './../', body.name)
-    const child = exec(`cd ${root_path} && git pull origin ${body.branch}`);
+    const child = exec(`cd ${root_path} && git stash && git pull origin ${body.branch}`);
     const tream = new ReadableStream({
         start(controller) {
 
