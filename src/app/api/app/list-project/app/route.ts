@@ -2,9 +2,13 @@ import { MODEL_PM2 } from "@/model/MODEL_PM2"
 import { spawn } from "child_process"
 import 'colors'
 
+interface BODY {
+    name: string
+}
 export async function POST(req: Request) {
-    const body = await req.json()
-    if (!body && !body.name) return new Response('Bad Request', { status: 400 })
+    const body = await req.json() as BODY
+    if (!body.name) return new Response('Bad Request', { status: 400 })
+
     const child = spawn('/bin/bash', ['-c', 'pm2 jlist'])
     const list_string: MODEL_PM2[] = await (async () => {
         let log = ""

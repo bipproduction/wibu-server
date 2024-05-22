@@ -3,7 +3,7 @@ import { Box, Flex, Paper, Stack, Table, Text, Title } from "@mantine/core";
 import _ from 'lodash'
 import { NavDetailApp } from "./NavDetailApp";
 import { useState } from "react";
-import { TerminalLog } from "./TerminalLog";
+import { TerminalLog } from "../project/components/TerminalLog";
 import { useShallowEffect } from "@mantine/hooks";
 import streamFetch from "@/bin/stream_fetch";
 

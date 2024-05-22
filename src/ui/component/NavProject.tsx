@@ -4,7 +4,7 @@ import { eventLoadProject } from "@/util/event";
 import { Button, Group, Modal, Paper, Stack, TextInput, Title } from "@mantine/core";
 import { useState } from "react";
 import { MdAdd, MdNearMe, MdShare, MdTextFormat } from "react-icons/md";
-import { TerminalLog } from "./TerminalLog";
+import { TerminalLog } from "../project/components/TerminalLog";
 
 export function NavProject() {
     const [openModal, setOpenModal] = useState(false)

@@ -47,8 +47,6 @@ export async function GET() {
             }
         }
 
-
-
         const data_pkg = await pkg()
         const data_prisma = await prisma()
         // devDependencies

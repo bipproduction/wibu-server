@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "gen-api": "npx tsc --esModuleInterop bin/gen_api.ts && node bin/gen_api.js ",
+    "gen-page": "npx tsc --esModuleInterop bin/gen_page.ts && node bin/gen_page.js",
+    "gen": "npx tsc --esModuleInterop bin/gen.ts bin/gen_api.ts bin/gen_page.ts ",
+    "next-gen": "node bin/gen.js",
+    "generate": "npx tsc --esModuleInterop bin/gen_api.ts bin/gen_page.ts bin/gen.ts"
   },
   "bin": {
     "wibu": "./bin/wibu.js"
@@ -17,6 +22,7 @@
   "dependencies": {
     "@caldwell619/react-kanban": "^0.0.11",
     "@hello-pangea/dnd": "^16.6.0",
+    "@mantine/code-highlight": "^7.9.2",
     "@mantine/core": "^7.8.1",
     "@mantine/hooks": "^7.8.1",
     "@prisma/client": "^5.13.0",
@@ -25,9 +31,11 @@
     "@types/moment": "^2.13.0",
     "@types/react-icons": "^3.0.0",
     "@types/uuid": "^9.0.8",
+    "@types/yargs": "^17.0.32",
     "@xterm/xterm": "^5.5.0",
     "boxen": "^7.1.1",
     "colors": "^1.4.0",
+    "commander": "^12.1.0",
     "crypto-js": "^4.2.0",
     "indexifier": "^3.3.0",
     "lodash": "^4.17.21",
@@ -40,6 +48,7 @@
     "react-simple-toasts": "^5.10.0",
     "react-terminal-command": "^2.0.3",
     "react-terminal-ui": "^1.2.0",
+    "readdirp": "^3.6.0",
     "remark-gfm": "^4.0.0",
     "simple-git": "^3.24.0",
     "strip-ansi": "^7.1.0",

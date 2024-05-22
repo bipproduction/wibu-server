@@ -74,7 +74,8 @@ export async function GET(req: Request, { params }: { params: { name: string } }
 
     const prisma_schema = await (async () => {
         try {
-            return await fs.promises.readFile(path.join(root_path, './..', params.name, 'prisma', 'schema.prisma'), 'utf8')
+            const text = await fs.promises.readFile(path.join(root_path, './..', params.name, 'prisma', 'schema.prisma'), 'utf8')
+            return text
         } catch (error) {
             return null
         }

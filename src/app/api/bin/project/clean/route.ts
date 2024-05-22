@@ -8,8 +8,8 @@ export async function POST(req: Request) {
         const res = await new Promise((resolve, reject) => {
             let log = ""
             const child = spawn('/bin/bash', ['-c', 'rm -r node_modules && rm yarn.lock'], { cwd: root, })
-            child.stdout?.on('data', (data) => log += data)
-            child.stderr?.on('data', (data) => log += data)
+            child.stdout?.on('data', (data) => log += data.toString('utf8') + "\nSUCCESS")
+            child.stderr?.on('data', (data) => log += data.toString('utf8'))
             child.on('error', reject)
             child.on('close', () => resolve(log))
         })
@@ -19,6 +19,6 @@ export async function POST(req: Request) {
     }
 
 
-    
+
 
 }

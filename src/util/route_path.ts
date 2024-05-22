@@ -12,7 +12,7 @@ const routePath = {
                     return this
                 },
                 async data() {
-                    return fetch(routePath.api.app.listApp.path, { method: routePath.api.app.listApp.method, cache: 'no-store' }).then(res => res.json())
+                    return fetch(this.path, { method: this.method, cache: 'no-store' }).then(res => res.json())
                 }
             },
             listProject: {
@@ -24,8 +24,9 @@ const routePath = {
                     return this
                 },
                 async data() {
-                    return fetch(routePath.api.app.listProject.path, { method: routePath.api.app.listProject.method, cache: 'no-store' }).then(res => res.json())
-                }
+                    return fetch(this.path, { method: this.method, cache: 'no-store' }).then(res => res.json())
+                },
+                
             },
             listServer: {
                 path: "/api/app/list-server",
@@ -106,6 +107,17 @@ const routePath = {
                 async data({ body }: { body: string }) {
                     return fetch(this.path, { method: this.method, body }).then(res => res.json())
                 }
+            },
+            gitCommit: {
+                path: "/api/bin/project/git-commit",
+                method: "POST",
+                server() {
+                    this.path = app_config.host + this.path
+                    return this
+                },
+                async data({ commit, name }: { commit: string, name: string }) {
+                    return fetch(this.path, { method: this.method, body: JSON.stringify({ commit, name }), cache: 'no-store' }).then(res => res.json())
+                }
             }
         }
     },
@@ -115,7 +127,14 @@ const routePath = {
                 path: `/admin/project-board/${id}`,
                 route: "src/app/admin/project-board/[id]",
             }),
+        },
+        project: {
+            byName: (name: string) => ({
+                path: `/admin/project/${name}`,
+                route: "src/app/admin/project/[name]",
+            }),
         }
+
     }
 }
 

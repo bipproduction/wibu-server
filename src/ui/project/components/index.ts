@@ -1,0 +1,1 @@
+export { TableProjectDetail } from "./TableProjectDetail";
