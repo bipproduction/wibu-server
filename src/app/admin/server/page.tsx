@@ -1,4 +1,4 @@
-import { NavServer } from "@/ui/component/ButtonAddServer";
+import { NavServer } from "@/ui/component/NavServer";
 import { TableServer } from "@/ui/component/TableServer";
 import app_config from "@/util/app_config";
 import { Button, Stack, Title } from "@mantine/core";

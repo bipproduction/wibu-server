@@ -2,7 +2,7 @@ import { Button, Code, Loader, Modal, Portal, Stack } from "@mantine/core";
 import { useState } from "react";
 import { MdFileOpen, MdHistory } from "react-icons/md";
 
-export default function ButtonAppLog({ name }: { name: string }) {
+export function ButtonAppLog({ name }: { name: string }) {
     const [openLog, setOpenLog] = useState(false)
     const [logText, setLogText] = useState("")
     const [loading, setLoading] = useState(false)

@@ -2,7 +2,8 @@
 import { Button, Group, Modal, Portal, Stack } from "@mantine/core";
 import { useState } from "react";
 import { MdDelete, MdFileOpen, MdRestartAlt, MdStop } from "react-icons/md";
-import ButtonAppLog from "./ButtonAppLog";
+import { ButtonAppLog } from "./ButtonAppLog";
+// import ButtonAppLog from "./ButtonAppLog";
 
 export function NavDetailApp({ name, status, onRestart, onStop, onDelete, loading }: { name: string, status: string, onRestart: () => void, onStop: () => void, onDelete: () => void, loading?: boolean }) {
 

@@ -2,7 +2,7 @@
 
 import { ActionIcon, Button, Flex, Paper, Stack, Table, TextInput } from "@mantine/core"
 import _ from "lodash"
-import { NavServer } from "./ButtonAddServer"
+import { NavServer } from "./NavServer"
 import { MdRestartAlt, MdSearch } from "react-icons/md"
 import { useState } from "react"
 import { useShallowEffect } from "@mantine/hooks"

@@ -5,8 +5,8 @@ import fs from "fs"
 
 
 export async function GET(req: Request) {
-    const formData = await req.formData()
-    _save_image(formData)
+    // const formData = await req.formData()
+    // _save_image(formData)
 
     const name = new URL(req.url).searchParams.get('name')
     if (!name) return new Response('Bad Request', { status: 400 })
@@ -41,7 +41,7 @@ export async function GET(req: Request) {
 }
 
 const root_path = path.join(process.cwd(), 'assets/img')
-export async function _save_image(formData: FormData) {
+async function _save_image(formData: FormData) {
     try {
         const file = formData.get('image') as File
         const filePath = path.join(root_path, file.name )
