@@ -1,4 +1,4 @@
-
+'use client'
 import routePath from "@/util/route_path";
 import { ActionIcon, Anchor, Badge, Button, Card, Center, Flex, Group, Loader, Modal, Pill, Portal, Stack, Table, Text, Title } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";

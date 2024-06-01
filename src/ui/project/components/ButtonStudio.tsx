@@ -1,3 +1,4 @@
+'use client'
 import routePath from "@/util/route_path"
 import { Stack, Button, Portal, Modal, Code } from "@mantine/core"
 import _ from "lodash"

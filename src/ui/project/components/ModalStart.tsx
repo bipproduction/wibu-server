@@ -1,3 +1,4 @@
+'use client'
 import streamFetch from "@/bin/stream_fetch"
 import { Modal, Stack, Title, PinInput, Group, Button, Text } from "@mantine/core"
 import { useInputState } from "@mantine/hooks"
@@ -28,14 +29,14 @@ export const ModalStart = function ({ opened, onclose, title, textlog, setTextLo
         } })
         setLoading(false)
     }
-    return <Modal opened={opened} onClose={onclose} withCloseButton withOverlay>
+    return <Modal opened={opened} onClose={onclose} withCloseButton withOverlay >
         <Stack>
             <Title order={3}>START SERVER</Title>
             <Title order={5}>PORT</Title>
             <PinInput title="port" placeholder="port" length={4} value={port + ""} onChange={setPort as any} />
             <Text c={"red"}>{errorText}</Text>
             <Group gap={"md"} justify="end">
-                <Button radius={"xl"} w={100} size="compact-xs" onClick={onclose} bg={"red"}>cancel</Button>
+                <Button variant="" radius={"xl"} w={100} size="compact-xs" onClick={onclose} bg={"red"}>cancel</Button>
                 <Button loading={loading} radius={"xl"} w={100} size="compact-xs" onClick={onSubmit} bg={"blue"}>start</Button>
             </Group>
         </Stack>

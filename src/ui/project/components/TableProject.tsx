@@ -90,14 +90,13 @@ export function TableProject({ list }: { list: any[] }) {
                             <Table.Td>{item.type}</Table.Td>
                             <Table.Td>{item.prisma}</Table.Td>
                             <Table.Td>{item.seed}</Table.Td>
-                            
+
                         </Table.Tr>)}
                     </Table.Tbody>
                 </Table>
             </Stack>
         </Stack>
     }
-
 
     return <MainView />
 

@@ -45,3 +45,8 @@ model ProjectBoard {
   isActive      Boolean  @default(true)
   history       Json?
 }
+
+model TestScroll {
+  id   Int    @id
+  name String
+}

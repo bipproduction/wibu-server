@@ -1,3 +1,4 @@
+'use client'
 import { Button, Code, Loader, Modal, Portal, Stack } from "@mantine/core";
 import { useState } from "react";
 import { MdFileOpen, MdHistory } from "react-icons/md";

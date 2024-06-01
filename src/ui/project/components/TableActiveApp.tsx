@@ -1,3 +1,4 @@
+'use client'
 import { Card, Stack, Title, Table, Text } from "@mantine/core"
 import { useShallowEffect } from "@mantine/hooks"
 import { useState } from "react"

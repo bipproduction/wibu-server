@@ -1,4 +1,4 @@
-
+'use client'
 import routePath from "@/util/route_path";
 import { ModelProject, boardTemplate } from "@/util/project_board_template";
 import tos from "@/util/tos";
