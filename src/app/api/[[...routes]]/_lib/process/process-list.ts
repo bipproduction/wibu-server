@@ -7,10 +7,10 @@ const X = promisify(exec);
 async function processList() {
   const { stdout } = await X("pm2 jlist 2>&1");
   const data = stdout.toString();
-  const match = data.match("[[^{]*({.*})]");
-  const newData = match ? match[1] : "[]";
+//   const match = data.match("[[^{]*({.*})]");
+//   const newData = match ? match[1] : "[]";
   try {
-    const parsedData = JSON.parse(newData);
+    const parsedData = JSON.parse(data);
     return {
       data: parsedData,
     };
