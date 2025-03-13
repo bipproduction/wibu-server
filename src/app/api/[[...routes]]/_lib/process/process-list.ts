@@ -9,7 +9,7 @@ async function processList() {
   const match = data.match("\[[^{]*({.*})\]")
   const newData = match ? match[1] : "[]"
   return {
-    data: JSON.parse(newData)
+    data: newData
   };
 }
 

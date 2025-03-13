@@ -27,7 +27,7 @@ const ApiServer = new Elysia()
     app.group("/process", (app) =>
       app.get("/list", async () => {
         const process = await processList();
-        return Response.json(process);
+        return new Response(process.data);
       })
     )
   );
