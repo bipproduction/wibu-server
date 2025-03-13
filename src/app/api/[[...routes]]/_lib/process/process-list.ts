@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { exec } from "child_process";
 import { promisify } from "util";
 
