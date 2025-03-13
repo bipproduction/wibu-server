@@ -6,7 +6,9 @@ const X = promisify(exec)
 async function processList() {
   const {stdout} = await X("pm2 jlist");
   const data  = stdout.toString()
-  return data;
+  const match = data.match("\[[^{]*({.*})\]")
+  const newData = match ? match[1] : "[]"
+  return newData;
 }
 
 export default processList;
