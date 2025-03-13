@@ -1,20 +1,23 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { exec } from "child_process";
 import { promisify } from "util";
 
-const execAsync = promisify(exec);
+const X = promisify(exec);
 
-async function processList(): Promise<{ data: any[] }> {
+async function processList() {
+  const { stdout } = await X("pm2 jlist 2>&1");
+  const data = stdout.toString();
+  const match = data.match("[[^{]*({.*})]");
+  const newData = match ? match[1] : "[]";
   try {
-    const { stdout, stderr } = await execAsync("pm2 jlist", { maxBuffer: 1024 * 1024 }); // 1MB buffer
-    if (stderr && stderr.trim().length > 0) {
-      console.warn("PM2 jlist stderr:", stderr);
-    }
-    const parsedData = JSON.parse(stdout);
-    return { data: Array.isArray(parsedData) ? parsedData : [] };
+    const parsedData = JSON.parse(newData);
+    return {
+      data: parsedData,
+    };
   } catch (error) {
-    console.error("Error in processList:", error);
-    return { data: [] };
+    return {
+      data: [],
+    };
   }
 }
 
