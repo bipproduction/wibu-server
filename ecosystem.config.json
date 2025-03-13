@@ -1,0 +1,28 @@
+{
+    "apps": [
+      {
+        "name": "wibu-server-3006",
+        "namespace": "wibu-server",
+        "script": "bun",
+        "args": "--bun run start",
+        "exec_mode": "fork",
+        "instances": 1,
+        "env": {
+          "NODE_ENV": "production",
+          "PORT": 3006
+        },
+        "max_memory_restart": "1G",
+        "autorestart": true,
+        "watch": false,
+        "wait_ready": true,
+        "restart_delay": 4000,
+        "merge_logs": true,
+        "time": true,
+        "max_size": "10M",
+        "retain": 5,
+        "compress": true,
+        "source_map_support": false,
+        "cwd": "/Users/bip/Documents/projects/wibu/wibu-server"
+      }
+    ]
+  }

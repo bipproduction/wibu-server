@@ -1,5 +1,10 @@
-import { AppServer } from '@/app/api/[[...routes]]/route'
-import { treaty } from '@elysiajs/eden'
-const ApiFetch = treaty<AppServer>(process.env.NEXT_PUBLIC_WIBU_URL || 'localhost:3000')
+import { AppServer } from "@/app/api/[[...routes]]/route";
+import { treaty } from "@elysiajs/eden";
 
-export default ApiFetch
+const url = process.env.NEXT_PUBLIC_WIBU_URL;
+if (!url) {
+  throw new Error("NEXT_PUBLIC_WIBU_URL is not defined");
+}
+const ApiFetch = treaty<AppServer>(url);
+
+export default ApiFetch;
