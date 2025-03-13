@@ -1,21 +1,30 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { exec } from "child_process";
 import { promisify } from "util";
 
-const X = promisify(exec);
+// Tipe untuk hasil
+interface ProcessListResult {
+  data: any[]; // Ganti any dengan tipe spesifik dari PM2 jika ada
+}
 
-async function processList() {
-  const { stdout } = await X("pm2 jlist");
-  const data = stdout.toString();
-  const match = data.match("[[^{]*({.*})]");
-  const newData = match ? match[1] : "[]";
+const execAsync = promisify(exec);
 
+async function processList(): Promise<ProcessListResult> {
   try {
-    const parsedData = JSON.parse(newData);
+    const { stdout, stderr } = await execAsync("pm2 jlist");
+
+    // Periksa stderr untuk error
+    if (stderr && stderr.trim().length > 0) {
+      console.warn("PM2 jlist stderr:", stderr);
+    }
+
+    // Langsung parse stdout karena pm2 jlist mengembalikan JSON
+    const parsedData = JSON.parse(stdout);
     return {
-      data: parsedData,
+      data: Array.isArray(parsedData) ? parsedData : [],
     };
   } catch (error) {
+    console.error("Error in processList:", error);
     return {
       data: [],
     };
