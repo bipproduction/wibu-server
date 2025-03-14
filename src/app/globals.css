@@ -1,42 +1,171 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
+/* Tema dasar mirip VSCode */
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
+  background-color: #1e1e1e; /* Warna background utama VSCode */
+  color: #d4d4d4; /* Warna teks default */
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
   margin: 0;
+  padding: 0;
+  font-size: 13px;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* Header atau title bar mirip VSCode */
+header {
+  background-color: #252526;
+  padding: 4px 8px;
+  border-bottom: 1px solid #3c3c3c;
+  display: flex;
+  align-items: center;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* Sidebar mirip VSCode */
+.sidebar {
+  background-color: #252526;
+  width: 250px;
+  height: 100vh;
+  border-right: 1px solid #333333;
+}
+
+/* Area konten utama */
+.content {
+  background-color: #1e1e1e;
+  padding: 10px;
+}
+
+/* Teks heading */
+h1, h2, h3 {
+  color: #d4d4d4;
+  font-weight: 400;
+}
+
+/* Tombol mirip VSCode */
+button {
+  background-color: #3c3c3c;
+  color: #d4d4d4;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.1s ease;
+}
+
+button:hover {
+  background-color: #505050;
+}
+
+/* Input mirip VSCode */
+input, textarea {
+  background-color: #3c3c3c;
+  color: #d4d4d4;
+  border: 1px solid #3c3c3c;
+  padding: 6px 8px;
+  border-radius: 2px;
+  font-size: 13px;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border: 1px solid #007acc; /* Biru khas VSCode */
+  background-color: #252526;
+}
+
+/* Status bar mirip VSCode */
+.status-bar {
+  background-color: #007acc;
+  color: #ffffff;
+  padding: 4px 8px;
+  font-size: 12px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Tab mirip VSCode */
+.tab {
+  background-color: #2d2d2d;
+  color: #858585;
+  padding: 6px 16px;
+  border-right: 1px solid #3c3c3c;
+  display: inline-block;
+}
+
+.tab.active {
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  border-top: 2px solid #007acc;
+}
+
+/* Kode atau terminal area */
+.code-area {
+  background-color: #1e1e1e;
+  border: 1px solid #3c3c3c;
+  padding: 10px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  color: #d4d4d4;
+}
+
+/* Scrollbar mirip VSCode */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #252526;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3c3c3c;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #505050;
+}
+
+/* Highlight mirip VSCode */
+.highlight {
+  background-color: #264f78;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+/* Card component mirip VSCode */
+.card {
+  background-color: #252526; /* Warna latar belakang seperti sidebar */
+  border: 1px solid #3c3c3c; /* Border subtle seperti elemen VSCode */
+  border-radius: 2px; /* Radius kecil khas VSCode */
+  padding: 10px;
+  margin: 10px 0; /* Jarak antar card */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Bayangan halus */
+  transition: background-color 0.1s ease;
+}
+
+.card:hover {
+  background-color: #2a2d2e; /* Efek hover seperti sidebar item */
+}
+
+.card-header {
+  font-size: 12px;
+  color: #999999; /* Warna teks header seperti sidebar header */
+  text-transform: uppercase;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #3c3c3c;
+  margin-bottom: 8px;
+}
+
+.card-content {
+  color: #d4d4d4;
+  font-size: 13px;
+}
+
+.card-footer {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.card-footer button {
+  padding: 4px 8px;
+  font-size: 11px;
 }

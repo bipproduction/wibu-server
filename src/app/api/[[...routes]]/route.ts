@@ -1,8 +1,10 @@
 import cors, { HTTPMethod } from "@elysiajs/cors";
 import swagger from "@elysiajs/swagger";
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 import processList from "./_lib/process/process-list";
 import serverConfig from "./_lib/server/server-config";
+import editServer from "./_lib/server/server-edit";
+import build from "./_lib/build";
 
 const corsConfig = {
   origin: "*",
@@ -33,8 +35,21 @@ const Server = new Elysia({
     const muku = Bun.inspect.table(config.data.muku.subdomains);
     return {
       data: muku,
+    };
+  })
+  .post(
+    "/edit-config",
+    async ({ body }) => {
+      const { name, data } = body;
+      return await editServer(name, data);
+    },
+    {
+      body: t.Object({
+        name: t.String(),
+        data: t.Array(t.Object({})),
+      }),
     }
-  });
+  );
 
 const Process = new Elysia({
   prefix: "/process",
@@ -51,7 +66,7 @@ const Process = new Elysia({
     const table = Bun.inspect.table(process.data);
     return {
       data: table,
-    }
+    };
   });
 
 const ApiServer = new Elysia()
@@ -65,7 +80,7 @@ const ApiServer = new Elysia()
       };
     }
   })
-  .group("/api", (app) => app.use(Server).use(Process));
+  .group("/api", (app) => app.use(Server).use(Process).get("/build", build));
 
 export const GET = ApiServer.handle;
 export const POST = ApiServer.handle;
