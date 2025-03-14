@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import processState from "@/state/process";
 import serverState from "@/state/server";
