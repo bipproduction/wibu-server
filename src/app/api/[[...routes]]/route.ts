@@ -13,6 +13,47 @@ const corsConfig = {
   credentials: true,
 };
 
+const Server = new Elysia({
+  prefix: "/server",
+  tags: ["Server"],
+})
+  .get("/config", async () => {
+    const config = await serverConfig();
+    return config;
+  })
+  .get("/table-wibudev", async () => {
+    const config = await serverConfig();
+    const wibudev = Bun.inspect.table(config.data.wibuDev.subdomains);
+    return {
+      data: wibudev,
+    };
+  })
+  .get("/table-muku", async () => {
+    const config = await serverConfig();
+    const muku = Bun.inspect.table(config.data.muku.subdomains);
+    return {
+      data: muku,
+    }
+  });
+
+const Process = new Elysia({
+  prefix: "/process",
+  tags: ["Process"],
+})
+  .get("/list", async () => {
+    const process = await processList();
+    return {
+      data: process.data,
+    };
+  })
+  .get("/table", async () => {
+    const process = await processList();
+    const table = Bun.inspect.table(process.data);
+    return {
+      data: table,
+    }
+  });
+
 const ApiServer = new Elysia()
   .use(swagger({ path: "/api/docs" }))
   .use(cors(corsConfig))
@@ -24,55 +65,7 @@ const ApiServer = new Elysia()
       };
     }
   })
-  .group("/api", (app) =>
-    app
-      .group("server", app => app.get("/config", async () => {
-        const config = await serverConfig();
-        return new Response(JSON.stringify(config), {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      })
-        .get("config-table-wibudev", async () => {
-          const config = await serverConfig()
-          const wibudev = Bun.inspect.table(config.data.wibuDev.subdomains)
-          return new Response(wibudev, {
-            headers: {
-              "Content-Type": "text/plain",
-            },
-          })
-        })
-        .get("config-table-muku", async () => {
-          const config = await serverConfig()
-          const muku = Bun.inspect.table(config.data.muku.subdomains)
-          return new Response(muku, {
-            headers: {
-              "Content-Type": "text/plain",
-            },
-          })
-        }))
-      .group("/process", (app) =>
-        app
-          .get("/list", async () => {
-            const process = await processList();
-            return new Response(JSON.stringify(process), {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
-          })
-         .get("/list-table", async () => {
-            const process = await processList();
-            const table = Bun.inspect.table(process.data)
-            return new Response(table, {
-              headers: {
-                "Content-Type": "text/plain",
-              },
-            });
-          })
-      )
-  );
+  .group("/api", (app) => app.use(Server).use(Process));
 
 export const GET = ApiServer.handle;
 export const POST = ApiServer.handle;
