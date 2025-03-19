@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import cors, { HTTPMethod } from "@elysiajs/cors";
 import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
@@ -80,7 +81,32 @@ const ApiServer = new Elysia()
       };
     }
   })
-  .group("/api", (app) => app.use(Server).use(Process).get("/build", build));
+  .group("/api", (app) =>
+    app
+      .use(Server)
+      .use(Process)
+      .post(
+        "/build",
+        async ({ body }) => {
+          const { name, namespace, branch, repo, env } = body.config as any;
+          if (!name || !namespace || !branch || !repo || !env) {
+            return {
+              status: 400,
+              body: "Missing required fields",
+            };
+          }
+          const result = await build({ config: body.config });
+          return {
+            data: result,
+          };
+        },
+        {
+          body: t.Object({
+            config: t.Object({}),
+          }),
+        }
+      )
+  );
 
 export const GET = ApiServer.handle;
 export const POST = ApiServer.handle;

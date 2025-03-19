@@ -1,0 +1,3 @@
+
+[Step 1] Menjalankan: mkdir -p /var/www/projects/hipmi/hipmi-staging/releases (CWD: /Users/bip/Documents/projects/wibu/wibu-server)
+[Step 1] [SUCCESS] (2025-03-19 04:13:12) : 
