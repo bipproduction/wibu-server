@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const OWNER = "wibudev";
+const OWNER = "bipproduction";
 const REPO = "wibu-server";
 const WORKFLOW_ID = "build.yml";
 const WIBU_GH_TOKEN = process.env.WIBU_GH_TOKEN;
