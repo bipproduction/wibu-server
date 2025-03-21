@@ -45,7 +45,6 @@ jobs:
                 // Konversi buffer ke string base64
                 const screenshotBase64 = screenshotBuffer.toString('base64');
 
-                // Simpan string base64 ke file `screenshot.txt`
                 console.log("Saving screenshot as base64 to screenshot.txt...");
                 fs.writeFileSync('screenshot.txt', screenshotBase64);
 
@@ -63,10 +62,3 @@ jobs:
 
           bun -e "$E"
           ls
-
-      # Upload screenshot sebagai artifact
-      - name: Upload screenshot
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshot
-          path: screenshot.png
