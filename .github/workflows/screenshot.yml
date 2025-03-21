@@ -21,7 +21,7 @@ jobs:
 
       # Upload screenshot sebagai artifact
       - name: Upload screenshot
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: screenshot
           path: ${{ env.WIBU_APP_VERSION }}/screenshot.png

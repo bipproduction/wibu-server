@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 
 const OWNER = "bipproduction";
 const REPO = "wibu-server";
-const WORKFLOW_ID = "build.yml";
+const WORKFLOW_ID = "screenshot.yml";
 const WIBU_GH_TOKEN = process.env.WIBU_GH_TOKEN;
 
 if (!WIBU_GH_TOKEN) {
