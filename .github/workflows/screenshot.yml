@@ -13,15 +13,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: run bun install workspace
+        run: bun install
+
       # Ambil screenshot menggunakan Puppeteer
       - name: Take screenshot
-        working-directory: ${{ env.WIBU_APP_VERSION }}
         run: |
-          npx puppeteer screenshot.js
+          bun run screenshot.ts
 
       # Upload screenshot sebagai artifact
       - name: Upload screenshot
         uses: actions/upload-artifact@v4
         with:
           name: screenshot
-          path: ${{ env.WIBU_APP_VERSION }}/screenshot.png
+          path: screenshot.png

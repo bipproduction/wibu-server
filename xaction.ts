@@ -1,5 +1,4 @@
 import dedent from "dedent";
-import { nanoid } from "nanoid";
 
 const OWNER = "bipproduction";
 const REPO = "wibu-server";
@@ -19,17 +18,8 @@ type Config = {
   count: number;
 };
 
-type Config2 = Config & {
-  date: string;
-  appVersion: string;
-};
 
 async function build(config: Config) {
-  const config2: Config2 = {
-    ...config,
-    date: new Date().toISOString(),
-    appVersion: nanoid(),
-  };
   const res = await fetch(
     `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`,
     {
@@ -41,7 +31,7 @@ async function build(config: Config) {
       body: JSON.stringify({
         ref: "main",
         inputs: {
-          data: JSON.stringify(config2),
+          data: JSON.stringify(config),
         },
       }),
     }
