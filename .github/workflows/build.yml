@@ -107,7 +107,7 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           script: |
             # deploy env
-            echo \"${{ fromJson(inputs.data).env }}\" > ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
+            echo "${{ fromJson(inputs.data).env }}" > ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
 
             # install and db push
             cd ${{env.WIBU_TARGET_WORKER_DIR}} && bun install && bunx prisma db push
@@ -118,16 +118,16 @@ jobs:
             # generate config
             cd ${{ env.WIBU_TARGET_PROJECT_DIR }}
             ECOSYSTEM_FILE="ecosystem.config.json"
-            if [[ ! -f "\$ECOSYSTEM_FILE" ]]; then
-              CONFIF=\$(bun /var/www/lib/generate-config.ts \
+            if [[ ! -f "$ECOSYSTEM_FILE" ]]; then
+              CONFIF=$(bun /var/www/lib/generate-config.ts \
                 --name "${{ env.WIBU_NAME }}" \
                 --namespace "${{ env.WIBU_NAMESPACE }}" \
                 --count "${{ env.WIBU_COUNT }}")
-            if [[ -z "\$CONFIF" ]]; then
+            if [[ -z "$CONFIF" ]]; then
               echo "Error: Failed to generate config"
               exit 1
             fi
-            echo "\$CONFIF" > "\$ECOSYSTEM_FILE"
+            echo "$CONFIF" > "$ECOSYSTEM_FILE"
             fi
 
       - name: handle current on server
