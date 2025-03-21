@@ -58,7 +58,11 @@ jobs:
       - name: finish
         if: always()
         run: |
+          # Baca isi file screenshot.txt sebagai string base64
           SCREENSHOT=$(cat screenshot.txt)
-          curl -X POST -H "Content-Type: application/json" \
-          -d '$SCREENSHOT' \
-          ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+
+          # Kirim data ke Firebase Database
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "{\"screenshot\": \"$SCREENSHOT\"}" \
+            "${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json"
