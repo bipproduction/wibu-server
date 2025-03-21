@@ -22,6 +22,7 @@ jobs:
       # Ambil screenshot menggunakan Puppeteer
       - name: Take screenshot
         run: |
+          bunx playwright install  
           E=$(cat <<EOF
           import { chromium } from 'playwright';
 
