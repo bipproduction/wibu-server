@@ -22,6 +22,7 @@ jobs:
       # Ambil screenshot menggunakan Puppeteer
       - name: Take screenshot
         run: |
+          bun add playwright
           sudo apt-get update
           sudo apt-get install -y \
           libgtk-4-1 \
