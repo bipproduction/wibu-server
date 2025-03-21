@@ -1,17 +1,8 @@
 name: connect ssh
 description: "Connect to VPS"
 inputs:
-  host:
-    description: "Host"
-    required: true
-  username:
-    description: "Username"
-    required: true
-  key:
-    description: "Key"
-    required: true
-  command:
-    description: "Command"
+  env:
+    description: "Environment"
     required: true
 runs:
   using: "shell"
