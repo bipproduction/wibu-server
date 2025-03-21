@@ -49,18 +49,6 @@ jobs:
           echo "WIBU_TARGET_CURRENT_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/current" >> $GITHUB_ENV
           echo "WIBU_TARGET_WORKER_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/releases/${{fromJson(inputs.data).appVersion}}" >> $GITHUB_ENV
 
-          # cat <<EOF > .env.wibu.app
-          # ${{ fromJson(inputs.data).env }}
-          # EOF
-
-          # cat <<EOF > ./id_rsa
-          # ${{ secrets.VPS_KEY }}
-          # EOF
-
-          # chmod 600 ./id_rsa
-
-          # ssh-keyscan ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
-
       - name: clone project
         run: git clone --branch ${{ env.WIBU_BRANCH }} https://x-access-token:${{ secrets.WIBU_GIT_TOKEN }}@github.com/bipproduction/${{ env.WIBU_REPO }}.git ${{ env.WIBU_APP_VERSION }}
 
