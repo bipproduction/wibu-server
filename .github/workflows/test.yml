@@ -1,0 +1,23 @@
+name: build and deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      data:
+        description: "data"
+        required: true
+        default: "null"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          script: echo "apa kabar ini test"

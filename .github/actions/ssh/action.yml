@@ -1,0 +1,22 @@
+name: connect ssh
+description: "Connect to VPS"
+inputs:
+  host:
+    description: "Host"
+    required: true
+  username:
+    description: "Username"
+    required: true
+  key:
+    description: "Key"
+    required: true
+  command:
+    description: "Command"
+    required: true
+runs:
+  using: "shell"
+  steps:
+    - name: Connect to VPS
+      run: |
+        chmod +x $GITHUB_ACTION_PATH/entrypoint.sh
+        $GITHUB_ACTION_PATH/entrypoint.sh ${{ inputs.command }}
