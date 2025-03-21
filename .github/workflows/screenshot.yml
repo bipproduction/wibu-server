@@ -22,7 +22,20 @@ jobs:
       # Ambil screenshot menggunakan Puppeteer
       - name: Take screenshot
         run: |
-          bun run screenshot.ts
+          E=$(cat <<EOF
+          import { chromium } from 'playwright';
+
+           (async () => {
+            const browser = await chromium.launch();
+            const page = await browser.newPage();
+            await page.goto('https://id.pngtree.com/free-png-vectors/gambar-kartun-lucu');
+            await page.screenshot({ path: 'screenshot.png', fullPage: true });
+            await browser.close();
+          })();
+          EOF
+          )
+
+          bun -e "$E"
 
       # Upload screenshot sebagai artifact
       - name: Upload screenshot
