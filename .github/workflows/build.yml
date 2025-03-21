@@ -77,6 +77,13 @@ jobs:
         working-directory: ${{ env.WIBU_APP_VERSION }}
         run: bun run build
 
+      - name: take screenshot
+        working-directory: ${{ env.WIBU_APP_VERSION }}
+        run: |
+          bun run start --port 3000
+          sleep 5
+          curl -s http://localhost:3000 > screenshot.png
+
       - name: remove node_modules
         working-directory: ${{ env.WIBU_APP_VERSION }}
         run: rm -r node_modules

@@ -1,0 +1,27 @@
+name: screenshot
+on:
+  workflow_dispatch:
+    inputs:
+      data:
+        description: "data"
+        required: true
+        default: "null"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Ambil screenshot menggunakan Puppeteer
+      - name: Take screenshot
+        working-directory: ${{ env.WIBU_APP_VERSION }}
+        run: |
+          npx puppeteer screenshot.js
+
+      # Upload screenshot sebagai artifact
+      - name: Upload screenshot
+        uses: actions/upload-artifact@v3
+        with:
+          name: screenshot
+          path: ${{ env.WIBU_APP_VERSION }}/screenshot.png
