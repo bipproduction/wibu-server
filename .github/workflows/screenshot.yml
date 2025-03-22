@@ -19,6 +19,14 @@ jobs:
       - name: run bun install workspace
         run: bun install
 
+      - name: finish
+        if: always()
+        run: |
+          # Kirim data ke Firebase Database
+          curl -X DELETE \
+            -H "Content-Type: application/json" \
+            "${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json"
+
       # Ambil screenshot menggunakan Puppeteer
       - name: Take screenshot
         run: |
@@ -64,5 +72,5 @@ jobs:
           # Kirim data ke Firebase Database
           curl -X POST \
             -H "Content-Type: application/json" \
-            -d "{\"screenshot\": \"$SCREENSHOT\"}" \
+            -d '{"screenshot": "$SCREENSHOT"}' \
             "${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json"
