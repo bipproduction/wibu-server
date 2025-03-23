@@ -62,7 +62,6 @@ jobs:
       - name: finish
         if: always()
         run: |
-          source .env
           # Encode gambar ke base64
           BASE64_CONTENT=$(base64 screenshot.png | tr -d '\n')
 
