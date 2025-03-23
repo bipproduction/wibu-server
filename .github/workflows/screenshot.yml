@@ -52,13 +52,6 @@ jobs:
           bun -e "$E"
           ls
 
-      # Upload screenshot sebagai artifact
-      - name: Upload screenshot
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshot
-          path: screenshot.png
-
       - name: finish
         if: always()
         run: |
@@ -83,5 +76,5 @@ jobs:
           # Kirim data ke Firebase Database
           curl -X POST \
             -H "Content-Type: application/json" \
-            -d "{\"screenshot\": \"$SCREENSHOT\"}" \
+            -d "{\"screenshot\": \"$RESULT\"}" \
             "${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json"
