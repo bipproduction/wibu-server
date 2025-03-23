@@ -43,11 +43,7 @@ jobs:
             console.log("Navigating to URL...");
             await page.goto('https://darmasaba.muku.id');
             console.log("Taking screenshot...");
-            const screenshotBuffer = await page.screenshot({ fullPage: true });
-            const screenshotBase64 = screenshotBuffer.toString('base64');
-            console.log("Saving screenshot as base64 to screenshot.txt...");
-            fs.writeFileSync('screenshot.txt', screenshotBase64);
-            console.log("Closing browser...");
+            await page.screenshot({ fullPage: true, path: 'screenshot.png' });
             await browser.close();
           })();
           EOF
@@ -66,8 +62,24 @@ jobs:
       - name: finish
         if: always()
         run: |
-          # Baca isi file screenshot.txt sebagai string base64
-          SCREENSHOT=$(cat screenshot.txt)
+          source .env
+          # Encode gambar ke base64
+          BASE64_CONTENT=$(base64 screenshot.png | tr -d '\n')
+
+          RANDOM_NAME=$(date +%s%N | md5sum | head -c 10)
+
+          # Upload ke repository
+          RESULT=$(curl -X PUT \
+            -s \
+            -H "Authorization: token ${{ secrets.WIBU_GIT_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{
+            "message": "Upload image",
+            "content": "'"$BASE64_CONTENT"'",
+            "branch": "main"
+            }' \
+            https://api.github.com/repos/bipproduction/assets/contents/images/${RANDOM_NAME}.jpg | jq -r '.content.download_url'
+          )
 
           # Kirim data ke Firebase Database
           curl -X POST \
