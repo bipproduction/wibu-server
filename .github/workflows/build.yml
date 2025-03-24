@@ -38,17 +38,18 @@ jobs:
 
       - name: Handle env
         run: |
+          APP_VERSION=$(date +%Y-%m-%d_%H-%M-%S)
           echo "WIBU_NAME=${{ fromJson(inputs.data).name }}" >> $GITHUB_ENV
           echo "WIBU_NAMESPACE=${{ fromJson(inputs.data).namespace }}" >> $GITHUB_ENV
           echo "WIBU_REPO=${{ fromJson(inputs.data).repo }}" >> $GITHUB_ENV
           echo "WIBU_BRANCH=${{ fromJson(inputs.data).branch }}" >> $GITHUB_ENV
           echo "WIBU_DATE=${{ fromJson(inputs.data).date }}" >> $GITHUB_ENV
-          echo "WIBU_APP_VERSION=$(date +%Y-%m-%d_%H-%M-%S)" >> $GITHUB_ENV
+          echo "WIBU_APP_VERSION=${APP_VERSION}" >> $GITHUB_ENV
           echo "WIBU_COUNT=${{ fromJson(inputs.data).count }}" >> $GITHUB_ENV
           echo "WIBU_DB_PUSH=${{ fromJson(inputs.data).options.dbPush }}" >> $GITHUB_ENV
           echo "WIBU_DB_SEED=${{ fromJson(inputs.data).options.dbSeed }}" >> $GITHUB_ENV
           echo "WIBU_BUILD=${{ fromJson(inputs.data).options.build }}" >> $GITHUB_ENV
-          echo "WIBU_SOURCE_DIR=${{ github.workspace }}/${{ env.WIBU_APP_VERSION }}" >> $GITHUB_ENV
+          echo "WIBU_SOURCE_DIR=${{ github.workspace }}/${APP_VERSION}" >> $GITHUB_ENV
           echo "WIBU_TARGET_PROJECT_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}" >> $GITHUB_ENV
           echo "WIBU_TARGET_RELEASES_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/releases" >> $GITHUB_ENV
           echo "WIBU_TARGET_CURRENT_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/current" >> $GITHUB_ENV

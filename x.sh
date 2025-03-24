@@ -19,4 +19,6 @@
 
 # echo $RESULT
 
-echo  "$APA" == "false" 
+APP_VERSION=$(date +%Y-%m-%d_%H-%M-%S)
+
+echo "WIBU=${APP_VERSION}"
