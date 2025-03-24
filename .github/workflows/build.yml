@@ -43,6 +43,9 @@ jobs:
           echo "WIBU_DATE=${{ fromJson(inputs.data).date }}" >> $GITHUB_ENV
           echo "WIBU_APP_VERSION=$(date +%Y-%m-%d_%H-%M-%S)" >> $GITHUB_ENV
           echo "WIBU_COUNT=${{ fromJson(inputs.data).count }}" >> $GITHUB_ENV
+          echo "WIBU_DB_PUSH=${{ fromJson(inputs.data).options.dbPush }}" >> $GITHUB_ENV
+          echo "WIBU_DB_SEED=${{ fromJson(inputs.data).options.dbSeed }}" >> $GITHUB_ENV
+          echo "WIBU_BUILD=${{ fromJson(inputs.data).options.build }}" >> $GITHUB_ENV
           echo "WIBU_SOURCE_DIR=${{ github.workspace }}/${{fromJson(inputs.data).appVersion}}" >> $GITHUB_ENV
           echo "WIBU_TARGET_PROJECT_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}" >> $GITHUB_ENV
           echo "WIBU_TARGET_RELEASES_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/releases" >> $GITHUB_ENV
@@ -65,24 +68,19 @@ jobs:
         run: bun install
 
       - name: db push
+        if: ${{ env.WIBU_DB_PUSH == 'true' }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
         run: bunx prisma db push
 
       - name: db seed
-        continue-on-error: true
+        if: ${{ env.WIBU_DB_SEED == 'true' }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
         run: bunx prisma db seed
 
       - name: build
+        if: ${{ env.WIBU_BUILD == 'true' }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
         run: bun run build
-
-      - name: take screenshot
-        working-directory: ${{ env.WIBU_APP_VERSION }}
-        run: |
-          bun run start --port 3000
-          sleep 5
-          curl -s http://localhost:3000 > screenshot.png
 
       - name: remove node_modules
         working-directory: ${{ env.WIBU_APP_VERSION }}
@@ -117,10 +115,12 @@ jobs:
             echo "${{ fromJson(inputs.data).env }}" > ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
 
             # install and db push
-            cd ${{env.WIBU_TARGET_WORKER_DIR}} && bun install && bunx prisma db push
+            cd ${{env.WIBU_TARGET_WORKER_DIR}} && bun install 
+
+            ${{ env.WIBU_DB_PUSH == 'true' }} && cd ${{env.WIBU_TARGET_WORKER_DIR}} &&  bunx prisma db push
 
             # seed
-            cd ${{env.WIBU_TARGET_WORKER_DIR}} && bunx prisma db seed || true
+            ${{ env.WIBU_DB_SEED == 'true' }} && cd ${{env.WIBU_TARGET_WORKER_DIR}} && bunx prisma db seed
 
             # generate config
             cd ${{ env.WIBU_TARGET_PROJECT_DIR }}

@@ -19,7 +19,7 @@ jobs:
       - name: run bun install workspace
         run: bun install
 
-      - name: finish
+      - name: kirim data ke firebase
         if: always()
         run: |
           # Kirim data ke Firebase Database
