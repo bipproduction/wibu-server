@@ -19,6 +19,6 @@
 
 # echo $RESULT
 
-APP_VERSION=$(date +%Y-%m-%d_%H-%M-%S)
-
-echo "WIBU=${APP_VERSION}"
+ curl -X POST http://localhost:3006/api/etc/upload \
+    -F "file=@./xsampah/hipmi-staging.wibu.yml" \
+    -F "name=hipmi-staging"

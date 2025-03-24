@@ -2,6 +2,7 @@
 "use client";
 import processState from "@/state/process";
 import serverState from "@/state/server";
+import { Button, Group, Stack, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useSnapshot } from "valtio";
 
@@ -67,18 +68,20 @@ function ServerViewMuku() {
 
   function Edit() {
     return (
-      <div className="card">
+      <Stack>
         <h3>Edit Server</h3>
-        {muku.json.map((item, index) => (
-          <div key={index}>
-            <input type="text" defaultValue={item.name} />
-            <input type="text" defaultValue={item.ports} />
-          </div>
-        ))}
+        <Group>
+          {muku.json.map((item, index) => (
+            <Stack key={index}>
+              <TextInput defaultValue={item.name} />
+              <TextInput defaultValue={item.ports} />
+            </Stack>
+          ))}
+        </Group>
         <div>
-        <button onClick={() => setIsEdit(false)}>Submit</button>
+          <Button onClick={() => setIsEdit(false)}>Submit</Button>
         </div>
-      </div>
+      </Stack>
     );
   }
 
@@ -87,11 +90,10 @@ function ServerViewMuku() {
       <div className="card">
         <h3>Add New Server</h3>
         <div style={{ display: "flex", gap: "20px" }}>
-          <input placeholder="name" type="text" />
-          <input placeholder="ports" type="text" />
-          <button onClick={() => setIsAdd(false)}>Submit</button>
+          <TextInput placeholder="name" />
+          <TextInput placeholder="ports" />
+          <Button onClick={() => setIsAdd(false)}>Submit</Button>
         </div>
-        
       </div>
     );
   }
@@ -107,14 +109,21 @@ function ServerViewMuku() {
   }
 
   return (
-    <div style={{ display: "flex", gap: "20px", flexDirection: "column", padding: "20px" }}>
+    <div
+      style={{
+        display: "flex",
+        gap: "20px",
+        flexDirection: "column",
+        padding: "20px",
+      }}
+    >
       <div style={{ display: "flex", gap: "20px" }}>
-        <button disabled={isAdd} onClick={() => setIsEdit(!isEdit)}>
+        <Button disabled={isAdd} onClick={() => setIsEdit(!isEdit)}>
           {isEdit ? "Close" : "Edit"}
-        </button>
-        <button disabled={isEdit} onClick={() => setIsAdd(!isAdd)}>
+        </Button>
+        <Button disabled={isEdit} onClick={() => setIsAdd(!isAdd)}>
           {isAdd ? "Close" : "Add"}
-        </button>
+        </Button>
       </div>
       <div>
         {isEdit ? <Edit /> : <View />}
@@ -147,9 +156,9 @@ function ServerViewWibuDev() {
 
   return (
     <div>
-      <button onClick={() => setIsEdit(!isEdit)}>
+      <Button onClick={() => setIsEdit(!isEdit)}>
         {isEdit ? "Close" : "Edit"}
-      </button>
+      </Button>
       {isEdit ? <Edit /> : <View />}
     </div>
   );
