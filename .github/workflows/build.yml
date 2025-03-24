@@ -7,7 +7,6 @@ on:
         description: "data"
         required: true
         default: "null"
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,7 +24,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -33,7 +31,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
-      - name: Run bun install workspace
+      - name: run bun install workspace
         run: bun install
 
       - name: Handle env
@@ -53,49 +51,50 @@ jobs:
           echo "WIBU_TARGET_PROJECT_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}" >> $GITHUB_ENV
           echo "WIBU_TARGET_RELEASES_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/releases" >> $GITHUB_ENV
           echo "WIBU_TARGET_CURRENT_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/current" >> $GITHUB_ENV
-          echo "WIBU_TARGET_WORKER_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/releases/${{ env.WIBU_APP_VERSION }}" >> $GITHUB_ENV
+          echo "WIBU_TARGET_WORKER_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/releases/${APP_VERSION}" >> $GITHUB_ENV
 
-      - name: Clone project
-        run: |
-          git clone --branch ${{ env.WIBU_BRANCH }} https://x-access-token:${{ secrets.WIBU_GIT_TOKEN }}@github.com/bipproduction/${{ env.WIBU_REPO }}.git ${{ env.WIBU_SOURCE_DIR }}
+      - name: clone project
+        run: git clone --branch ${{ env.WIBU_BRANCH }} https://x-access-token:${{ secrets.WIBU_GIT_TOKEN }}@github.com/bipproduction/${{ env.WIBU_REPO }}.git ${{ env.WIBU_APP_VERSION }}
 
-      - name: Handle .env
-        working-directory: ${{ env.WIBU_SOURCE_DIR }}
-        run: |
-          echo '${{ fromJson(inputs.data).env }}' > .env
-          cat .env # Debugging: Tampilkan isi .env
+      - name: handle .env
+        working-directory: ${{ env.WIBU_APP_VERSION }}
+        run: cat package.json
 
-      - name: Bun install on source
-        working-directory: ${{ env.WIBU_SOURCE_DIR }}
+      - name: handle .env
+        working-directory: ${{ env.WIBU_APP_VERSION }}
+        run: echo '${{ fromJson(inputs.data).env }}' > .env
+
+      - name: bun install on source
+        working-directory: ${{ env.WIBU_APP_VERSION }}
         run: bun install
 
-      - name: DB push
+      - name: db push
         if: ${{ env.WIBU_DB_PUSH == 'true' }}
-        working-directory: ${{ env.WIBU_SOURCE_DIR }}
+        working-directory: ${{ env.WIBU_APP_VERSION }}
         run: bunx prisma db push
 
-      - name: DB seed
+      - name: db seed
         if: ${{ env.WIBU_DB_SEED == 'true' }}
-        working-directory: ${{ env.WIBU_SOURCE_DIR }}
+        working-directory: ${{ env.WIBU_APP_VERSION }}
         run: bunx prisma db seed
 
-      - name: Build
+      - name: build
         if: ${{ env.WIBU_BUILD == 'true' }}
-        working-directory: ${{ env.WIBU_SOURCE_DIR }}
+        working-directory: ${{ env.WIBU_APP_VERSION }}
         run: bun run build
 
-      - name: Remove node_modules
-        working-directory: ${{ env.WIBU_SOURCE_DIR }}
-        run: rm -rf node_modules
+      - name: remove node_modules
+        working-directory: ${{ env.WIBU_APP_VERSION }}
+        run: rm -r node_modules
 
-      - name: Create releases directory on VPS
+      - name: handle create dir releases
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
-            mkdir -p ${{ env.WIBU_TARGET_RELEASES_DIR }}
+            mkdir -p ${{env.WIBU_TARGET_RELEASES_DIR}}
 
       - name: Deploy to VPS (New Version)
         uses: appleboy/scp-action@master
@@ -103,98 +102,77 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
-          source: "${{ env.WIBU_SOURCE_DIR }}/*"
-          target: "${{ env.WIBU_TARGET_WORKER_DIR }}"
-          strip_components: 1 # Hanya ambil isi folder
+          source: "${{ env.WIBU_APP_VERSION}}"
+          target: "${{ env.WIBU_TARGET_RELEASES_DIR }}"
 
-      - name: Configure on server
+      - name: handle config on server
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
-            # Deploy .env
+            # deploy env
             echo "${{ fromJson(inputs.data).env }}" > ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
 
-            # Install dependencies
-            cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bun install
+            # install and db push
+            cd ${{env.WIBU_TARGET_WORKER_DIR}} && bun install 
 
-            # DB push if enabled
-            if [ "${{ env.WIBU_DB_PUSH }}" = "true" ]; then
-              cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bunx prisma db push
-            fi
+            ${{ env.WIBU_DB_PUSH == 'true' }} && cd ${{env.WIBU_TARGET_WORKER_DIR}} &&  bunx prisma db push
 
-            # DB seed if enabled
-            if [ "${{ env.WIBU_DB_SEED }}" = "true" ]; then
-              cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bunx prisma db seed
-            fi
+            # seed
+            ${{ env.WIBU_DB_SEED == 'true' }} && cd ${{env.WIBU_TARGET_WORKER_DIR}} && bunx prisma db seed
 
-            # Generate ecosystem config if not exists
+            # generate config
             cd ${{ env.WIBU_TARGET_PROJECT_DIR }}
             ECOSYSTEM_FILE="ecosystem.config.json"
-            if [ ! -f "$ECOSYSTEM_FILE" ]; then
-              CONFIG=$(bun /var/www/lib/generate-config.ts \
+            if [[ ! -f "$ECOSYSTEM_FILE" ]]; then
+              CONFIF=$(bun /var/www/lib/generate-config.ts \
                 --name "${{ env.WIBU_NAME }}" \
                 --namespace "${{ env.WIBU_NAMESPACE }}" \
                 --count "${{ env.WIBU_COUNT }}")
-              if [ -z "$CONFIG" ]; then
-                echo "Error: Failed to generate config"
-                exit 1
-              fi
-              echo "$CONFIG" > "$ECOSYSTEM_FILE"
+            if [[ -z "$CONFIF" ]]; then
+              echo "Error: Failed to generate config"
+              exit 1
+            fi
+            echo "$CONFIF" > "$ECOSYSTEM_FILE"
             fi
 
       - name: Clean current directory
         uses: appleboy/ssh-action@v1
+        continue-on-error: true
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
-            rm -rf ${{ env.WIBU_TARGET_CURRENT_DIR }}
+            # Hapus direktori current jika ada
+            if [ -d "${{ env.WIBU_TARGET_CURRENT_DIR }}" ]; then
+              rm -rf ${{ env.WIBU_TARGET_CURRENT_DIR }}
+              echo "Current directory cleaned up"
+            fi
 
-      - name: Handle current on server
+      - name: handle current on server
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
-            # Create symlink to latest release
+            # Buat symlink baru ke direktori worker terbaru
             ln -sf ${{ env.WIBU_TARGET_WORKER_DIR }} ${{ env.WIBU_TARGET_CURRENT_DIR }}
 
-            # Verify symlink
-            if [ ! -L ${{ env.WIBU_TARGET_CURRENT_DIR }} ]; then
-              echo "Error: Failed to create symlink for current"
-              exit 1
-            fi
-
-            # Reload or start PM2
+            # Reload PM2 jika sudah berjalan, atau mulai PM2 jika belum berjalan
             pm2 reload ${{ env.WIBU_TARGET_PROJECT_DIR }}/ecosystem.config.json || \
             pm2 start ${{ env.WIBU_TARGET_PROJECT_DIR }}/ecosystem.config.json
 
-            # Save PM2 configuration
+            # Simpan konfigurasi PM2 agar persisten setelah reboot
             pm2 save
 
             # Update history
             bun /var/www/lib/history.ts --name "${{ env.WIBU_NAME }}" --namespace "${{ env.WIBU_NAMESPACE }}"
 
-      - name: Debug directory structure
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_KEY }}
-          script: |
-            echo "Releases directory:"
-            ls -la ${{ env.WIBU_TARGET_RELEASES_DIR }}
-            echo "Current directory:"
-            ls -la ${{ env.WIBU_TARGET_CURRENT_DIR }}
-            echo "Symlink target:"
-            readlink ${{ env.WIBU_TARGET_CURRENT_DIR }}
-
-      - name: Finish
+      - name: finish
         if: always()
         run: |
           curl -X POST -H "Content-Type: application/json" \
