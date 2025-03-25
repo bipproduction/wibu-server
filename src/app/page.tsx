@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import ConfigView from "@/components/config/ConfigView";
 import ProcessView from "@/components/process/ProcessView";
@@ -12,11 +13,11 @@ export default function Home() {
   return (
     <Stack p={"md"}>
       <Title order={2}>API Server</Title>
-      <ServerView />
+      {/* <ServerView />
       <Divider />
       <ProcessView />
       <Divider />
-      <ConfigView />
+      <ConfigView /> */}
     </Stack>
   );
 }
