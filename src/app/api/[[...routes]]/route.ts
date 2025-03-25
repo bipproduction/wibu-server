@@ -11,6 +11,7 @@ import processList from "./_lib/process/process-list";
 import serverConfig from "./_lib/server/server-config";
 import editServer from "./_lib/server/server-edit";
 import configDelete from "./_lib/etc/config-delete";
+import getVersion from "./_lib/version";
 
 const corsConfig = {
   origin: "*",
@@ -166,7 +167,8 @@ const ApiServer = new Elysia({
         body: "Route not found :(",
       };
     }
-  });
+  })
+  .get("/version", getVersion, { tags: ["Server"] });
 
 export const GET = ApiServer.handle;
 export const POST = ApiServer.handle;
