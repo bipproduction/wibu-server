@@ -31,7 +31,13 @@
 # NAMESPACE="hipmi-staging"
 # bun -e "$CONFIG({name: /"$NAME/", namespace: /"$NAMESPACE/"})"
 
-CONFIG=$(cat lib/config-generator.txt)
-echo "$CONFIG" > /tmp/config-generator.ts
-bun /tmp/config-generator.ts --name "hipmi" --namespace "hipmi-staging"
+TEXT=$(cat lib/config-generator.txt)
+CONFIG=$(echo -n "$TEXT" | base64)
+
+echo "$CONFIG"
+
+DCONFIG=$(echo -n "$CONFIG" | base64 -d)
+
+echo "$DCONFIG"
+
 
