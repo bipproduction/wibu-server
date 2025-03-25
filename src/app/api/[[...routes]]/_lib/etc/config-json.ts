@@ -3,7 +3,8 @@ import yml from "yaml";
 const UPLOAD_DIR = process.env.WIBU_UPLOAD_DIR;
 
 async function configJson(params: { name: string }) {
-  const { name } = params;
+  try {
+    const { name } = params;
   if (!UPLOAD_DIR) {
     return {
       status: 500,
@@ -22,6 +23,10 @@ async function configJson(params: { name: string }) {
   }
   const config = await fs.readFile(`${UPLOAD_DIR}/config/${name}.yml`, "utf-8");
   return yml.parse(config);
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 }
 
 export default configJson;

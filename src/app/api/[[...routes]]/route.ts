@@ -11,6 +11,8 @@ import serverConfig from "./_lib/server/server-config";
 import editServer from "./_lib/server/server-edit";
 import configDelete from "./_lib/etc/config-delete";
 import getVersion from "./_lib/version";
+import { table } from "table";
+import _ from "lodash";
 
 const corsConfig = {
   origin: "*",
@@ -31,14 +33,20 @@ const Server = new Elysia({
   })
   .get("/table-wibudev", async () => {
     const config = await serverConfig();
-    const wibudev = Bun.inspect.table(config.data.wibuDev.subdomains);
+    const dataString = _.map(config.data.wibuDev.subdomains, (obj) =>
+      _.values(obj).map(String)
+    );
+    const wibudev = table(dataString);
     return {
       data: wibudev,
     };
   })
   .get("/table-muku", async () => {
     const config = await serverConfig();
-    const muku = Bun.inspect.table(config.data.muku.subdomains);
+    const dataString = _.map(config.data.muku.subdomains, (obj) =>
+      _.values(obj).map(String)
+    );
+    const muku = table(dataString);
     return {
       data: muku,
     };
@@ -68,11 +76,21 @@ const Process = new Elysia({
     };
   })
   .get("/table", async () => {
-    const process = await processList();
-    const table = Bun.inspect.table(process.data);
-    return {
-      data: table,
-    };
+    try {
+      const process = await processList();
+      const dataString = _.map(process.data, (obj) =>
+        _.values(obj).map(String)
+      );
+      const t = table(dataString);
+      return {
+        data: t,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        data: "",
+      };
+    }
   });
 
 const Etc = new Elysia({
@@ -110,9 +128,10 @@ const Etc = new Elysia({
   })
   .get("/config-table", async () => {
     const list = await configList();
-    const table = Bun.inspect.table(list);
+    const dataString = _.map(list, (obj) => _.values(obj).map(String));
+    const t = table(dataString);
     return {
-      data: table,
+      data: t,
     };
   })
   .get("/config-json/:name", async ({ params }) => {
