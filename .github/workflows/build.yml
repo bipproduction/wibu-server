@@ -115,10 +115,9 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
-          script_path: ${{ env.WIBU_TARGET_WORKER_DIR }}
           script: |
-            echo "${{ fromJson(inputs.data).env }}" > .env
-            cat .env
+            echo "${{ fromJson(inputs.data).env }}" > ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
+            cat ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
 
       - name: handle db push on vps
         if: ${{ env.WIBU_DB_PUSH == 'true' }}
