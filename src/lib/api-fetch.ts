@@ -1,4 +1,3 @@
-'use client'
 import { AppServer } from "@/app/api/[[...routes]]/route";
 import { treaty } from "@elysiajs/eden";
 
