@@ -118,7 +118,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
-            echo "${{ fromJson(inputs.data).env }}" > ${{ env.WIBU_TARGET_PROJECT_DIR }}/.env
+            echo "${{ fromJson(inputs.data).env }}" > ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
 
       - name: handle db push on vps
         if: ${{ env.WIBU_DB_PUSH == 'true' }}

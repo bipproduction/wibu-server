@@ -140,7 +140,7 @@ const config = port?.map((v) => ({
   name: name + "-" + v,
   namespace: namespace,
   script: "bun",
-  args: `--bun --env-file=/var/www/projects/${name}/${namespace}/.env run start`,
+  args: `--bun run start`,
   exec_mode: "fork",
   instances: 1,
   env: {
