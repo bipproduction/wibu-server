@@ -1,0 +1,211 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Elysia Documentation",
+    "description": "Development documentation",
+    "version": "0.0.0"
+  },
+  "paths": {
+    "/api/server/config": {
+      "get": {
+        "operationId": "getApiServerConfig",
+        "tags": ["Server"],
+        "responses": { "200": {} }
+      }
+    },
+    "/api/server/table-wibudev": {
+      "get": {
+        "operationId": "getApiServerTable-wibudev",
+        "tags": ["Server"],
+        "responses": { "200": {} }
+      }
+    },
+    "/api/server/table-muku": {
+      "get": {
+        "operationId": "getApiServerTable-muku",
+        "tags": ["Server"],
+        "responses": { "200": {} }
+      }
+    },
+    "/api/server/edit-config": {
+      "post": {
+        "parameters": [],
+        "operationId": "postApiServerEdit-config",
+        "tags": ["Server"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "data": {
+                    "type": "array",
+                    "items": { "type": "object", "properties": {} }
+                  }
+                },
+                "required": ["name", "data"]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "data": {
+                    "type": "array",
+                    "items": { "type": "object", "properties": {} }
+                  }
+                },
+                "required": ["name", "data"]
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "data": {
+                    "type": "array",
+                    "items": { "type": "object", "properties": {} }
+                  }
+                },
+                "required": ["name", "data"]
+              }
+            }
+          }
+        },
+        "responses": { "200": {} }
+      }
+    },
+    "/api/process/list": {
+      "get": {
+        "operationId": "getApiProcessList",
+        "tags": ["Process"],
+        "responses": { "200": {} }
+      }
+    },
+    "/api/process/table": {
+      "get": {
+        "operationId": "getApiProcessTable",
+        "tags": ["Process"],
+        "responses": { "200": {} }
+      }
+    },
+    "/api/etc/config-upload": {
+      "post": {
+        "parameters": [],
+        "operationId": "postApiEtcConfig-upload",
+        "tags": ["Etc"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "default": "File",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "name": { "type": "string" }
+                },
+                "required": ["file", "name"]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "default": "File",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "name": { "type": "string" }
+                },
+                "required": ["file", "name"]
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "default": "File",
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "name": { "type": "string" }
+                },
+                "required": ["file", "name"]
+              }
+            }
+          }
+        },
+        "responses": { "200": {} }
+      }
+    },
+    "/api/etc/config-list": {
+      "get": {
+        "operationId": "getApiEtcConfig-list",
+        "tags": ["Etc"],
+        "responses": { "200": {} }
+      }
+    },
+    "/api/etc/config-json/{name}": {
+      "get": {
+        "operationId": "getApiEtcConfig-jsonByName",
+        "tags": ["Etc"],
+        "parameters": [
+          {
+            "schema": { "type": "string" },
+            "in": "path",
+            "name": "name",
+            "required": true
+          }
+        ],
+        "responses": { "200": {} }
+      }
+    },
+    "/api/etc/config-text/{name}": {
+      "get": {
+        "operationId": "getApiEtcConfig-textByName",
+        "tags": ["Etc"],
+        "parameters": [
+          {
+            "schema": { "type": "string" },
+            "in": "path",
+            "name": "name",
+            "required": true
+          }
+        ],
+        "responses": { "200": {} }
+      }
+    },
+    "/api/etc/config-example": {
+      "get": {
+        "operationId": "getApiEtcConfig-example",
+        "tags": ["Etc"],
+        "responses": { "200": {} }
+      }
+    },
+    "/api/docs": {
+      "get": {
+        "operationId": "getApiDocs",
+        "tags": ["Server", "Process"],
+        "responses": { "200": {} }
+      }
+    },
+    "/api/docs/json": {
+      "get": {
+        "operationId": "getApiDocsJson",
+        "tags": ["Server", "Process"],
+        "responses": { "200": {} }
+      }
+    }
+  },
+  "components": { "schemas": {} }
+}

@@ -19,6 +19,8 @@
 
 # echo $RESULT
 
- curl -X POST http://localhost:3006/api/etc/upload \
-    -F "file=@./xsampah/hipmi-staging.wibu.yml" \
-    -F "name=hipmi-staging"
+#  curl -X POST http://localhost:3006/api/etc/upload \
+#     -F "file=@./xsampah/hipmi-staging.wibu.yml" \
+#     -F "name=hipmi-staging"
+
+bunx openapi-typescript http://localhost:3006/api/docs/json -o ApiSchema.d.ts --make-paths-enum
