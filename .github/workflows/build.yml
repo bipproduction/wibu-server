@@ -55,10 +55,6 @@ jobs:
           echo "WIBU_TARGET_CURRENT_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/current" >> $GITHUB_ENV
           echo "WIBU_TARGET_WORKER_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/releases/${APP_VERSION}" >> $GITHUB_ENV
 
-          # Handle config generator 
-          CONFIG_TEXT=$(cat bin/config-generator.txt)
-          echo "CONFIG_TEXT=${CONFIG_TEXT}" >> $GITHUB_ENV
-
       - name: clone project
         run: git clone --branch ${{ env.WIBU_BRANCH }} https://x-access-token:${{ secrets.WIBU_GIT_TOKEN }}@github.com/bipproduction/${{ env.WIBU_REPO }}.git ${{ env.WIBU_APP_VERSION }}
 
