@@ -34,13 +34,6 @@ jobs:
       - name: run bun install workspace
         run: bun install
 
-      - name: handle config
-        run: |
-          # Handle config
-          TEXT=$(cat ${{ github.workspace }}/lib/config-generator.txt)
-          CONFIG=$(echo -n "$TEXT" | base64)
-          echo "WIBU_CONFIG=\"${CONFIG}\"" >> $GITHUB_ENV
-
       - name: Handle env
         run: |
           # Handle ENV
@@ -146,6 +139,15 @@ jobs:
           script: |
             cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bunx prisma db seed
 
+      - name: Deploy to VPS (New Version)
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          source: "${{ github.workspace }}/lib/config-generator.ts"
+          target: "/var/www/lib/config-generator.ts"
+
       - name: handle generate config
         if: ${{ env.WIBU_NEW_CONFIG == 'true' }}
         uses: appleboy/ssh-action@v1
@@ -155,8 +157,6 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           script: |
             cd ${{ env.WIBU_TARGET_PROJECT_DIR }}
-            TEXT=$(echo -n "${{ env.WIBU_CONFIG }}" | base64 -d)
-            echo "$TEXT" > /var/www/lib/generate-config.ts
             CONFIG=$(bun /var/www/lib/generate-config.ts \
                 --name "${{ env.WIBU_NAME }}" \
                 --namespace "${{ env.WIBU_NAMESPACE }}" \
