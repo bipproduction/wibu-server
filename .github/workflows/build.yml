@@ -64,7 +64,9 @@ jobs:
 
       - name: handle .env
         working-directory: ${{ env.WIBU_APP_VERSION }}
-        run: echo '${{ fromJson(inputs.data).env }}' > .env
+        run: |
+          echo '${{ fromJson(inputs.data).env }}' > .env
+          cat .env
 
       - name: bun install on source
         working-directory: ${{ env.WIBU_APP_VERSION }}
@@ -113,8 +115,10 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
+          script_path: ${{ env.WIBU_TARGET_WORKER_DIR }}
           script: |
-            echo "${{ fromJson(inputs.data).env }}" > ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
+            echo "${{ fromJson(inputs.data).env }}" > .env
+            cat .env
 
       - name: handle db push on vps
         if: ${{ env.WIBU_DB_PUSH == 'true' }}
