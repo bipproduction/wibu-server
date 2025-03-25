@@ -154,11 +154,11 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           script: |
             cd ${{ env.WIBU_TARGET_PROJECT_DIR }}
-            echo "${{ env.WIBU_CONFIG }}" > /var/www/lib/generate-config.ts
             CONFIG=$(bun /var/www/lib/generate-config.ts \
                 --name "${{ env.WIBU_NAME }}" \
                 --namespace "${{ env.WIBU_NAMESPACE }}" \
                 --count "${{ env.WIBU_COUNT }}")
+
             echo "$CONFIG" > ecosystem.config.json
 
       - name: Clean current directory

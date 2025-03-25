@@ -1,3 +1,4 @@
+#!/bin/bash
 # source .env
 # # Encode gambar ke base64
 # BASE64_CONTENT=$(base64 red.jpg | tr -d '\n')
@@ -23,4 +24,14 @@
 #     -F "file=@./xsampah/hipmi-staging.wibu.yml" \
 #     -F "name=hipmi-staging"
 
-bunx openapi-typescript http://localhost:3006/api/docs/json -o ApiSchema.d.ts --make-paths-enum
+# bunx openapi-typescript http://localhost:3006/api/docs/json -o ApiSchema.d.ts --make-paths-enum
+
+# CONFIG=$(cat lib/config.txt)
+# NAME="hipmi"
+# NAMESPACE="hipmi-staging"
+# bun -e "$CONFIG({name: /"$NAME/", namespace: /"$NAMESPACE/"})"
+
+CONFIG=$(cat lib/config-generator.txt)
+echo "$CONFIG" > /tmp/config-generator.ts
+bun /tmp/config-generator.ts --name "hipmi" --namespace "hipmi-staging"
+
