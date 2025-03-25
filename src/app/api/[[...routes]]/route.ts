@@ -26,33 +26,18 @@ const Server = new Elysia({
   tags: ["Server"],
 })
   .get("/config", async () => {
-    const config = await serverConfig().catch(() => ({
-      data: {
-        wibuDev: [],
-        muku: [],
-      },
-    }));
+    const config = await serverConfig();
     return config;
   })
   .get("/table-wibudev", async () => {
-    const config = await serverConfig().catch(() => ({
-      data: {
-        wibuDev: {subdomains: []},
-        muku: {subdomains: []},
-      },
-    }));
+    const config = await serverConfig();
     const wibudev = Bun.inspect.table(config.data.wibuDev.subdomains);
     return {
       data: wibudev,
     };
   })
   .get("/table-muku", async () => {
-    const config = await serverConfig().catch(() => ({
-      data: {
-        wibuDev: {subdomains: []},
-        muku: {subdomains: []},
-      },
-    }));
+    const config = await serverConfig();
     const muku = Bun.inspect.table(config.data.muku.subdomains);
     return {
       data: muku,
@@ -77,17 +62,13 @@ const Process = new Elysia({
   tags: ["Process"],
 })
   .get("/list", async () => {
-    const process = await processList().catch(() => ({
-      data: [],
-    }));
+    const process = await processList();
     return {
       data: process.data,
     };
   })
   .get("/table", async () => {
-    const process = await processList().catch(() => ({
-      data: [],
-    }));
+    const process = await processList();
     const table = Bun.inspect.table(process.data);
     return {
       data: table,
