@@ -109,6 +109,15 @@ jobs:
           source: "${{ env.WIBU_APP_VERSION}}"
           target: "${{ env.WIBU_TARGET_RELEASES_DIR }}"
 
+      - name: handle install on vps
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          script: |
+            cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bun install
+
       - name: handle env on vps
         uses: appleboy/ssh-action@v1
         with:
@@ -139,7 +148,7 @@ jobs:
           script: |
             cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bunx prisma db seed
 
-      - name: Deploy to VPS (New Version)
+      - name: deploy config generator
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
