@@ -39,7 +39,7 @@ jobs:
           # Handle config
           TEXT=$(cat ${{ github.workspace }}/lib/config-generator.txt)
           CONFIG=$(echo -n "$TEXT" | base64)
-          echo "WIBU_CONFIG=${CONFIG}" >> $GITHUB_ENV
+          echo "WIBU_CONFIG=\"${CONFIG}\"" >> $GITHUB_ENV
 
       - name: Handle env
         run: |

@@ -34,7 +34,7 @@
 TEXT=$(cat lib/config-generator.txt)
 CONFIG=$(echo -n "$TEXT" | base64)
 
-echo "$CONFIG"
+# echo "\"$CONFIG\""
 
 DCONFIG=$(echo -n "$CONFIG" | base64 -d)
 
