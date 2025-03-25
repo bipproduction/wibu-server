@@ -10,6 +10,7 @@ import configUpload from "./_lib/etc/config-upload";
 import processList from "./_lib/process/process-list";
 import serverConfig from "./_lib/server/server-config";
 import editServer from "./_lib/server/server-edit";
+import configDelete from "./_lib/etc/config-delete";
 
 const corsConfig = {
   origin: "*",
@@ -78,6 +79,17 @@ const Etc = new Elysia({
   prefix: "/etc",
   tags: ["Etc"],
 })
+  .delete(
+    "/config-delete/:name",
+    async ({ params }) => {
+      return await configDelete(params);
+    },
+    {
+      params: t.Object({
+        name: t.String(),
+      }),
+    }
+  )
   .post(
     "/config-upload",
     async ({ body }) => {
@@ -94,6 +106,13 @@ const Etc = new Elysia({
     const list = await configList();
     return {
       data: list,
+    };
+  })
+  .get("/config-table", async () => {
+    const list = await configList();
+    const table = Bun.inspect.table(list);
+    return {
+      data: table,
     };
   })
   .get("/config-json/:name", async ({ params }) => {

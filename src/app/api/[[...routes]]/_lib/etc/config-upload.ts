@@ -18,7 +18,7 @@ async function configUpload({ body }: { body: { file: File, name: string } }) {
   await fs.mkdir(`${UPLOAD_DIR}/config`, { recursive: true });
 
   const fileBuffer = Buffer.from(await body.file.arrayBuffer());
-  await fs.writeFile(`${UPLOAD_DIR}/config/${body.name}.yml`, fileBuffer);
+  await fs.writeFile(`${UPLOAD_DIR}/config/${body.name}`, fileBuffer);
   return {
     status: 200,
     body: {

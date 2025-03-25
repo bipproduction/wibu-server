@@ -1,0 +1,19 @@
+name: "tele-server"
+namespace: "tele-server-production"
+# untuk production pilih main
+branch: "main"
+# repo github bagian belakannya aja karena hanya untuk project bip
+repo: "tele-server"
+# tambahkan env yang dibutuhkan
+env: |
+  TELE_SESSION_TEXT="1BQANOTEuMTA4LjU2LjIwMAG7UYnkeVRnmhqto7SYJ+lLlhvXtWpIb02WkGgX9TO9P2Vnu4HCxUoWYg1bBVIoPnFOVZ6nMXGhl5bboJBmt3BNUv2dn0Xt1o8Ri6Lex5nPsPot+EwaWizxYxL+ZkgrbFw77/m2VyxYQHmyREOHFNRo7PJ1ZmXS/fCYjD1XZzn2sC9R4VIkm4abFQEGOjsWTFXK0oXtV9D+i+yPisBArMJ/NsSW79BJxxL7Epg+emMRh5ERKjmg0VOJCTW33iaJtOlBJCq4eApHwPo/EZpWgYbdXe0AaaKMHg/P/5BuY4i+iHf6WcKbDD9Qkox7I20d+GBQvVrjw2lQ8tAbTJ/yTXmlPA=="
+  TELE_APP_ID="29857494"
+  TELE_APP_HASH="1a17e1ef6d9b6106e8d43692b0b87fe8"
+  TELE_WIBUDEV_ID="-1002622442948"
+  TELE_API_KEY="makuro"
+  PORT="3000"
+options:
+  - dbPush: false
+  - dbSeed: false
+  - build: false
+  - newConfig: true

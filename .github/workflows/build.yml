@@ -36,6 +36,7 @@ jobs:
 
       - name: Handle env
         run: |
+          # Handle ENV
           APP_VERSION=$(date +%Y-%m-%d_%H-%M-%S)
           echo "WIBU_NAME=${{ fromJson(inputs.data).name }}" >> $GITHUB_ENV
           echo "WIBU_NAMESPACE=${{ fromJson(inputs.data).namespace }}" >> $GITHUB_ENV
@@ -47,11 +48,16 @@ jobs:
           echo "WIBU_DB_PUSH=${{ fromJson(inputs.data).options.dbPush }}" >> $GITHUB_ENV
           echo "WIBU_DB_SEED=${{ fromJson(inputs.data).options.dbSeed }}" >> $GITHUB_ENV
           echo "WIBU_BUILD=${{ fromJson(inputs.data).options.build }}" >> $GITHUB_ENV
+          echo "WIBU_NEW_CONFIG=${{ fromJson(inputs.data).options.newConfig }}" >> $GITHUB_ENV
           echo "WIBU_SOURCE_DIR=${{ github.workspace }}/${APP_VERSION}" >> $GITHUB_ENV
           echo "WIBU_TARGET_PROJECT_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}" >> $GITHUB_ENV
           echo "WIBU_TARGET_RELEASES_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/releases" >> $GITHUB_ENV
           echo "WIBU_TARGET_CURRENT_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/current" >> $GITHUB_ENV
           echo "WIBU_TARGET_WORKER_DIR=/var/www/projects/${{ fromJson(inputs.data).name }}/${{ fromJson(inputs.data).namespace }}/releases/${APP_VERSION}" >> $GITHUB_ENV
+
+          # Handle config generator 
+          CONFIG_TEXT=$(cat bin/config-generator.txt)
+          echo "CONFIG_TEXT=${CONFIG_TEXT}" >> $GITHUB_ENV
 
       - name: clone project
         run: git clone --branch ${{ env.WIBU_BRANCH }} https://x-access-token:${{ secrets.WIBU_GIT_TOKEN }}@github.com/bipproduction/${{ env.WIBU_REPO }}.git ${{ env.WIBU_APP_VERSION }}
@@ -105,38 +111,55 @@ jobs:
           source: "${{ env.WIBU_APP_VERSION}}"
           target: "${{ env.WIBU_TARGET_RELEASES_DIR }}"
 
-      - name: handle config on server
+      - name: handle env on vps
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
-            # deploy env
-            echo "${{ fromJson(inputs.data).env }}" > ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
+            echo "${{ fromJson(inputs.data).env }}" > ${{ env.WIBU_TARGET_PROJECT_DIR }}/.env
 
-            # install and db push
-            cd ${{env.WIBU_TARGET_WORKER_DIR}} && bun install 
+      - name: handle db push on vps
+        if: ${{ env.WIBU_DB_PUSH == 'true' }}
+        uses: appleboy/ssh-action@v1
+        continue-on-error: true
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          script_path: ${{ env.WIBU_TARGET_WORKER_DIR }}
+          script: |
+            bunx prisma db push
 
-            ${{ env.WIBU_DB_PUSH == 'true' }} && cd ${{env.WIBU_TARGET_WORKER_DIR}} &&  bunx prisma db push
+      - name: handle db seed on vps
+        if: ${{ env.WIBU_DB_SEED == 'true' }}
+        uses: appleboy/ssh-action@v1
+        continue-on-error: true
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          script_path: ${{ env.WIBU_TARGET_WORKER_DIR }}
+          script: |
+            bunx prisma db seed
 
-            # seed
-            ${{ env.WIBU_DB_SEED == 'true' }} && cd ${{env.WIBU_TARGET_WORKER_DIR}} && bunx prisma db seed
-
-            # generate config
-            cd ${{ env.WIBU_TARGET_PROJECT_DIR }}
-            ECOSYSTEM_FILE="ecosystem.config.json"
-            if [[ ! -f "$ECOSYSTEM_FILE" ]]; then
-              CONFIF=$(bun /var/www/lib/generate-config.ts \
+      - name: handle generate config
+        if: ${{ env.WIBU_NEW_CONFIG == 'true' }}
+        uses: appleboy/ssh-action@v1
+        continue-on-error: true
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          script_path: ${{ env.WIBU_TARGET_PROJECT_DIR }}
+          script: |
+            CONFIG=$(bun /var/www/lib/generate-config.ts \
                 --name "${{ env.WIBU_NAME }}" \
                 --namespace "${{ env.WIBU_NAMESPACE }}" \
                 --count "${{ env.WIBU_COUNT }}")
-            if [[ -z "$CONFIF" ]]; then
-              echo "Error: Failed to generate config"
-              exit 1
-            fi
-            echo "$CONFIF" > "$ECOSYSTEM_FILE"
-            fi
+
+            echo "$CONFIG" > ecosystem.config.json
 
       - name: Clean current directory
         uses: appleboy/ssh-action@v1
