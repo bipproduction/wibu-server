@@ -20,7 +20,7 @@ async function processList() {
         branch: d.pm2_env?.versioning?.branch || "null",
         cwd: d.pm2_env.cwd || "null",
         memory: d.monit.memory || "null",
-        url: d.pm2_env?.versioning?.url || "null",
+        // url: d.pm2_env?.versioning?.url || "null",
         repo_path: d.pm2_env?.versioning?.repo_path || "null",
         cpu: d.monit.cpu || "null",
         kill_retry_time: d.pm2_env.kill_retry_time || "null",

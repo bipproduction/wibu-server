@@ -34,6 +34,7 @@ function ProcessList() {
                   {_.keys(item).map((key) => (
                     <Table.Td key={key}>
                       <Text
+                        miw={key === "name" ? 200 : 100}
                         c={
                           key === "status" && item[key] === "online"
                             ? "green"

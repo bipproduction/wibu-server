@@ -193,6 +193,8 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
+            git config --global --add safe.directory ${{ env.WIBU_TARGET_WORKER_DIR }}
+
             # Buat symlink baru ke direktori worker terbaru
             ln -sf ${{ env.WIBU_TARGET_WORKER_DIR }} ${{ env.WIBU_TARGET_CURRENT_DIR }}
 
