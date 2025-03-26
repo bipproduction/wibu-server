@@ -126,15 +126,16 @@ async function findPort() {
   return result;
 }
 
-const port = await findPort();
-
 const name = argv.name;
 const namespace = argv.namespace;
+const defaultPort = argv.port;
 
 if (!name || !namespace) {
   console.error("Missing name or namespace");
   process.exit(1);
 }
+
+const port = defaultPort ? [defaultPort] : await findPort();
 
 const config = port?.map((v) => ({
   name: name + "-" + v,

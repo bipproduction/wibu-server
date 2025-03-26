@@ -44,7 +44,8 @@ jobs:
           echo "WIBU_BRANCH=${{ fromJson(inputs.data).branch }}" >> $GITHUB_ENV
           echo "WIBU_DATE=${{ fromJson(inputs.data).date }}" >> $GITHUB_ENV
           echo "WIBU_APP_VERSION=${APP_VERSION}" >> $GITHUB_ENV
-          echo "WIBU_COUNT=${{ fromJson(inputs.data).count }}" >> $GITHUB_ENV
+          echo "WIBU_COUNT=${{ fromJson(inputs.data).options.count }}" >> $GITHUB_ENV
+          echo "WIBU_PORT=${{ fromJson(inputs.data).options.port }}" >> $GITHUB_ENV
           echo "WIBU_DB_PUSH=${{ fromJson(inputs.data).options.dbPush }}" >> $GITHUB_ENV
           echo "WIBU_DB_SEED=${{ fromJson(inputs.data).options.dbSeed }}" >> $GITHUB_ENV
           echo "WIBU_BUILD=${{ fromJson(inputs.data).options.build }}" >> $GITHUB_ENV
@@ -180,7 +181,8 @@ jobs:
             CONFIG=$(bun /var/www/lib/generate-config.ts \
                 --name "${{ env.WIBU_NAME }}" \
                 --namespace "${{ env.WIBU_NAMESPACE }}" \
-                --count "${{ env.WIBU_COUNT }}")
+                --count "${{ env.WIBU_COUNT }}" \
+                --port "${{ env.WIBU_PORT }}")
             echo "$CONFIG" > ecosystem.config.json
 
       - name: Clean current directory
