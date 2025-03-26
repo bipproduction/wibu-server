@@ -15,6 +15,7 @@
     "@elysiajs/swagger": "^1.2.0",
     "@mantine/core": "^7.17.2",
     "@mantine/hooks": "^7.17.2",
+    "@monaco-editor/react": "^4.7.0",
     "@prisma/client": "^6.3.1",
     "@types/bun": "^1.2.5",
     "@types/lodash": "^4.17.16",

@@ -74,7 +74,6 @@ async function run(config: Config) {
       }),
     }
   );
-
   return res;
 }
 

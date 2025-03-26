@@ -42,6 +42,42 @@ const configState = proxy({
       return data;
     },
   },
+  run: {
+    name: null as string | null,
+    message: null as string | null,
+    async now() {
+      if (!this.name) {
+        return {
+          status: 400,
+          body: {
+            message: "Name is required",
+          },
+        };
+      }
+      const { data } = await ApiFetch.api.etc["config-run"]({
+        name: this.name,
+      }).post();
+      return data;
+    },
+  },
+  detail: {
+    name: null as string | null,
+    text: null as string | null,
+    async load() {
+      if (!this.name) {
+        return {
+          status: 400,
+          body: {
+            message: "Name is required",
+          },
+        };
+      }
+      const { data } = await ApiFetch.api.etc["config-text"]({
+        name: this.name,
+      }).get();
+      this.text = data?.data as string;
+    },
+  },
 });
 
 export default configState;

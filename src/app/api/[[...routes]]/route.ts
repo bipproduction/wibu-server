@@ -13,6 +13,7 @@ import configDelete from "./_lib/etc/config-delete";
 import getVersion from "./_lib/version";
 import { table } from "table";
 import _ from "lodash";
+import configRun from "./_lib/etc/config-run";
 
 const corsConfig = {
   origin: "*",
@@ -149,25 +150,16 @@ const Etc = new Elysia({
     }
   })
   .get("/config-text/:name", async ({ params, set }) => {
-    try {
-      const config = await configText(params);
-      set.headers["Content-Type"] = "text/plain";
-      return config.toString();
-    } catch (error) {
-      console.error(error);
-      return {
-        status: 500,
-        body: {
-          message: "Internal Server Error",
-        },
-      };
-    }
+    const config = await configText(params);
+    set.headers["Content-Type"] = "text/plain";
+    return config;
   })
   .get("/config-example", async ({ set }) => {
     const config = await configExample();
     set.headers["Content-Type"] = "text/plain";
     return config.toString();
-  });
+  })
+  .post("/config-run/:name", configRun);
 
 const ApiServer = new Elysia({
   prefix: "/api",
