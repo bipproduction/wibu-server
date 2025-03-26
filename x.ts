@@ -1,96 +1,53 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import * as fs from 'fs';
+#!/usr/bin/env bun
 
-// Fungsi untuk mengonversi tipe Swagger ke tipe TypeScript
-function swaggerTypeToTsType(swaggerType: string, format?: string): string {
-  if (swaggerType === 'string' && format === 'binary') return 'File'; // Untuk file binary
-  switch (swaggerType) {
-    case 'string':
-      return 'string';
-    case 'integer':
-    case 'number':
-      return 'number';
-    case 'boolean':
-      return 'boolean';
-    case 'array':
-      return 'any[]'; // Default, akan disesuaikan jika ada items
-    case 'object':
-      return 'object';
-    default:
-      return 'any';
-  }
+// Tipe untuk hasil parsing
+interface ParsedArgs {
+  _: string[]; // Argumen non-opsi
+  [key: string]: string | boolean | string[]; // Opsi lainnya bisa string, boolean, atau array untuk _
 }
 
-// Fungsi untuk mengonversi schema object ke interface TypeScript
-function schemaToTsInterface(name: string, schema: any): string {
-  let tsOutput = `interface ${name} {\n`;
-  const properties = schema.properties || {};
-  const required = schema.required || [];
+// Tipe untuk aliases
+type Aliases = Record<string, string>;
 
-  for (const [propName, propDetails] of Object.entries(properties)) {
-    const propType = (propDetails as any).type;
-    const propFormat = (propDetails as any).format;
-    let tsType = swaggerTypeToTsType(propType, propFormat);
+function parseArgs(args: string[], aliases: Aliases = {}): ParsedArgs {
+  const result: ParsedArgs = {
+    _: [],
+  };
 
-    // Jika tipe adalah array dan ada items
-    if (propType === 'array' && (propDetails as any).items) {
-      const itemType = swaggerTypeToTsType((propDetails as any).items.type);
-      tsType = `${itemType}[]`;
-    }
+  const argList: string[] = Array.isArray(args) ? args.slice(2) : [];
 
-    const isRequired = required.includes(propName) ? '' : '?';
-    tsOutput += `  ${propName}${isRequired}: ${tsType};\n`;
-  }
+  for (let i = 0; i < argList.length; i++) {
+    const arg: string = argList[i];
 
-  tsOutput += '}\n\n';
-  return tsOutput;
-}
+    if (arg.startsWith("-")) {
+      const cleanArg: string = arg.replace(/^-+/, "");
+      let key: string = cleanArg;
 
-// Fungsi utama untuk mengonversi Swagger JSON ke TypeScript
-function convertSwaggerToTs(swaggerJsonPath: string, outputPath: string) {
-  try {
-    // Baca file Swagger JSON
-    const swaggerData = JSON.parse(fs.readFileSync(swaggerJsonPath, 'utf8'));
-    const paths = swaggerData.paths || {};
-
-    let tsOutput = '// Generated TypeScript types from Swagger JSON\n\n';
-
-    // Iterasi setiap path dan method
-    for (const [path, methods] of Object.entries(paths)) {
-      for (const [method, details] of Object.entries(methods as any)) {
-        const operationId = (details as any).operationId || `${method}${path.replace(/\//g, '_')}`;
-
-        // Proses parameters (jika ada)
-        if ((details as any).parameters?.length > 0) {
-          const paramName = `${operationId}Params`;
-          tsOutput += `interface ${paramName} {\n`;
-          (details as any).parameters.forEach((param: any) => {
-            const paramType = swaggerTypeToTsType(param.schema.type);
-            const isRequired = param.required ? '' : '?';
-            tsOutput += `  ${param.name}${isRequired}: ${paramType};\n`;
-          });
-          tsOutput += '}\n\n';
-        }
-
-        // Proses requestBody (jika ada)
-        if ((details as any).requestBody) {
-          const requestBody = (details as any).requestBody;
-          const content = requestBody.content['application/json'] || requestBody.content['multipart/form-data'];
-          if (content && content.schema) {
-            const requestName = `${operationId}Request`;
-            tsOutput += schemaToTsInterface(requestName, content.schema);
-          }
+      // Cek alias
+      for (const [short, long] of Object.entries(aliases)) {
+        if (cleanArg === short) {
+          key = long;
+          break;
         }
       }
-    }
 
-    // Tulis hasil ke file
-    fs.writeFileSync(outputPath, tsOutput);
-    console.log(`TypeScript types berhasil disimpan di ${outputPath}`);
-  } catch (error) {
-    console.error('Error saat mengonversi Swagger ke TS:', error);
+      if (key.includes("=")) {
+        const [k, value] = key.split("=", 2) as [string, string];
+        result[k] = value;
+      } else if (i + 1 < argList.length && !argList[i + 1].startsWith("-")) {
+        result[key] = argList[i + 1];
+        i++;
+      } else {
+        result[key] = true;
+      }
+    } else {
+      result._.push(arg);
+    }
   }
+
+  return result;
 }
 
-// Contoh penggunaan
-convertSwaggerToTs('./swagger.json', './src/myApi.ts');
+const argv = parseArgs(process.argv);
+
+console.log("3000".split(",").map(Number));
