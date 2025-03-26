@@ -8,10 +8,9 @@ import {
   Stack,
   Text,
   Title,
-  UnstyledButton
 } from "@mantine/core";
 import { useFileDialog, useShallowEffect } from "@mantine/hooks";
-import Editor from '@monaco-editor/react';
+import Editor from "@monaco-editor/react";
 import { useEffect } from "react";
 import { useSnapshot } from "valtio";
 
@@ -64,14 +63,14 @@ function List() {
         </Group>
         <Stack gap={"xs"}>
           {etc.configList.list.map((item, index) => (
-            <Flex
-              key={index}
-              gap={"md"}
-            >
+            <Flex key={index} gap={"md"}>
               <Text>{index + 1}</Text>
               <Text w={"460"}>{item.name}</Text>
               <Text>{item.path}</Text>
-              <Button variant="transparent" onClick={() => (configState.detail.name = item.name)}>
+              <Button
+                variant="transparent"
+                onClick={() => (configState.detail.name = item.name)}
+              >
                 View
               </Button>
             </Flex>
@@ -93,14 +92,20 @@ function ConfigDetail() {
   return (
     <Stack bg={"dark.9"} p={"md"}>
       <Title order={3}>Config Detail</Title>
-      <Editor height="300px" theme="vs-dark" defaultLanguage="yaml" value={detail.text ?? ""} options={{
-        readOnly: true,
-        minimap: {
-          enabled: false
-        },
-        lineNumbers: "off",
-        scrollBeyondLastLine: false
-      }} />
+      <Editor
+        height="300px"
+        theme="vs-dark"
+        defaultLanguage="yaml"
+        value={detail.text ?? ""}
+        options={{
+          readOnly: true,
+          minimap: {
+            enabled: false,
+          },
+          lineNumbers: "off",
+          scrollBeyondLastLine: false,
+        }}
+      />
     </Stack>
   );
 }
