@@ -35,7 +35,7 @@ function ProcessList() {
                   <Table.Td key={key} maw={360}>
                     <Tooltip label={item[key]}>
                       <Text
-                        miw={172}
+                        miw={100}
                         lineClamp={1}
                         c={
                           key === "status" && item[key] === "online"

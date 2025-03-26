@@ -21,11 +21,11 @@ async function processList() {
         cwd: d.pm2_env.cwd || "null",
         memory: d.monit.memory || "null",
         // url: d.pm2_env?.versioning?.url || "null",
-        repo_path: d.pm2_env?.versioning?.repo_path || "null",
-        cpu: d.monit.cpu || "null",
-        kill_retry_time: d.pm2_env.kill_retry_time || "null",
+        // repo_path: d.pm2_env?.versioning?.repo_path || "null",
+        // cpu: d.monit.cpu || "null",
+        // kill_retry_time: d.pm2_env.kill_retry_time || "null",
         args: d.pm2_env.args || "null",
-        pm_uptime: dayjs().diff(dayjs(d.pm2_env.pm_uptime), "hours")+" h",
+        pm_uptime: dayjs().diff(dayjs(d.pm2_env.pm_uptime), "hours")+" h"
       };
     });
 
