@@ -33,7 +33,7 @@ function ProcessList() {
               <Table.Tr key={index}>
                 {_.keys(item).map((key) => (
                   <Table.Td key={key} maw={360}>
-                    <Tooltip label={item[key]}>
+                    <Tooltip label={item[key]} maw={360}>
                       <Text
                         miw={100}
                         lineClamp={1}
