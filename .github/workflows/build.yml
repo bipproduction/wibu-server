@@ -168,7 +168,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           source: "${{ github.workspace }}/lib/config-generator.ts"
-          target: "/var/www/lib/config-generator.ts"
+          target: "/var/www/lib/"
 
       - name: handle generate config
         if: ${{ env.WIBU_NEW_CONFIG == 'true' }}
