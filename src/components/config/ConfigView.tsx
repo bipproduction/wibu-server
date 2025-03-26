@@ -1,10 +1,18 @@
-import { useSnapshot } from "valtio";
 import configState from "@/state/config";
+import {
+  Box,
+  Button,
+  Flex,
+  Notification,
+  Stack,
+  Text,
+  Title
+} from "@mantine/core";
 import { useFileDialog } from "@mantine/hooks";
 import { useEffect } from "react";
-import { Box, Button, Flex, Notification, Stack } from "@mantine/core";
-import ConfigViewDelete from "./ConfigViewDelete";
+import { useSnapshot } from "valtio";
 import ConfigViewRun from "./ConfigRun";
+import ConfigViewDelete from "./ConfigViewDelete";
 
 function ConfigView() {
   const etc = useSnapshot(configState);
@@ -21,6 +29,7 @@ function ConfigView() {
   }, [fileDialog.files]);
   return (
     <Stack>
+      <Title order={3}>Config</Title>
       <Flex>
         <Notification
           onClose={() => (configState.notif = null)}
@@ -39,9 +48,15 @@ function ConfigView() {
         <Button variant="light" onClick={() => fileDialog.open()}>
           Upload Config
         </Button>
-        <code>
-          <pre>{etc.configList.table}</pre>
-        </code>
+        <Stack gap={0}>
+          {etc.configList.list.map((item, index) => (
+            <Flex key={index} gap={"md"}>
+              <Text>{index + 1}</Text>
+              <Text w={"460"}>{item.name}</Text>
+              <Text>{item.path}</Text>
+            </Flex>
+          ))}
+        </Stack>
       </Box>
       <ConfigViewDelete />
       <ConfigViewRun />
@@ -50,4 +65,3 @@ function ConfigView() {
 }
 
 export default ConfigView;
-

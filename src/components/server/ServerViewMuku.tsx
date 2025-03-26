@@ -1,5 +1,5 @@
 import serverState from "@/state/server";
-import { Button, Group, Stack, TextInput } from "@mantine/core";
+import { Button, Flex, Group, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { useState } from "react";
 import { useSnapshot } from "valtio";
@@ -50,16 +50,23 @@ function ServerViewMuku() {
   
     function View() {
       return (
-        <div>
-          <code>
-            <pre>{muku.table}</pre>
-          </code>
-        </div>
+       <Stack>
+        <Stack gap={0}>
+            {muku.json.map((item, index) => (
+              <Flex key={index} gap={"md"}>
+                <Text>{index + 1}</Text>
+                <Text w={"460"}>{item.name}</Text>
+                <Text>{item.ports.join(", ")}</Text>
+              </Flex>
+            ))}
+          </Stack>
+       </Stack>
       );
     }
   
     return (
       <Stack>
+        <Title order={3}>Muku</Title>
         <Group>
           <Button
             variant="light"

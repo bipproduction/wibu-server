@@ -1,26 +1,48 @@
 import processState from "@/state/process";
+import { Stack, Table, Text, Title } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
+import _ from "lodash";
 import { useSnapshot } from "valtio";
 
 function ProcessView() {
-    const process = useSnapshot(processState);
-    useShallowEffect(() => {
-      process.load();
-    }, []);
-    return (
-      <div>
-        <div
-          style={{
-            width: "100%",
-            overflow: "scroll",
-          }}
-        >
-          <code>
-            <pre>{process.table}</pre>
-          </code>
-        </div>
+  const process = useSnapshot(processState);
+  useShallowEffect(() => {
+    process.load();
+  }, []);
+  return (
+    <Stack>
+      <Title order={3}>Process</Title>
+      <div
+        style={{
+          width: "100%",
+          overflow: "scroll",
+        }}
+      >
+        <Table>
+          <Table.Thead>
+            <Table.Tr bg={"gray.9"}>
+              {_.keys(process.list[0]).map((key) => (
+                <Table.Th key={key}>
+                  <Text>{key}</Text>
+                </Table.Th>
+              ))}
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            {process.list.map((item, index) => (
+              <Table.Tr key={index}>
+                {_.keys(item).map((key) => (
+                  <Table.Td key={key}>
+                    <Text c={(key === "status" && item[key] === "online") ? "green" : ""}>{item[key]}</Text>
+                  </Table.Td>
+                ))}
+              </Table.Tr>
+            ))}
+          </Table.Tbody>
+        </Table>
       </div>
-    );
-  }
+    </Stack>
+  );
+}
 
-  export default ProcessView;
+export default ProcessView;
