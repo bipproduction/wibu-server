@@ -50,4 +50,4 @@ function parseArgs(args: string[], aliases: Aliases = {}): ParsedArgs {
 
 const argv = parseArgs(process.argv);
 
-console.log("3000".split(",").map(Number));
+console.log(argv.ports?"apa": "kabar");

@@ -31,13 +31,16 @@
 # NAMESPACE="hipmi-staging"
 # bun -e "$CONFIG({name: /"$NAME/", namespace: /"$NAMESPACE/"})"
 
-TEXT=$(cat lib/config-generator.txt)
-CONFIG=$(echo -n "$TEXT" | base64)
+# TEXT=$(cat lib/config-generator.txt)
+# CONFIG=$(echo -n "$TEXT" | base64)
 
-# echo "\"$CONFIG\""
+# # echo "\"$CONFIG\""
 
-DCONFIG=$(echo -n "$CONFIG" | base64 -d)
+# DCONFIG=$(echo -n "$CONFIG" | base64 -d)
 
-echo "$DCONFIG"
+# echo "$DCONFIG"
+
+APA=true
+echo "$APA" == true
 
 

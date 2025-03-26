@@ -17,11 +17,13 @@ type Config = {
   branch: string;
   repo: string;
   env: string;
-  count: number;
   options?: {
     dbPush?: boolean | undefined;
     dbSeed?: boolean | undefined;
     build?: boolean | undefined;
+    newConfig?: boolean | undefined;
+    count?: number | undefined;
+    ports?: string | null;
   };
 };
 
@@ -49,6 +51,13 @@ async function configRun(params: { name: string }) {
 }
 
 async function run(config: Config) {
+  config.options = config.options ?? {};
+  config.options.dbPush = config.options.dbPush ?? true;
+  config.options.dbSeed = config.options.dbSeed ?? true;
+  config.options.build = config.options.build ?? true;
+  config.options.newConfig = config.options.newConfig ?? false;
+  config.options.count = config.options.count ?? 1;
+  config.options.ports = config.options.ports ?? null;
   const res = await fetch(
     `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`,
     {
