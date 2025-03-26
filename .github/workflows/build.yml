@@ -31,6 +31,15 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
+      - name: check generate config
+        run: |
+          if [ -f lib/generate-config.ts ]; then
+            echo "Generate config already exists"
+          else
+            echo "Generate config does not exist"
+            exit 1
+          fi
+
       - name: run bun install workspace
         run: bun install
 
@@ -167,7 +176,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
-          source: "${{ github.workspace }}/lib/generate-config.ts"
+          source: "lib/generate-config.ts"
           target: "/var/www/lib/"
 
       - name: handle generate config
