@@ -31,15 +31,6 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
-      - name: check generate config
-        run: |
-          if [ -f lib/generate-config.ts ]; then
-            echo "Generate config already exists"
-          else
-            echo "Generate config does not exist"
-            exit 1
-          fi
-
       - name: run bun install workspace
         run: bun install
 
@@ -158,27 +149,6 @@ jobs:
           script: |
             cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bunx prisma db seed
 
-      - name: handle remove config generator
-        if: ${{ env.WIBU_NEW_CONFIG == 'true' }}
-        uses: appleboy/ssh-action@v1
-        continue-on-error: true
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_KEY }}
-          script: |
-            rm /var/www/lib/generate-config.ts
-
-      - name: deploy config generator
-        if: ${{ env.WIBU_NEW_CONFIG == 'true' }}
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_KEY }}
-          source: "lib/generate-config.ts"
-          target: "/var/www/lib/"
-
       - name: handle generate config
         if: ${{ env.WIBU_NEW_CONFIG == 'true' }}
         uses: appleboy/ssh-action@v1
@@ -188,12 +158,15 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           script: |
             cd ${{ env.WIBU_TARGET_PROJECT_DIR }}
-            CONFIG=$(bun /var/www/lib/generate-config.ts \
-                --name "${{ env.WIBU_NAME }}" \
-                --namespace "${{ env.WIBU_NAMESPACE }}" \
-                --count "${{ env.WIBU_COUNT }}" \
-                --ports "${{ env.WIBU_PORTS }}")
-            echo "$CONFIG" > ecosystem.config.json
+            DATA=$(curl -s \
+            https://raw.githubusercontent.com/bipproduction/wibu-server/refs/heads/main/lib/generate-config.ts?v=1 \
+            | bun run - \
+              --name "${{ env.WIBU_NAME }}" \
+              --namespace "${{ env.WIBU_NAMESPACE }}" \
+              --count "${{ env.WIBU_COUNT }}" \
+              --ports "${{ env.WIBU_PORTS }}" \
+            )
+            echo "$DATA" > ecosystem.config.json
 
       - name: Clean current directory
         uses: appleboy/ssh-action@v1

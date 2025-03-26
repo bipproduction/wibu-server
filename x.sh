@@ -40,7 +40,12 @@
 
 # echo "$DCONFIG"
 
-APA=true
-echo "$APA" == true
+DATA=$(curl -s \
+ https://raw.githubusercontent.com/bipproduction/wibu-server/refs/heads/main/lib/generate-config.ts?v=1 \
+ | bun run - \
+  --name "hipmi" \
+  --namespace "hipmi-staging" \
+ )
+echo "$DATA"
 
 
