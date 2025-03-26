@@ -32,9 +32,10 @@ function ProcessList() {
             {process.list.map((item, index) => (
               <Table.Tr key={index}>
                 {_.keys(item).map((key) => (
-                  <Table.Td key={key} maw={230}>
+                  <Table.Td key={key} maw={360}>
                     <Tooltip label={item[key]}>
                       <Text
+                        miw={172}
                         lineClamp={1}
                         c={
                           key === "status" && item[key] === "online"
