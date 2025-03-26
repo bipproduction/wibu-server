@@ -33,7 +33,7 @@ function ProcessView() {
               <Table.Tr key={index}>
                 {_.keys(item).map((key) => (
                   <Table.Td key={key}>
-                    <Text c={(key === "status" && item[key] === "online") ? "green" : ""}>{item[key]}</Text>
+                    <Text c={(key === "status" && item[key] === "online") ? "green" : ""}>{item[key] ?? "-"}</Text>
                   </Table.Td>
                 ))}
               </Table.Tr>
