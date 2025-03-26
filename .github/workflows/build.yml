@@ -201,8 +201,18 @@ jobs:
             # Simpan konfigurasi PM2 agar persisten setelah reboot
             pm2 save
 
-            # Update history
-            bun /var/www/lib/history.ts --name "${{ env.WIBU_NAME }}" --namespace "${{ env.WIBU_NAMESPACE }}"
+      - name: update history
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          script: |
+            curl -s \
+            https://raw.githubusercontent.com/bipproduction/wibu-server/refs/heads/main/lib/history.ts?v=1 \
+            | bun run - \
+              --name "${{ env.WIBU_NAME }}" \
+              --namespace "${{ env.WIBU_NAMESPACE }}" 
 
       - name: finish
         if: always()
