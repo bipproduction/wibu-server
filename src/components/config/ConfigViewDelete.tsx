@@ -1,11 +1,12 @@
 import configState from "@/state/config";
-import { Button, Group, Radio, Stack } from "@mantine/core";
+import { Button, Group, Radio, Stack, Title } from "@mantine/core";
 import { useSnapshot } from "valtio";
 
 function ConfigViewDelete() {
   const { configList, configDelete } = useSnapshot(configState);
   return (
-    <Stack>
+    <Stack bg={"dark.9"} p={"md"}>
+      <Title order={3}>Delete Config</Title>  
       <Radio.Group>
         {configList.list.map((item) => (
           <Group key={item.name} gap={"md"} p={"xs"}>

@@ -32,7 +32,7 @@ function ServerViewWibuDev() {
   }
 
   return (
-    <Stack>
+    <Stack bg={"dark.9"} p={"md"}>
       <Title order={3}>WibuDev</Title>
       <Group>
         <Button variant="light" onClick={() => setIsEdit(!isEdit)}>

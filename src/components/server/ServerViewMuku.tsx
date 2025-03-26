@@ -65,7 +65,7 @@ function ServerViewMuku() {
     }
   
     return (
-      <Stack>
+      <Stack bg={"dark.9"} p={"md"}>
         <Title order={3}>Muku</Title>
         <Group>
           <Button
