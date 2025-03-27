@@ -1,6 +1,11 @@
 // Import styles of packages that you've installed.
 // All packages except `@mantine/hooks` require styles imports
 import "@mantine/core/styles.css";
+import { toastConfig } from "react-simple-toasts";
+import "react-simple-toasts/dist/style.css";
+import "react-simple-toasts/dist/theme/dark.css";
+
+toastConfig({ theme: "dark" });
 
 import {
   ColorSchemeScript,

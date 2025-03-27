@@ -3,7 +3,7 @@ import yml from "yaml";
 
 const OWNER = "bipproduction";
 const REPO = "wibu-server";
-const WORKFLOW_ID = "screenshot.yml";
+const WORKFLOW_ID = "build.yml";
 const WIBU_GH_TOKEN = process.env.WIBU_GH_TOKEN;
 const UPLOAD_DIR = process.env.WIBU_UPLOAD_DIR;
 
@@ -27,7 +27,7 @@ type Config = {
   };
 };
 
-async function configRun(params: { name: string }) {
+async function configRun({ params }: { params: { name: string } }) {
   const { name } = params;
   if (!name) {
     return {
@@ -74,7 +74,12 @@ async function run(config: Config) {
       }),
     }
   );
-  return res;
+
+  console.log(JSON.stringify(config, null, 2));
+  return {
+    status: res.status,
+    body: await res.json(),
+  };
 }
 
 export default configRun;

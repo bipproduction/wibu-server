@@ -17,3 +17,11 @@ env: |
   NEXT_PUBLIC_WIBU_REALTIME_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5aml4c2J1c2diYnR2am9namhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY3Mzk1NDUsImV4cCI6MjA0MjMxNTU0NX0.jHNW5Pwhj-KXUQOMqzILaAz62k3xlKEL5XKE4xoR7Xc"
   NEXT_PUBLIC_BASE_TOKEN_KEY="QWERTYUIOPLKJHGFDSAZXCVBNMQAZWSXEDCRFVTGBYHNUJMIKOLPPOIUYTREWQLKJHGFDSAMNBVCXZlghvftyguhijknhbgvcfytguu8okjnhbgvfty7u8oilkjnhgvtygu7u8ojilnkhbgvhujnkhghvjhukjnhb"
   NEXT_PUBLIC_BASE_SESSION_KEY="hipmi-key"
+
+options:
+  - dbPush: false
+  - dbSeed: false
+  - build: true
+  # - newConfig: true
+  # - count: 1
+  # - ports: null

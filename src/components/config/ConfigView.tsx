@@ -1,6 +1,7 @@
 import configState from "@/state/config";
 import { Button, Stack, Title } from "@mantine/core";
 import { useSnapshot } from "valtio";
+import ConfigCreate from "./ConfigCreate";
 import ConfigList from "./ConfigList";
 import ConfigViewRun from "./ConfigRun";
 import ConfigViewDelete from "./ConfigViewDelete";
@@ -22,6 +23,12 @@ function ConfigView() {
         >
           Delete
         </Button>
+        <Button
+          variant="light"
+          onClick={() => (configState.selected = "create")}
+        >
+          Create
+        </Button>
       </Button.Group>
       <Container />
     </Stack>
@@ -39,6 +46,9 @@ function Container() {
   }
   if (config.selected === "delete") {
     return <ConfigViewDelete />;
+  }
+  if (config.selected === "create") {
+    return <ConfigCreate />;
   }
   return <ConfigList />;
 }

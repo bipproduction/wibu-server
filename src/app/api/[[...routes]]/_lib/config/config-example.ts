@@ -16,6 +16,9 @@ options:
   - dbPush: true
   - dbSeed: true
   - build: true
+  # - newConfig: true
+  # - count: 1
+  # - ports: null
 `
 
 async function configExample() {

@@ -34,7 +34,7 @@ jobs:
       - name: run bun install workspace
         run: bun install
 
-      - name: Handle env
+      - name: Handle parse env
         run: |
           # Handle ENV
           APP_VERSION=$(date +%Y-%m-%d_%H-%M-%S)
@@ -59,34 +59,29 @@ jobs:
       - name: clone project
         run: git clone --branch ${{ env.WIBU_BRANCH }} https://x-access-token:${{ secrets.WIBU_GIT_TOKEN }}@github.com/bipproduction/${{ env.WIBU_REPO }}.git ${{ env.WIBU_APP_VERSION }}
 
-      - name: handle .env
-        working-directory: ${{ env.WIBU_APP_VERSION }}
-        run: cat package.json
-
-      - name: handle .env
+      - name: create env
         working-directory: ${{ env.WIBU_APP_VERSION }}
         run: |
           echo '${{ fromJson(inputs.data).env }}' > .env
-          cat .env
 
       - name: bun install on source
         working-directory: ${{ env.WIBU_APP_VERSION }}
         run: bun install
 
       - name: db push
-        if: ${{ env.WIBU_DB_PUSH == 'true' }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
-        run: bunx prisma db push
+        run: |
+          ${{ fromJson(inputs.data).options.dbPush }} && bunx prisma db push
 
       - name: db seed
-        if: ${{ env.WIBU_DB_SEED == 'true' }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
-        run: bunx prisma db seed
+        run: |
+          ${{ fromJson(inputs.data).options.dbSeed }} && bunx prisma db seed
 
       - name: build
-        if: ${{ env.WIBU_BUILD == 'true' }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
-        run: bun run build
+        run: |
+          ${{ fromJson(inputs.data).options.build }} && bun run build
 
       - name: remove node_modules
         working-directory: ${{ env.WIBU_APP_VERSION }}
@@ -127,20 +122,17 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           script: |
             echo "${{ fromJson(inputs.data).env }}" > ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
-            cat ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
 
       - name: handle db push on vps
-        if: ${{ env.WIBU_DB_PUSH == 'true' }}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
-            cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bunx prisma db push
+            ${{ fromJson(inputs.data).options.dbPush }} && cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bunx prisma db push
 
       - name: handle db seed on vps
-        if: ${{ env.WIBU_DB_SEED == 'true' }}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -150,14 +142,13 @@ jobs:
             cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bunx prisma db seed
 
       - name: handle generate config
-        if: ${{ env.WIBU_NEW_CONFIG == 'true' }}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
-            cd ${{ env.WIBU_TARGET_PROJECT_DIR }}
+            ${{ fromJson(inputs.data).options.newConfig }} && cd ${{ env.WIBU_TARGET_PROJECT_DIR }} && \
             DATA=$(curl -s \
             https://raw.githubusercontent.com/bipproduction/wibu-server/refs/heads/main/lib/generate-config.ts?v=1 \
             | bun run - \

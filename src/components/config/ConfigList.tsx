@@ -2,38 +2,39 @@ import configState from "@/state/config";
 import {
   Button,
   Flex,
-  Group,
   Notification,
+  SimpleGrid,
   Stack,
-  Text
+  Text,
 } from "@mantine/core";
-import { useFileDialog } from "@mantine/hooks";
-import { IconFile } from "@tabler/icons-react";
+import { IconChevronRight } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { useSnapshot } from "valtio";
 import ConfigDetail from "./ConfigDetail";
 
 function ConfigList() {
+  const etc = useSnapshot(configState);
+
   return (
     <Stack>
-      <List />
+      <SimpleGrid cols={{
+        base: 1,
+        md: 2
+      }}>
+        <List />
+        {etc.detail.text && <ConfigDetail />}
+      </SimpleGrid>
     </Stack>
   );
 }
 
 function List() {
   const etc = useSnapshot(configState);
-  const fileDialog = useFileDialog({ accept: ".yml" });
+
   useEffect(() => {
     configState.configList.load();
   }, []);
 
-  useEffect(() => {
-    if (fileDialog.files) {
-      const name = fileDialog.files[0].name;
-      configState.configUpload.upload({ file: fileDialog.files[0], name });
-    }
-  }, [fileDialog.files]);
   return (
     <Stack bg={"dark.9"} p={"md"} flex={0}>
       <Text size={"1.5rem"}>Config List</Text>
@@ -52,32 +53,23 @@ function List() {
           overflow: "scroll",
         }}
       >
-        <Group>
-          <Button variant="light" onClick={() => fileDialog.open()}>
-            Upload Config
-          </Button>
-        </Group>
         <Stack gap={"xs"}>
           {etc.configList.list.map((item, index) => (
-            <Flex key={index} gap={"md"}>
+            <Flex key={index} gap={"md"} align={"center"}>
               <Text>{index + 1}</Text>
-              <Text>{item.name}</Text>
-              <Text>{item.path}</Text>
+              <Text w={172}>{item.name}</Text>
               <Button
                 variant="transparent"
-                onClick={() => (configState.detail.name = item.name)}
+                onClick={() => configState.detail.load({ name: item.name })}
               >
-                <IconFile />
+                <IconChevronRight />
               </Button>
             </Flex>
           ))}
         </Stack>
       </Stack>
-      {configState.detail.name && <ConfigDetail />}
     </Stack>
   );
 }
-
-
 
 export default ConfigList;

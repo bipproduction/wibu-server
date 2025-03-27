@@ -1,32 +1,16 @@
 "use client";
-import ConfigView from "@/components/config/ConfigView";
-import ProcessView from "@/components/process/ProcessView";
-import ServerView from "@/components/server/ServerView";
-import {
-  Divider,
-  Stack,
-  Title
-} from "@mantine/core";
+import { Card, Center, Stack, Title } from "@mantine/core";
+import Link from "next/link";
 
 export default function Home() {
   return (
     <Stack p={"md"}>
       <Title order={2}>Wibu Server</Title>
-      <ServerView />
-      <Divider />
-      <ProcessView />
-      <Divider />
-      <ConfigView />
+      <Center>
+        <Card withBorder component={Link} href="/admin">
+          Admin
+        </Card>
+      </Center>
     </Stack>
   );
 }
-
-
-
-
-
-
-
-
-
-

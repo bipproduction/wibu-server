@@ -18,6 +18,7 @@ import processRestart from "./_lib/process/process-restart";
 import processReload from "./_lib/process/process-reload";
 import processStop from "./_lib/process/process-stop";
 import processRemove from "./_lib/process/process-remove";
+import configCreate from "./_lib/config/config-create";
 
 const corsConfig = {
   origin: "*",
@@ -143,14 +144,6 @@ const Etc = new Elysia({
       data: list,
     };
   })
-  .get("/config-table", async () => {
-    const list = await configList();
-    const dataString = _.map(list, (obj) => _.values(obj).map(String));
-    const t = table(dataString);
-    return {
-      data: t,
-    };
-  })
   .get("/config-json/:name", async ({ params }) => {
     try {
       const config = await configJson(params);
@@ -175,7 +168,13 @@ const Etc = new Elysia({
     set.headers["Content-Type"] = "text/plain";
     return config.toString();
   })
-  .post("/config-run/:name", configRun);
+  .post("/config-run/:name", configRun)
+  .post("/config-create", configCreate, {
+    body: t.Object({
+      name: t.String(),
+      text: t.String(),
+    }),
+  });
 
 const ApiServer = new Elysia({
   prefix: "/api",
