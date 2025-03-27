@@ -67,6 +67,7 @@ async function main() {
   }
 
   try {
+    const keep = 20;
     // Baca symlink untuk rilis saat ini
     const current = await fs.readlink(currentDir);
 
@@ -74,9 +75,9 @@ async function main() {
     const releases = await fs.readdir(releasesDir);
 
     // Jika jumlah rilis lebih dari 5, hapus rilis tertua
-    if (releases.length > 5) {
+    if (releases.length > keep) {
       const sortedReleases = releases.sort(); // Urutkan rilis berdasarkan nama
-      const oldReleases = sortedReleases.splice(0, releases.length - 5); // Ambil rilis tertua
+      const oldReleases = sortedReleases.splice(0, releases.length - keep); // Ambil rilis tertua
 
       for (const release of oldReleases) {
         // Jangan hapus rilis yang sedang digunakan
