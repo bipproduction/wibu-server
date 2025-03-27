@@ -1,19 +1,23 @@
 import cors, { HTTPMethod } from "@elysiajs/cors";
 import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
-import configExample from "./_lib/etc/config-example";
-import configJson from "./_lib/etc/config-json";
-import configList from "./_lib/etc/config-list";
-import configText from "./_lib/etc/config-text";
-import configUpload from "./_lib/etc/config-upload";
+import configExample from "./_lib/config/config-example";
+import configJson from "./_lib/config/config-json";
+import configList from "./_lib/config/config-list";
+import configText from "./_lib/config/config-text";
+import configUpload from "./_lib/config/config-upload";
 import processList from "./_lib/process/process-list";
 import serverConfig from "./_lib/server/server-config";
 import editServer from "./_lib/server/server-edit";
-import configDelete from "./_lib/etc/config-delete";
+import configDelete from "./_lib/config/config-delete";
 import getVersion from "./_lib/version";
 import { table } from "table";
 import _ from "lodash";
-import configRun from "./_lib/etc/config-run";
+import configRun from "./_lib/config/config-run";
+import processRestart from "./_lib/process/process-restart";
+import processReload from "./_lib/process/process-reload";
+import processStop from "./_lib/process/process-stop";
+import processRemove from "./_lib/process/process-remove";
 
 const corsConfig = {
   origin: "*",
@@ -92,6 +96,18 @@ const Process = new Elysia({
         data: "",
       };
     }
+  })
+  .post("/restart/:namespace", async ({ params }) => {
+    return await processRestart(params);
+  })
+  .post("/reload/:namespace", async ({ params }) => {
+    return await processReload(params);
+  })
+  .post("/stop/:namespace", async ({ params }) => {
+    return await processStop(params);
+  })
+  .post("/remove/:namespace", async ({ params }) => {
+    return await processRemove(params);
   });
 
 const Etc = new Elysia({

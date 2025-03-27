@@ -11,7 +11,7 @@ import {
 export default function Home() {
   return (
     <Stack p={"md"}>
-      <Title order={2}>API Server</Title>
+      <Title order={2}>Wibu Server</Title>
       <ServerView />
       <Divider />
       <ProcessView />

@@ -4,23 +4,19 @@ import {
   Flex,
   Group,
   Notification,
-  SimpleGrid,
   Stack,
-  Text,
-  Title,
+  Text
 } from "@mantine/core";
-import { useFileDialog, useShallowEffect } from "@mantine/hooks";
-import Editor from "@monaco-editor/react";
+import { useFileDialog } from "@mantine/hooks";
+import { IconFile } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { useSnapshot } from "valtio";
+import ConfigDetail from "./ConfigDetail";
 
 function ConfigList() {
   return (
     <Stack>
-      <SimpleGrid cols={2}>
-        <List />
-        <ConfigDetail />
-      </SimpleGrid>
+      <List />
     </Stack>
   );
 }
@@ -65,49 +61,23 @@ function List() {
           {etc.configList.list.map((item, index) => (
             <Flex key={index} gap={"md"}>
               <Text>{index + 1}</Text>
-              <Text w={"460"}>{item.name}</Text>
+              <Text>{item.name}</Text>
               <Text>{item.path}</Text>
               <Button
                 variant="transparent"
                 onClick={() => (configState.detail.name = item.name)}
               >
-                View
+                <IconFile />
               </Button>
             </Flex>
           ))}
         </Stack>
       </Stack>
+      {configState.detail.name && <ConfigDetail />}
     </Stack>
   );
 }
 
-function ConfigDetail() {
-  const { detail } = useSnapshot(configState);
 
-  useShallowEffect(() => {
-    if (detail.name) {
-      configState.detail.load();
-    }
-  }, [detail.name]);
-  return (
-    <Stack bg={"dark.9"} p={"md"}>
-      <Title order={3}>Config Detail</Title>
-      <Editor
-        height="300px"
-        theme="vs-dark"
-        defaultLanguage="yaml"
-        value={detail.text ?? ""}
-        options={{
-          readOnly: true,
-          minimap: {
-            enabled: false,
-          },
-          lineNumbers: "off",
-          scrollBeyondLastLine: false,
-        }}
-      />
-    </Stack>
-  );
-}
 
 export default ConfigList;

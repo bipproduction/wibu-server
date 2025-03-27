@@ -10,7 +10,7 @@ function ConfigViewRun() {
     {config.configList.list.map((item) => (
       <Group gap={"md"} key={item.name}>
         <Text>{item.name}</Text>
-        <Button variant="light" onClick={() => {}}>
+        <Button variant="light" onClick={() => configState.run.now({ name: item.name })}>
           Run
         </Button>
       </Group>

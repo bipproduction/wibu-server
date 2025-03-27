@@ -4,6 +4,7 @@ import { proxy } from "valtio";
 
 const configState = proxy({
   notif: null as string | null,
+  selected: null as string | null,
   configList: {
     list: [] as any[],
     table: "",
@@ -43,19 +44,11 @@ const configState = proxy({
     },
   },
   run: {
-    name: null as string | null,
+
     message: null as string | null,
-    async now() {
-      if (!this.name) {
-        return {
-          status: 400,
-          body: {
-            message: "Name is required",
-          },
-        };
-      }
+    async now({ name }: { name: string }) {
       const { data } = await ApiFetch.api.etc["config-run"]({
-        name: this.name,
+        name,
       }).post();
       return data;
     },

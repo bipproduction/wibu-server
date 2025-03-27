@@ -1,18 +1,15 @@
+import { Stack } from "@mantine/core";
 import ServerViewMuku from "./ServerViewMuku";
 import ServerViewWibuDev from "./ServerViewWibudev";
+import { Title } from "@mantine/core";
 
 function ServerView() {
     return (
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          flexDirection: "column",
-        }}
-      >
+      <Stack>
+        <Title order={3}>Server</Title>
         <ServerViewMuku />
         <ServerViewWibuDev />
-      </div>
+      </Stack>
     );
   }
 

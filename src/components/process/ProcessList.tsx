@@ -1,6 +1,7 @@
 import processState from "@/state/process";
-import { Stack, Title, Table, Text, Tooltip } from "@mantine/core";
+import { Stack, Table, Text, Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
+import { IconChevronRight } from '@tabler/icons-react';
 import _ from "lodash";
 import { useSnapshot } from "valtio";
 
@@ -21,6 +22,9 @@ function ProcessList() {
         <Table>
           <Table.Thead>
             <Table.Tr bg={"gray.9"}>
+              <Table.Th>
+                <Text>===</Text>
+              </Table.Th>
               {_.keys(process.list[0]).map((key) => (
                 <Table.Th key={key}>
                   <Text>{key}</Text>
@@ -30,7 +34,12 @@ function ProcessList() {
           </Table.Thead>
           <Table.Tbody>
             {process.list.map((item, index) => (
-              <Table.Tr key={index}>
+              <Table.Tr key={index} >
+                <Table.Td>
+                  <UnstyledButton onClick={() => (processState.selected = item)}>
+                    <IconChevronRight />
+                  </UnstyledButton>
+                </Table.Td>
                 {_.keys(item).map((key) => (
                   <Table.Td key={key} maw={360}>
                     <Tooltip label={item[key]} maw={360}>

@@ -17,6 +17,7 @@
     "@mantine/hooks": "^7.17.2",
     "@monaco-editor/react": "^4.7.0",
     "@prisma/client": "^6.3.1",
+    "@tabler/icons-react": "^3.31.0",
     "@types/bun": "^1.2.5",
     "@types/lodash": "^4.17.16",
     "@types/minimist": "^1.2.5",
