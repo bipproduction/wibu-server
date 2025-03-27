@@ -69,17 +69,17 @@ jobs:
         run: bun install
 
       - name: db push
-        if: ${{ fromJson(inputs.data).options.dbPush }}
+        if: ${{ fromJson(inputs.data).options.dbPush == true }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
         run: bunx prisma db push
 
       - name: db seed
-        if: ${{ fromJson(inputs.data).options.dbSeed }}
+        if: ${{ fromJson(inputs.data).options.dbSeed == true }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
         run: bunx prisma db seed
 
       - name: build
-        if: ${{ fromJson(inputs.data).options.build }}
+        if: ${{ fromJson(inputs.data).options.build == true }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
         run: bun run build
 
@@ -124,7 +124,7 @@ jobs:
             echo "${{ fromJson(inputs.data).env }}" > ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
 
       - name: handle db push on vps
-        if: ${{ fromJson(inputs.data).options.dbPush }}
+        if: ${{ fromJson(inputs.data).options.dbPush == true }}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -134,7 +134,7 @@ jobs:
             cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bunx prisma db push
 
       - name: handle db seed on vps
-        if: ${{ fromJson(inputs.data).options.dbSeed }}
+        if: ${{ fromJson(inputs.data).options.dbSeed == true }}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -144,7 +144,7 @@ jobs:
             bunx prisma db seed
 
       - name: handle generate config
-        if: ${{ fromJson(inputs.data).options.newConfig }}
+        if: ${{ fromJson(inputs.data).options.newConfig == true }}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
