@@ -69,19 +69,19 @@ jobs:
         run: bun install
 
       - name: db push
+        if: ${{ fromJson(inputs.data).options.dbPush }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
-        run: |
-          ${{ fromJson(inputs.data).options.dbPush }} && bunx prisma db push
+        run: bunx prisma db push
 
       - name: db seed
+        if: ${{ fromJson(inputs.data).options.dbSeed }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
-        run: |
-          ${{ fromJson(inputs.data).options.dbSeed }} && bunx prisma db seed
+        run: bunx prisma db seed
 
       - name: build
+        if: ${{ fromJson(inputs.data).options.build }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
-        run: |
-          ${{ fromJson(inputs.data).options.build }} && bun run build
+        run: bun run build
 
       - name: remove node_modules
         working-directory: ${{ env.WIBU_APP_VERSION }}
@@ -124,31 +124,34 @@ jobs:
             echo "${{ fromJson(inputs.data).env }}" > ${{ env.WIBU_TARGET_WORKER_DIR }}/.env
 
       - name: handle db push on vps
+        if: ${{ fromJson(inputs.data).options.dbPush }}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
-            ${{ fromJson(inputs.data).options.dbPush }} && cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bunx prisma db push
+            cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bunx prisma db push
 
       - name: handle db seed on vps
+        if: ${{ fromJson(inputs.data).options.dbSeed }}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
-            cd ${{ env.WIBU_TARGET_WORKER_DIR }} && bunx prisma db seed
+            bunx prisma db seed
 
       - name: handle generate config
+        if: ${{ fromJson(inputs.data).options.newConfig }}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
-            ${{ fromJson(inputs.data).options.newConfig }} && cd ${{ env.WIBU_TARGET_PROJECT_DIR }} && \
+            cd ${{ env.WIBU_TARGET_PROJECT_DIR }} && \
             DATA=$(curl -s \
             https://raw.githubusercontent.com/bipproduction/wibu-server/refs/heads/main/lib/generate-config.ts?v=1 \
             | bun run - \
