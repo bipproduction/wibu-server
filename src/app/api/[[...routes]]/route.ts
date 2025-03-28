@@ -19,6 +19,10 @@ import processReload from "./_lib/process/process-reload";
 import processStop from "./_lib/process/process-stop";
 import processRemove from "./_lib/process/process-remove";
 import configCreate from "./_lib/config/config-create";
+import projectList from "./_lib/projects/project-list";
+import projectNamespace from "./_lib/projects/project-namespace";
+import projectReleases from "./_lib/projects/project-releases";
+import projectReleasesAssign from "./_lib/projects/project-releases-assign";
 
 const corsConfig = {
   origin: "*",
@@ -111,9 +115,9 @@ const Process = new Elysia({
     return await processRemove(params);
   });
 
-const Etc = new Elysia({
-  prefix: "/etc",
-  tags: ["Etc"],
+const Config = new Elysia({
+  prefix: "/config",
+  tags: ["Config"],
 })
   .delete(
     "/config-delete/:name",
@@ -144,20 +148,7 @@ const Etc = new Elysia({
       data: list,
     };
   })
-  .get("/config-json/:name", async ({ params }) => {
-    try {
-      const config = await configJson(params);
-      return config;
-    } catch (error) {
-      console.error(error);
-      return {
-        status: 500,
-        body: {
-          message: "Internal Server Error",
-        },
-      };
-    }
-  })
+  .get("/config-json/:name", configJson)
   .get("/config-text/:name", async ({ params, set }) => {
     const config = await configText(params);
     set.headers["Content-Type"] = "text/plain";
@@ -176,6 +167,15 @@ const Etc = new Elysia({
     }),
   });
 
+const Projects = new Elysia({
+  prefix: "/projects",
+  tags: ["Projects"],
+})
+  .get("/list", projectList)
+  .get("/namespace/:name", projectNamespace)
+  .get("/releases/:name/:namespace", projectReleases)
+  .post("/releases-assign/:name/:namespace/:release", projectReleasesAssign);
+
 const ApiServer = new Elysia({
   prefix: "/api",
   tags: ["Server", "Process"],
@@ -184,7 +184,8 @@ const ApiServer = new Elysia({
   .use(cors(corsConfig))
   .use(Server)
   .use(Process)
-  .use(Etc)
+  .use(Config)
+  .use(Projects)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {

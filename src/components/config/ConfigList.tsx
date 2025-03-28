@@ -1,12 +1,6 @@
+'use client'
 import configState from "@/state/config";
-import {
-  Button,
-  Flex,
-  Notification,
-  SimpleGrid,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Button, Flex, Grid, Stack, Text } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { useSnapshot } from "valtio";
@@ -17,19 +11,18 @@ function ConfigList() {
 
   return (
     <Stack>
-      <SimpleGrid cols={{
-        base: 1,
-        md: 2
-      }}>
-        <List />
-        {etc.detail.text && <ConfigDetail />}
-      </SimpleGrid>
+      <Grid>
+        <Grid.Col span={"content"}>
+          <List />
+        </Grid.Col>
+        <Grid.Col span={"auto"}>{etc.detail.text && <ConfigDetail />}</Grid.Col>
+      </Grid>
     </Stack>
   );
 }
 
 function List() {
-  const etc = useSnapshot(configState);
+  const config = useSnapshot(configState);
 
   useEffect(() => {
     configState.configList.load();
@@ -38,15 +31,6 @@ function List() {
   return (
     <Stack bg={"dark.9"} p={"md"} flex={0}>
       <Text size={"1.5rem"}>Config List</Text>
-      <Flex>
-        <Notification
-          onClose={() => (configState.notif = null)}
-          title="Notification"
-          display={etc.notif ? "block" : "none"}
-        >
-          {etc.notif}
-        </Notification>
-      </Flex>
       <Stack
         style={{
           width: "100%",
@@ -54,8 +38,13 @@ function List() {
         }}
       >
         <Stack gap={"xs"}>
-          {etc.configList.list.map((item, index) => (
-            <Flex key={index} gap={"md"} align={"center"}>
+          {config.configList.list.map((item, index) => (
+            <Flex
+              key={index}
+              gap={"md"}
+              align={"center"}
+              bg={item.name === config.detail.name ? "dark.8" : "dark.9"}
+            >
               <Text>{index + 1}</Text>
               <Text w={172}>{item.name}</Text>
               <Button

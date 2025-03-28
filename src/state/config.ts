@@ -5,16 +5,17 @@ import { proxy } from "valtio";
 const configState = proxy({
   notif: null as string | null,
   selected: null as string | null,
+  isEdit: false as boolean,
   configList: {
     list: [] as any[],
     async load() {
-      const list = await ApiFetch.api.etc["config-list"].get();
+      const list = await ApiFetch.api.config["config-list"].get();
       this.list = list.data?.data as any[];
     },
   },
   configUpload: {
     async upload({ file, name }: { file: File; name: string }) {
-      const { data } = await ApiFetch.api.etc["config-upload"].post({
+      const { data } = await ApiFetch.api.config["config-upload"].post({
         file,
         name,
       });
@@ -33,7 +34,7 @@ const configState = proxy({
           },
         };
       }
-      const { data } = await ApiFetch.api.etc["config-delete"]({
+      const { data } = await ApiFetch.api.config["config-delete"]({
         name: this.name,
       }).delete();
       configState.configList.load();
@@ -46,7 +47,7 @@ const configState = proxy({
     async run({ name }: { name: string }) {
       try {
         this.loading = true;
-        const { data } = await ApiFetch.api.etc["config-run"]({
+        const { data } = await ApiFetch.api.config["config-run"]({
           name,
         }).post();
 
@@ -73,6 +74,7 @@ const configState = proxy({
   detail: {
     name: null as string | null,
     text: null as string | null,
+    json: null as Record<string, any> | null,
     async load({ name }: { name: string }) {
       this.name = name;
       if (!name) {
@@ -83,10 +85,14 @@ const configState = proxy({
           },
         };
       }
-      const { data } = await ApiFetch.api.etc["config-text"]({
+      const { data } = await ApiFetch.api.config["config-text"]({
+        name,
+      }).get();
+      const { data: json } = await ApiFetch.api.config["config-json"]({
         name,
       }).get();
       this.text = data?.data as string;
+      this.json = json?.data as Record<string, unknown>;
     },
   },
   create: {
@@ -110,7 +116,7 @@ const configState = proxy({
         }
 
         console.log(name, text);
-        const { data } = await ApiFetch.api.etc["config-create"].post({
+        const { data } = await ApiFetch.api.config["config-create"].post({
           name,
           text,
         });
