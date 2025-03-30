@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { generateNginxFromSubdomain } from "@/lib/nginx";
 import fs from "fs/promises";
 import serverConfigList from "../server-config-list";

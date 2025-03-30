@@ -6,20 +6,19 @@ import {
   Box,
   Button,
   Flex,
-  Indicator,
   Stack,
   Table,
   Text,
   Title,
-  Tooltip,
+  Tooltip
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
+import { useState } from "react";
 import { useSnapshot } from "valtio";
 import { useProxy } from "valtio/utils";
 import ServerAdd from "./ServerAdd";
 import ServerUpdate from "./ServerUpdate";
-import { useState } from "react";
 
 function ServerView() {
   const server = useSnapshot(serverState);
