@@ -25,6 +25,7 @@ import serverRemove from "./_lib/server/server-remove";
 import getVersion from "./_lib/version";
 import processLog from "./_lib/process/precess-log";
 import { processItem } from "./_lib/process/process-item";
+import buildLog from "./_lib/webhook/build-log";
 
 const corsConfig = {
   origin: "*",
@@ -80,6 +81,13 @@ const Projects = new Elysia({
   .get("/releases/:name/:namespace", projectReleases)
   .post("/releases-assign/:name/:namespace/:release", projectReleasesAssign);
 
+
+  const Webhook = new Elysia({
+    prefix: "/webhook",
+    tags: ["Webhook"],
+  })
+    .post("/build-log", buildLog);
+
 const ApiServer = new Elysia({
   prefix: "/api",
 })
@@ -89,6 +97,7 @@ const ApiServer = new Elysia({
   .use(Process)
   .use(Config)
   .use(Projects)
+  .use(Webhook)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {

@@ -40,12 +40,10 @@
 
 # echo "$DCONFIG"
 
-DATA=$(curl -s \
- https://raw.githubusercontent.com/bipproduction/wibu-server/refs/heads/main/lib/generate-config.ts?v=1 \
- | bun run - \
-  --name "hipmi" \
-  --namespace "hipmi-staging" \
- )
-echo "$DATA"
+echo "apa kabarnya" 2>&1 | tee /dev/tty | curl -X POST \
+-H "Content-Type: text/plain" \
+-H "x-api-key: makuro" \
+-H "x-api-path: hipmi/hipmi-staging" \
+-d "apa kabarnya" http://localhost:3006/api/webhook/build-log
 
 
