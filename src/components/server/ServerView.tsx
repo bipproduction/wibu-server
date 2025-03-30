@@ -7,7 +7,7 @@ import {
   Indicator,
   Stack,
   Text,
-  Title
+  Title,
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
@@ -15,6 +15,7 @@ import { useSnapshot } from "valtio";
 import { useProxy } from "valtio/utils";
 import ServerAdd from "./ServerAdd";
 import ServerUpdate from "./ServerUpdate";
+import { useState } from "react";
 
 function ServerView() {
   const server = useSnapshot(serverState);
@@ -32,6 +33,7 @@ function ServerView() {
 
 function View({ name, data }: { name: string; data: any[] | null }) {
   const server = useProxy(serverState);
+  const [deleteCount, setDeleteCount] = useState(0);
   if (!data) return <Text>loading ...</Text>;
 
   if (server.event?.name === name && server.event.action === "add") {
@@ -82,11 +84,20 @@ function View({ name, data }: { name: string; data: any[] | null }) {
           <Flex key={index} gap={"md"}>
             {server.event?.name === name &&
               server.event?.action === "remove" && (
-                <Indicator label={server.deleteCount}>
+                <Indicator label={deleteCount}>
                   <ActionIcon
-                    onClick={() =>
-                      server.onRemove({ domainId: name, id: item.id })
-                    }
+                    onClick={() => {
+                      setDeleteCount((prev) => prev + 1);
+                      if (deleteCount >= 3) {
+                        server.onRemove({ domainId: name, id: item.id });
+                        setDeleteCount(0);
+                        return
+                      }
+
+                      setTimeout(() => {
+                        setDeleteCount(0);
+                      }, 3000);
+                    }}
                     c={"red"}
                     variant="transparent"
                   >
@@ -112,8 +123,5 @@ function View({ name, data }: { name: string; data: any[] | null }) {
     </Stack>
   );
 }
-
-
-
 
 export default ServerView;

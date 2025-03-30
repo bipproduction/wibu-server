@@ -6,7 +6,6 @@ import { proxy } from "valtio";
 const serverState = proxy({
   muku: null as any[] | null,
   wibudev: null as any | null,
-  deleteCount: 0,
   form: {
     id: "",
     domainId: "",
@@ -51,20 +50,15 @@ const serverState = proxy({
     this.event = null;
   },
   async onRemove({ domainId, id }: { domainId: string; id: string }) {
-    this.deleteCount++;
-    toast(`${this.deleteCount} / 5 to delete`);
-    if (this.deleteCount === 3) {
-      await ApiFetch.api.server["server-remove"].post({
-        name: domainId,
-        data: { id },
-      });
+    await ApiFetch.api.server["server-remove"].post({
+      name: domainId,
+      data: { id },
+    });
 
-      this.event = null;
-      this.deleteCount = 0;
-      toast(`${id} Deleted!`);
-      this.load();
-      return;
-    }
+    this.event = null;
+    toast(`${id} Deleted!`);
+    this.load();
+    return;
   },
   async onCreate(params: {
     domainId: string;

@@ -3,6 +3,9 @@ import { generateNginxFromSubdomain } from "@/lib/nginx";
 import fs from "fs/promises";
 import serverConfigList from "../server-config-list";
 import _ from "lodash";
+import { exec } from "child_process";
+import { promisify } from "util";
+const EX = promisify(exec);
 
 async function serverAdd({
   body,
@@ -33,14 +36,22 @@ async function serverAdd({
     };
   }
 
-  const config = await serverConfigList({ domainId: name });
-  const newData = [...config, data];
-  const serverString = generateNginxFromSubdomain({ subdomains: newData });
-  await fs.writeFile(`/etc/nginx/conf.d/${name}.conf`, serverString);
-  console.log(serverString);
-  return {
-    message: "Server added successfully",
-  };
+  try {
+    const config = await serverConfigList({ domainId: name });
+    const newData = [...config, data];
+    const serverString = generateNginxFromSubdomain({ subdomains: newData });
+    await fs.writeFile(`/etc/nginx/conf.d/${name}.conf`, serverString);
+
+    await EX("nginx -s reload");
+    return {
+      message: "Server added successfully",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      message: "Server added failed",
+    };
+  }
 }
 
 export default serverAdd;
