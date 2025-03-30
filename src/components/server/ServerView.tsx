@@ -2,15 +2,19 @@
 import serverState from "@/state/server";
 import {
   ActionIcon,
+  Badge,
+  Box,
   Button,
   Flex,
   Indicator,
   Stack,
+  Table,
   Text,
   Title,
+  Tooltip,
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useSnapshot } from "valtio";
 import { useProxy } from "valtio/utils";
 import ServerAdd from "./ServerAdd";
@@ -60,65 +64,85 @@ function View({ name, data }: { name: string; data: any[] | null }) {
             variant="light"
             size="compact-xs"
           >
-            Add
+            <Tooltip label="Add">
+              <IconPlus />
+            </Tooltip>
           </Button>
           <Button
             onClick={() => (server.event = { name, action: "remove" })}
             variant="light"
             size="compact-xs"
           >
-            Remove
+            <Tooltip label="Remove">
+              <IconTrash />
+            </Tooltip>
           </Button>
           <Button
             onClick={() => (server.event = { name, action: "update" })}
             variant="light"
             size="compact-xs"
           >
-            Update
+            <Tooltip label="Update">
+              <IconEdit />
+            </Tooltip>
           </Button>
         </Button.Group>
       </Stack>
       <Stack>
         {!data?.length && <Text>No servers found</Text>}
-        {data.map((item, index) => (
-          <Flex key={index} gap={"md"}>
-            {server.event?.name === name &&
-              server.event?.action === "remove" && (
-                <Indicator label={deleteCount}>
-                  <ActionIcon
-                    onClick={() => {
-                      setDeleteCount((prev) => prev + 1);
-                      if (deleteCount >= 3) {
-                        server.onRemove({ domainId: name, id: item.id });
-                        setDeleteCount(0);
-                        return
-                      }
+        <Table>
+          <Table.Tbody>
+            {data.map((item, index) => (
+              <Table.Tr key={index}>
+                <Table.Td w={20}>
+                  {server.event?.name === name &&
+                    server.event?.action === "remove" && (
+                      <ActionIcon
+                        onClick={() => {
+                          setDeleteCount((prev) => prev + 1);
+                          if (deleteCount >= 3) {
+                            server.onRemove({ domainId: name, id: item.id });
+                            setDeleteCount(0);
+                            return;
+                          }
 
-                      setTimeout(() => {
-                        setDeleteCount(0);
-                      }, 3000);
-                    }}
-                    c={"red"}
-                    variant="transparent"
-                  >
-                    <IconTrash />
-                  </ActionIcon>
-                </Indicator>
-              )}
-            {server.event?.name === name &&
-              server.event?.action === "update" && (
-                <ActionIcon
-                  onClick={() => (server.updateData = item)}
-                  variant="transparent"
-                >
-                  <IconEdit />
-                </ActionIcon>
-              )}
-            <Text w={20}>{index + 1}</Text>
-            <Text w={220}>{item.name}</Text>
-            <Text>{item.ports.join(",")}</Text>
-          </Flex>
-        ))}
+                          setTimeout(() => {
+                            setDeleteCount(0);
+                          }, 3000);
+                        }}
+                        c={"red"}
+                        variant="transparent"
+                      >
+                        <IconTrash />
+                      </ActionIcon>
+                    )}
+                  {server.event?.name === name &&
+                    server.event?.action === "update" && (
+                      <ActionIcon
+                        onClick={() => (server.updateData = item)}
+                        variant="transparent"
+                      >
+                        <IconEdit />
+                      </ActionIcon>
+                    )}
+                </Table.Td>
+                <Table.Td w={20}>
+                  <Text>{index + 1}</Text>
+                </Table.Td>
+                <Table.Td w={220}>
+                  <Text>{item.name}</Text>
+                </Table.Td>
+                <Table.Td>
+                  <Box>
+                    {item.ports.map((port: number, index: number) => (
+                      <Badge key={index}>{port}</Badge>
+                    ))}
+                  </Box>
+                </Table.Td>
+              </Table.Tr>
+            ))}
+          </Table.Tbody>
+        </Table>
       </Stack>
     </Stack>
   );

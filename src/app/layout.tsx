@@ -4,6 +4,7 @@ import "@mantine/core/styles.css";
 import { toastConfig } from "react-simple-toasts";
 import "react-simple-toasts/dist/style.css";
 import "react-simple-toasts/dist/theme/dark.css";
+import '@mantine/code-highlight/styles.css';
 
 toastConfig({ theme: "dark" });
 

@@ -1,18 +1,16 @@
 import configState from "@/state/config";
-import { Button, CloseButton, Flex, Stack, Title } from "@mantine/core";
+import { Button, Flex, Stack, Text } from "@mantine/core";
 import { useSnapshot } from "valtio";
 import ConfigCreate from "./ConfigCreate";
 import ConfigList from "./ConfigList";
 import ConfigViewRun from "./ConfigRun";
 import ConfigViewDelete from "./ConfigViewDelete";
-import Link from "next/link";
 
 function ConfigView() {
   return (
     <Stack>
       <Flex>
-        <CloseButton component={Link} href={"/admin"} />
-        <Title order={2}>Config</Title>
+        <Text size="1.5rem">Config</Text>
       </Flex>
       <Button.Group>
         <Button variant="light" onClick={() => (configState.selected = "list")}>

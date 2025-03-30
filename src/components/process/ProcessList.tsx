@@ -1,8 +1,17 @@
 import processState from "@/state/process";
-import { Stack, Table, Text, Title, Tooltip, UnstyledButton } from "@mantine/core";
+import {
+  ActionIcon,
+  Flex,
+  Loader,
+  Stack,
+  Table,
+  Text,
+  Tooltip
+} from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
-import { IconChevronRight } from '@tabler/icons-react';
+import { IconChevronRight, IconRefresh } from "@tabler/icons-react";
 import _ from "lodash";
+import Link from "next/link";
 import { useSnapshot } from "valtio";
 
 function ProcessList() {
@@ -12,7 +21,13 @@ function ProcessList() {
   }, []);
   return (
     <Stack bg={"dark.9"} p={"md"}>
-      <Title order={3}>Process List</Title>
+      <Flex align={"center"} gap={"md"}>
+        <Text size="1.5rem">Process List</Text>
+        <ActionIcon display={process.loading ? "none" : "block"} variant="light" onClick={() => process.load()}>
+          <IconRefresh />
+        </ActionIcon>
+        <Loader size={"sm"} display={process.loading ? "block" : "none"} />
+      </Flex>
       <div
         style={{
           width: "100%",
@@ -34,11 +49,11 @@ function ProcessList() {
           </Table.Thead>
           <Table.Tbody>
             {process.list.map((item, index) => (
-              <Table.Tr key={index} >
+              <Table.Tr key={index}>
                 <Table.Td>
-                  <UnstyledButton onClick={() => (processState.selected = item)}>
+                  <ActionIcon variant="light" component={Link} href={`/admin/process/${item.name}`}>
                     <IconChevronRight />
-                  </UnstyledButton>
+                  </ActionIcon>
                 </Table.Td>
                 {_.keys(item).map((key) => (
                   <Table.Td key={key} maw={360}>

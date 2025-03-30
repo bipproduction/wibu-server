@@ -36,7 +36,7 @@ function ConfigCreate() {
           </Notification>
         )}
         <Upload />
-        <Divider />
+        <Divider label={"OR"} labelPosition="center" w={"100%"} />
         <Title order={2}>Create Config</Title>
         <TextInput
           label="Name"

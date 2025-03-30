@@ -23,6 +23,8 @@ import serverConfig from "./_lib/server/server-config";
 import serverEdit from "./_lib/server/server-edit";
 import serverRemove from "./_lib/server/server-remove";
 import getVersion from "./_lib/version";
+import processLog from "./_lib/process/precess-log";
+import { processItem } from "./_lib/process/process-item";
 
 const corsConfig = {
   origin: "*",
@@ -52,7 +54,9 @@ const Process = new Elysia({
   .post("/restart/:namespace", processRestart)
   .post("/reload/:namespace", processReload)
   .post("/stop/:namespace", processStop)
-  .post("/remove/:namespace", processRemove);
+  .post("/remove/:namespace", processRemove)
+  .get("/log/:name", processLog)
+  .get("/item/:name", processItem);
 
 const Config = new Elysia({
   prefix: "/config",

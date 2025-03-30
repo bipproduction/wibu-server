@@ -1,13 +1,12 @@
 'use client'
-import { Button } from "@mantine/core";
-import Link from "next/link";
+import { Card, Flex, Stack, Text } from "@mantine/core";
 
 export default function Page(){
-    return <div>
-        <Button.Group>
-            <Button variant="light" component={Link} href={"/admin/server"}>Server</Button>
-            <Button variant="light" component={Link} href={"/admin/process"}>Process</Button>
-            <Button variant="light" component={Link} href={"/admin/config"}>Config</Button>
-        </Button.Group>
-    </div>
+    return <Stack>
+       <Card>
+        <Flex gap={"md"} align={"center"}>
+            <Text size="1.5rem">Admin</Text>
+        </Flex>
+       </Card>
+    </Stack>
 }
