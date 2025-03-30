@@ -2,7 +2,8 @@ import { parseNginxToSubdomainJson } from "@/lib/nginx";
 import fs from "fs/promises";
 
 async function serverConfig() {
-  const wibudevPath = "/etc/nginx/conf.d/wibudev.conf";
+  try {
+    const wibudevPath = "/etc/nginx/conf.d/wibudev.conf";
   const mukuPath = "/etc/nginx/conf.d/muku.conf";
 
   const wibudevConfig = await fs.readFile(wibudevPath, "utf-8");
@@ -13,10 +14,19 @@ async function serverConfig() {
 
   return {
     data: {
-      wibuDev: wibuDevJson,
-      muku: mukuJson,
+      wibuDev: wibuDevJson.subdomains,
+      muku: mukuJson.subdomains,
     },
   };
+  } catch (error) {
+    console.error(error);
+    return {
+      data: {
+        wibuDev: [],
+        muku: [],
+      },
+    };
+  }
 }
 
 export default serverConfig;

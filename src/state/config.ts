@@ -10,7 +10,7 @@ const configState = proxy({
     list: [] as any[],
     async load() {
       const list = await ApiFetch.api.config["config-list"].get();
-      this.list = list.data?.data as any[];
+      this.list = list.data as any[];
     },
   },
   configUpload: {

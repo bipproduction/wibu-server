@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 const UPLOAD_DIR = process.env.WIBU_UPLOAD_DIR;
 
-async function configText(params: { name: string }) {
+async function configText({ params }: { params: { name: string } }) {
   try {
     const { name } = params;
     if (!UPLOAD_DIR) {

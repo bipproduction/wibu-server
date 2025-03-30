@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { generateNginxFromSubdomain } from "@/lib/nginx";
 import fs from "fs/promises";
 import serverConfigList from "../server-config-list";
 import _ from "lodash";
 
-async function serverEdit({
+async function serverAdd({
   body,
 }: {
   body: {
@@ -19,7 +18,8 @@ async function serverEdit({
   };
 }) {
   const { name, data } = body;
-  const config = await serverConfigList({ domainId: name });
+  data.id = _.kebabCase(data.name);
+  data.name = _.kebabCase(data.name);
 
   if (!data.ports || data.ports.length < 1) {
     return {
@@ -33,25 +33,14 @@ async function serverEdit({
     };
   }
 
-  if(!config) {
-    return {
-      message: "Server not found",
-    };
-  }
-  const newData = config?.map((item: any) => {
-    if (item.id === data.id) {
-      data.id = _.kebabCase(data.name);
-      data.name = _.kebabCase(data.name);
-      return data;
-    }
-    return item;
-  });
-
+  const config = await serverConfigList({ domainId: name });
+  const newData = [...config, data];
   const serverString = generateNginxFromSubdomain({ subdomains: newData });
   await fs.writeFile(`/etc/nginx/conf.d/${name}.conf`, serverString);
+  console.log(serverString);
   return {
     message: "Server added successfully",
   };
 }
 
-export default serverEdit;
+export default serverAdd;

@@ -7,6 +7,14 @@ const serverState = proxy({
   muku: null as any[] | null,
   wibudev: null as any | null,
   deleteCount: 0,
+  form: {
+    id: "",
+    domainId: "",
+    name: "",
+    ports: [3000],
+  } as
+    | { id: string; domainId: string; name: string; ports: number[] }
+    | undefined,
   updateData: null as {
     id?: string | undefined;
     domainId?: string | undefined;
@@ -14,12 +22,12 @@ const serverState = proxy({
     ports?: number[] | undefined;
   } | null,
   async load() {
-    const { data } = await ApiFetch.api.server.config.get();
-    const lsMuku = data?.data.muku.subdomains as any[];
+    const { data } = await ApiFetch.api.server["server-config"].get();
+    const lsMuku = data?.data.muku as any[];
     if (lsMuku) {
       this.muku = lsMuku;
     }
-    const lsWibuDev = data?.data.wibuDev.subdomains as any[];
+    const lsWibuDev = data?.data.wibuDev as any[];
     if (lsWibuDev) {
       this.wibudev = lsWibuDev;
     }
@@ -34,51 +42,45 @@ const serverState = proxy({
     name: string;
     ports: number[];
   }) {
-    if (params.domainId === "muku") {
-      const newData = this.muku?.map((item: any) => {
-        if (item.id === params.id) {
-          return params;
-        }
-        return item;
-      });
-      this.muku = newData as any[];
-      this.updateData = null;
-      this.event = null;
-    }
-
-    if (params.domainId === "wibuDev") {
-      const newData = this.wibudev?.map((item: any) => {
-        if (item.id === params.id) {
-          return params;
-        }
-        return item;
-      });
-      this.wibudev = newData as any[];
-    }
+    await ApiFetch.api.server["server-edit"].post({
+      name: params.domainId,
+      data: params,
+    });
+    this.load();
+    toast(`${params.name} Updated!`);
+    this.event = null;
   },
   async onRemove({ domainId, id }: { domainId: string; id: string }) {
     this.deleteCount++;
     toast(`${this.deleteCount} / 5 to delete`);
-    if (this.deleteCount === 5) {
-      if (domainId === "muku") {
-        const newData = this.muku?.filter((item: any) => item.id !== id);
-        this.muku = newData as any[];
-      }
-
-      if (domainId === "wibuDev") {
-        const newData = this.wibudev?.filter((item: any) => item.id !== id);
-        this.wibudev = newData as any[];
-      }
+    if (this.deleteCount === 3) {
+      await ApiFetch.api.server["server-remove"].post({
+        name: domainId,
+        data: { id },
+      });
 
       this.event = null;
       this.deleteCount = 0;
       toast(`${id} Deleted!`);
+      this.load();
       return;
     }
-
-    setTimeout(() => {
-      this.deleteCount = 0;
-    }, 5000);
+  },
+  async onCreate(params: {
+    domainId: string;
+    id: string;
+    name: string;
+    ports: number[];
+  }) {
+    // console.log(params.ports);
+    const res = await ApiFetch.api.server["server-add"].post({
+      name: params.domainId,
+      data: params,
+    });
+    this.load();
+    toast(`${params.name} Added! ${res.data?.message}`);
+    this.event = null;
+    this.form = undefined;
   },
 });
 
