@@ -12,7 +12,7 @@ async function processLog({
   set.headers["Content-Type"] = "text/plain";
   return await new Promise((resolve) => {
     let data = "";
-    const child = spawn("pm2", ["logs", params.name, "--lines", "100"], {
+    const child = spawn("pm2", ["logs", params.name, "--lines", "2000"], {
       stdio: "pipe",
       env: process.env,
     });
