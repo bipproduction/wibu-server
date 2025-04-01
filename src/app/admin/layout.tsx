@@ -1,29 +1,63 @@
-'use client'
-import { Button, Stack } from "@mantine/core";
-import { IconHome } from "@tabler/icons-react";
+"use client";
+import { Button, Flex, Stack } from "@mantine/core";
+import {
+  IconAdjustments,
+  IconHome,
+  IconProgress,
+  IconServer
+} from "@tabler/icons-react";
+import _ from "lodash";
 import Link from "next/link";
+import { useSelectedLayoutSegments } from "next/navigation";
+
+const listNav = [
+  {
+    label: "Home",
+    icon: <IconHome />,
+    href: "/admin",
+  },
+  {
+    label: "Server",
+    icon: <IconServer />,
+    href: "/admin/server",
+  },
+  {
+    label: "Process",
+    icon: <IconProgress />,
+    href: "/admin/process",
+  },
+  {
+    label: "Config",
+    icon: <IconAdjustments />,
+    href: "/admin/config",
+  },
+];
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const params = useSelectedLayoutSegments()[0];
   return (
     <Stack>
-      <Button.Group>
-        <Button variant="light" component={Link} href={"/admin"}>
-          <IconHome />
-        </Button>
-        <Button variant="light" component={Link} href={"/admin/server"}>
-          Server
-        </Button>
-        <Button variant="light" component={Link} href={"/admin/process"}>
-          Process
-        </Button>
-        <Button variant="light" component={Link} href={"/admin/config"}>
-          Config
-        </Button>
-      </Button.Group>
+      <Flex bg={"dark.9"}>
+        <Button.Group>
+          {listNav.map((item) => (
+            <Button
+              leftSection={item.icon}
+              key={item.label}
+              variant="transparent"
+              component={Link}
+              href={item.href}
+              c={_.startCase(params) === item.label ? "blue.9" : params == null && item.label === "Home" ? "blue.9" : "grey"}
+              size="compact-xs"
+            >
+              {item.label}
+            </Button>
+          ))}
+        </Button.Group>
+      </Flex>
       {children}
     </Stack>
   );

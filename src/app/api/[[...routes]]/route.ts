@@ -56,7 +56,7 @@ const Process = new Elysia({
   .post("/reload/:namespace", processReload)
   .post("/stop/:namespace", processStop)
   .post("/remove/:namespace", processRemove)
-  .get("/log/:name", processLog)
+  .get("/log/:name/:lines", processLog)
   .get("/item/:name", processItem);
 
 const Config = new Elysia({

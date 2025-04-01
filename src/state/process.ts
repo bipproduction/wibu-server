@@ -6,8 +6,6 @@ import { proxy } from "valtio";
 
 const processState = proxy({
   list: [] as any[],
-  table: "",
-  // selected: null as Record<string, any> | null,
   loading: false,
   async load() {
     processState.loading = true;
@@ -53,12 +51,26 @@ const processState = proxy({
   log: {
     loading: false,
     text: "[LOG]: ...",
+    lines: {
+      line: 15,
+      set(line: number) {
+        processState.log.lines.line = line;
+        window?.localStorage?.setItem("logLines", line.toString());
+        processState.log.lines.get();
+      },
+      get() {
+        return Number(window?.localStorage?.getItem("logLines") ?? 15);
+      },
+    },
     async log(params: { name: string }) {
-      this.text = "[LOG]: loading ...";
-      this.loading = true;
-      const { data } = await ApiFetch.api.process.log(params).get();
-      this.text = data as string;
-      this.loading = false;
+      processState.log.text = "[LOG]: loading ...";
+      processState.log.loading = true;
+      processState.log.lines.set(Number(window?.localStorage?.getItem("logLines") ?? 15));
+      const { data } = await ApiFetch.api.process
+        .log({ name: params.name })({ lines: processState.log.lines.get() })
+        .get();
+      processState.log.text = data as string;
+      processState.log.loading = false;
       return data;
     },
   },
@@ -66,10 +78,10 @@ const processState = proxy({
     data: null as Record<string, any> | null,
     loading: false,
     async item(params: { name: string }) {
-      this.loading = true;
+      processState.processItem.loading = true;
       const { data } = await ApiFetch.api.process.item(params).get();
-      this.data = data as Record<string, any> | null;
-      this.loading = false;
+      processState.processItem.data = data as Record<string, any> | null;
+      processState.processItem.loading = false;
       return data;
     },
   },

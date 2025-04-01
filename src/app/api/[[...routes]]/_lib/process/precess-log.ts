@@ -6,16 +6,20 @@ async function processLog({
   params,
   set,
 }: {
-  params: { name: string };
+  params: { name: string; lines: number };
   set: any;
 }) {
   set.headers["Content-Type"] = "text/plain";
   return await new Promise((resolve) => {
     let data = "";
-    const child = spawn("/bin/bash", ["-c", `pm2 logs ${params.name} --lines 2000`], {
-      stdio: "pipe",
-      env: process.env,
-    });
+    const child = spawn(
+      "/bin/bash",
+      ["-c", `pm2 logs ${params.name} --lines ${params.lines ?? 15}`],
+      {
+        stdio: "pipe",
+        env: process.env,
+      }
+    );
     child.stdout.on("data", (chunk) => {
       data += decoder.decode(chunk);
     });

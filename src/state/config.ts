@@ -1,6 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiFetch from "@/lib/api-fetch";
 import { proxy } from "valtio";
+import projectState from "./projects";
+import toast from "react-simple-toasts";
+
+const configTemplate = `
+name: "name"
+namespace: "namespace"
+branch: "branch"
+repo: "repo"
+env: |
+  NODE_ENV="production"
+options:
+  dbPush: false
+  dbSeed: false
+  build: true
+  # newConfig: true
+  # count: 1
+  # ports: null
+`;
 
 const configState = proxy({
   notif: null as string | null,
@@ -10,7 +28,7 @@ const configState = proxy({
     list: [] as any[],
     async load() {
       const list = await ApiFetch.api.config["config-list"].get();
-      this.list = list.data as any[];
+      configState.configList.list = list.data as any[];
     },
   },
   configUpload: {
@@ -26,7 +44,7 @@ const configState = proxy({
   configDelete: {
     name: null as string | null,
     async delete() {
-      if (!this.name) {
+      if (!configState.configDelete.name) {
         return {
           status: 400,
           body: {
@@ -35,7 +53,7 @@ const configState = proxy({
         };
       }
       const { data } = await ApiFetch.api.config["config-delete"]({
-        name: this.name,
+        name: configState.configDelete.name!,
       }).delete();
       configState.configList.load();
       return data;
@@ -46,28 +64,28 @@ const configState = proxy({
     message: null as string | null,
     async run({ name }: { name: string }) {
       try {
-        this.loading = true;
+        configState.run.loading = true;
         const { data } = await ApiFetch.api.config["config-run"]({
           name,
         }).post();
 
-        console.log(data?.status);
-
         if (data?.status !== 204) {
-          this.loading = false;
-          this.message = JSON.stringify(
+          configState.run.loading = false;
+          configState.run.message = JSON.stringify(
             data?.body as unknown as string,
             null,
             2
           );
           return data;
         }
-        this.loading = false;
-        this.message = "SUCCESS";
+        configState.run.loading = false;
+        configState.run.message = "SUCCESS";
         return data;
       } catch (error) {
-        this.loading = false;
-        this.message = (error as { message: string }).message;
+        configState.run.loading = false;
+        configState.run.message = (error as { message: string }).message;
+      } finally {
+        configState.run.loading = false;
       }
     },
   },
@@ -76,7 +94,6 @@ const configState = proxy({
     text: null as string | null,
     json: null as Record<string, any> | null,
     async load({ name }: { name: string }) {
-      this.name = name;
       if (!name) {
         return {
           status: 400,
@@ -91,44 +108,46 @@ const configState = proxy({
       const { data: json } = await ApiFetch.api.config["config-json"]({
         name,
       }).get();
-      this.text = data?.data as string;
-      this.json = json?.data as Record<string, unknown>;
+
+      configState.detail.name = name;
+      configState.detail.text = data?.data as string;
+      configState.detail.json = json?.data as Record<string, unknown>;
+
+      // console.log(json?.data);
+      projectState.releases.load({
+        name: json?.data.name as string,
+        namespace: json?.data.namespace as string,
+      });
     },
   },
   create: {
     name: null as string | null,
-    text: null as string | null,
+    text: configTemplate as string | null,
     loading: false as boolean,
     message: null as string | null,
-    async create({
-      name,
-      text,
-    }: { name: string; text: string }) {
+    async create({ name, text }: { name: string; text: string }) {
       try {
-        this.loading = true;
+        configState.create.loading = true;
         if (!name || !text) {
-          return {
-            status: 400,
-            body: {
-              message: "Name and text are required",
-            },
-          };
+          return toast("Name and text are required");
         }
 
-        console.log(name, text);
+        // console.log(name, text);
         const { data } = await ApiFetch.api.config["config-create"].post({
           name,
           text,
         });
-        this.loading = false;
+        configState.create.loading = false;
         configState.configList.load();
-        this.name = null;
-        this.text = null;
-        this.message = "SUCCESS ";
+        configState.create.name = null;
+        configState.create.text = null;
+        configState.create.message = "SUCCESS ";
         return data;
       } catch (error) {
-        this.loading = false;
-        this.message = (error as { message: string }).message;
+        configState.create.loading = false;
+        configState.create.message = (error as { message: string }).message;
+      } finally {
+        configState.create.loading = false;
       }
     },
   },

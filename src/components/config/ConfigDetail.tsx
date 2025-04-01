@@ -1,109 +1,132 @@
 import configState from "@/state/config";
 import projectState from "@/state/projects";
 import {
+  ActionIcon,
   Button,
-  CloseButton,
   Flex,
+  Group,
+  SimpleGrid,
   Stack,
   Text,
   Title,
-  Tooltip,
+  Tooltip
 } from "@mantine/core";
+import { useShallowEffect } from "@mantine/hooks";
 import { Editor } from "@monaco-editor/react";
-import { IconEdit, IconPlayerPlay } from "@tabler/icons-react";
+import {
+  IconAssembly,
+  IconEdit,
+  IconPlayerPlay,
+  IconTrash,
+} from "@tabler/icons-react";
 import { useSnapshot } from "valtio";
+import { useProxy } from "valtio/utils";
 
-function ConfigDetail() {
-  const { detail, run, isEdit } = useSnapshot(configState);
-  const project = useSnapshot(projectState);
+function ConfigDetail({ name }: { name: string }) {
+  const config = useSnapshot(configState);
+  const project = useProxy(projectState);
 
-  if (project.releases.list) {
-    return <ReleasesView />;
-  }
+  useShallowEffect(() => {
+    if (name) {
+      config.detail.load({ name });
+    }
+  }, [name]);
 
   return (
     <Stack bg={"dark.9"} p={"md"}>
-      <Title order={3}>Config Detail</Title>
+      <Title order={3}>{name}</Title>
       <Button.Group>
         <Button
           variant="transparent"
-          onClick={() => (configState.isEdit = !isEdit)}
+          onClick={() => (configState.isEdit = !config.isEdit)}
         >
           <Tooltip label={"edit"}>
             <IconEdit />
           </Tooltip>
         </Button>
         <Button
-          loading={run.loading}
+          loading={config.run.loading}
           variant="transparent"
-          onClick={() => configState.run.run({ name: detail.name! })}
+          onClick={() => config.run.run({ name: config.detail.name! })}
         >
           <Tooltip label="Run">
             <IconPlayerPlay />
           </Tooltip>
         </Button>
-        <Button
-          variant="transparent"
-          onClick={() =>
-            projectState.releases.load({
-              name: detail.json?.name as string,
-              namespace: detail.json?.namespace as string,
-            })
-          }
-        >
-          <Text>releases</Text>
-        </Button>
+        <Tooltip label="Delete">
+          <ActionIcon variant="transparent">
+            <IconTrash />
+          </ActionIcon>
+        </Tooltip>
       </Button.Group>
-      <Text>{detail.name}</Text>
       <Editor
         height="300px"
         theme="vs-dark"
         defaultLanguage="yaml"
-        value={detail.text ?? ""}
+        value={config.detail.text ?? ""}
         onChange={(e) => (configState.detail.text = e || null)}
         options={{
-          readOnly: !isEdit,
+          readOnly: !config.isEdit,
         }}
       />
-      <Button.Group>
-        {isEdit && (
-          <Button
-            loading={configState.create.loading}
-            onClick={() => {
-              configState.create.create({
-                name: detail.name!,
-                text: detail.text!,
-              });
-            }}
-            variant="light"
-          >
-            Update
-          </Button>
-        )}
-      </Button.Group>
+      <Group justify="right">
+        <Button.Group>
+          {config.isEdit && (
+            <Button
+              loading={config.create.loading}
+              onClick={() => {
+                config.create.create({
+                  name: config.detail.name!,
+                  text: config.detail.text!,
+                });
+              }}
+              variant="light"
+            >
+              Update
+            </Button>
+          )}
+        </Button.Group>
+      </Group>
+      {project.releases.list && <ReleasesView />}
     </Stack>
   );
 }
 
 function ReleasesView() {
+  const project = useProxy(projectState);
   return (
     <Stack bg={"dark.9"} p={"md"}>
       <Flex gap={"md"}>
-        <CloseButton onClick={() => (projectState.releases.list = null)} />
         <Text size={"1.5rem"}>Releases</Text>
       </Flex>
-      <Stack>
-        {projectState.releases.list?.map((release) => (
-          <Flex bg={release === projectState.releases.current ? "dark.8" : ""} key={release} gap={"md"} align={"center"}>
-            <Text
-              key={release}
+      <SimpleGrid
+        cols={{
+          base: 2,
+          md: 4,
+        }}
+      >
+        {project.releases.list?.map((release) => (
+          <Flex
+            bg={release === project.releases.current ? "dark" : ""}
+            justify={"space-between"}
+            key={release}
+            gap={"md"}
+            align={"center"}
+          >
+            <Text c={release === project.releases.current ? "green.9" : "dark"}>{release}</Text>
+            <ActionIcon
+              onClick={() => project.releases.assign({ release })}
+              loading={project.releases.loading}
+              c={release === project.releases.current ? "green.9" : "dark"}
+              variant="transparent"
             >
-              {release}
-            </Text>
-            <Button onClick={() => projectState.releases.assign({ release })} loading={projectState.releases.loading} c={release === projectState.releases.current ? "green.9" : "dark"} variant="transparent">Assign</Button>
+              <Tooltip label="Assign">
+                <IconAssembly />
+              </Tooltip>
+            </ActionIcon>
           </Flex>
         ))}
-      </Stack>
+      </SimpleGrid>
     </Stack>
   );
 }

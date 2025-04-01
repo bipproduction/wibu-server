@@ -15,7 +15,7 @@ function ConfigList() {
         <Grid.Col span={"content"}>
           <List />
         </Grid.Col>
-        <Grid.Col span={"auto"}>{etc.detail.text && <ConfigDetail />}</Grid.Col>
+        <Grid.Col span={"auto"}>{etc.detail.text && <ConfigDetail name={etc.detail.name!} />}</Grid.Col>
       </Grid>
     </Stack>
   );

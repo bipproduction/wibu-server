@@ -24,7 +24,7 @@ function ServerView() {
   const server = useSnapshot(serverState);
 
   useShallowEffect(() => {
-    serverState.load();
+    serverState.load.load();
   }, []);
   return (
     <Stack p={"md"}>

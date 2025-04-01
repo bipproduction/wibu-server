@@ -20,16 +20,26 @@ const serverState = proxy({
     name?: string | undefined;
     ports?: number[] | undefined;
   } | null,
-  async load() {
-    const { data } = await ApiFetch.api.server["server-config"].get();
-    const lsMuku = data?.data.muku as any[];
-    if (lsMuku) {
-      this.muku = lsMuku;
-    }
-    const lsWibuDev = data?.data.wibuDev as any[];
-    if (lsWibuDev) {
-      this.wibudev = lsWibuDev;
-    }
+  load: {
+    loading: false as boolean,
+    async load() {
+      try {
+        serverState.load.loading = true;
+        const { data } = await ApiFetch.api.server["server-config"].get();
+        const lsMuku = data?.data.muku as any[];
+        if (lsMuku) {
+          serverState.muku = lsMuku;
+        }
+        const lsWibuDev = data?.data.wibuDev as any[];
+        if (lsWibuDev) {
+          serverState.wibudev = lsWibuDev;
+        }
+      } catch (error) {
+        toast(`[LOAD SERVER]: ${error}`);
+      } finally {
+        serverState.load.loading = false;
+      }
+    },
   },
   event: null as null | {
     name: string;
@@ -45,9 +55,9 @@ const serverState = proxy({
       name: params.domainId,
       data: params,
     });
-    this.load();
+    serverState.load.load();
     toast(`${params.name} Updated!`);
-    this.event = null;
+    serverState.event = null;
   },
   async onRemove({ domainId, id }: { domainId: string; id: string }) {
     await ApiFetch.api.server["server-remove"].post({
@@ -55,9 +65,9 @@ const serverState = proxy({
       data: { id },
     });
 
-    this.event = null;
+    serverState.event = null;
     toast(`${id} Deleted!`);
-    this.load();
+    serverState.load.load();
     return;
   },
   async onCreate(params: {
@@ -71,10 +81,10 @@ const serverState = proxy({
       name: params.domainId,
       data: params,
     });
-    this.load();
+    serverState.load.load();
     toast(`${params.name} Added! ${res.data?.message}`);
-    this.event = null;
-    this.form = undefined;
+    serverState.event = null;
+    serverState.form = undefined;
   },
 });
 

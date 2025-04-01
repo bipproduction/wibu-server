@@ -10,27 +10,27 @@ const projectState = proxy({
     namespace: null as string | null,
     loading: false as boolean,
     async load({ name, namespace }: { name: string; namespace: string }) {
-      this.name = name;
-      this.namespace = namespace;
+      projectState.releases.name = name;
+      projectState.releases.namespace = namespace;
       const { data } = await ApiFetch.api.projects["releases"]({
         name,
       })({ namespace }).get();
-      this.list = data?.project ?? null;
-      this.current = data?.current ?? null;
+      projectState.releases.list = data?.project ?? null;
+      projectState.releases.current = data?.current ?? null;
     },
     async assign({ release }: { release: string }) {
-      this.loading = true;
+      projectState.releases.loading = true;
       const { data } = await ApiFetch.api.projects["releases-assign"]({
-        name: this.name!,
+        name: projectState.releases.name!,
       })({
-        namespace: this.namespace!,
+        namespace: projectState.releases.namespace!,
       })({
         release,
       }).post();
 
       toast(data?.success ? "Success" : "Failed");
-      this.load({ name: this.name!, namespace: this.namespace! });
-      this.loading = false;
+      projectState.releases.load({ name: projectState.releases.name!, namespace: projectState.releases.namespace! });
+      projectState.releases.loading = false;
      
       return data?.success ?? false;
     },
