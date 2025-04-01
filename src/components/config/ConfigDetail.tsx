@@ -14,10 +14,10 @@ import {
 import { useShallowEffect } from "@mantine/hooks";
 import { Editor } from "@monaco-editor/react";
 import {
-  IconAssembly,
   IconEdit,
   IconPlayerPlay,
   IconTrash,
+  IconWorldWww
 } from "@tabler/icons-react";
 import { useSnapshot } from "valtio";
 import { useProxy } from "valtio/utils";
@@ -101,7 +101,7 @@ function ReleasesView() {
       </Flex>
       <SimpleGrid
         cols={{
-          base: 2,
+          base: 1,
           md: 4,
         }}
       >
@@ -121,7 +121,7 @@ function ReleasesView() {
               variant="transparent"
             >
               <Tooltip label="Assign">
-                <IconAssembly />
+                <IconWorldWww />
               </Tooltip>
             </ActionIcon>
           </Flex>

@@ -86,6 +86,11 @@ const serverState = proxy({
     serverState.event = null;
     serverState.form = undefined;
   },
+  async reload() {
+    await ApiFetch.api.server["server-reload"].post();
+    serverState.load.load();
+    toast("[SUCCESS] Server Reloaded!");
+  },
 });
 
 export default serverState;

@@ -3,13 +3,14 @@ import {
   ActionIcon,
   Box,
   Card,
+  Divider,
   Flex,
   Group,
   Indicator,
   Loader,
   SimpleGrid,
   Stack,
-  Text
+  Text,
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { IconChevronRight, IconRefresh } from "@tabler/icons-react";
@@ -43,13 +44,13 @@ function ProcessList() {
         <SimpleGrid
           spacing={"md"}
           cols={{
-            base: 2,
+            base: 1,
             md: 4,
           }}
         >
           {process.list.map((item, index) => (
             <Card key={index}>
-              <Stack gap={0}>
+              <Stack gap={"md"}>
                 <Flex gap={"md"} align={"center"}>
                   <Box>
                     <Indicator
@@ -63,18 +64,24 @@ function ProcessList() {
                     {item.name}
                   </Text>
                 </Flex>
-                <Flex gap={"md"}>
-                  <Text w={100}>namespace</Text>
-                  <Text lineClamp={1}>{item.namespace}</Text>
-                </Flex>
-                <Flex gap={"md"}>
-                  <Text w={100}>memory</Text>
-                  <Text>{item.memory}</Text>
-                </Flex>
-                <Flex gap={"md"}>
-                  <Text w={100}>pm_uptime</Text>
-                  <Text>{item.pm_uptime}</Text>
-                </Flex>
+                <Stack gap={"0"} align="center">
+                  <Text fw={"bold"} size="1.5rem" lineClamp={1}>
+                    {item.namespace}
+                  </Text>
+                  <Text size="0.8rem" c={"gray.6"}>
+                    namespace
+                  </Text>
+                </Stack>
+                <Divider />
+                <Stack gap={"0"} align={"center"}>
+                  <Text fw={"bold"} size="1.5rem">{item.memory}</Text>
+                  <Text size="0.8rem" c={"gray.6"}>memory</Text>
+                </Stack>
+                <Divider />
+                <Stack gap={"0"} align={"center"}>
+                  <Text fw={"bold"} size="1.5rem">{item.pm_uptime}</Text>
+                  <Text size="0.8rem" c={"gray.6"}>pm_uptime</Text>
+                </Stack>
                 <Group justify={"right"}>
                   <ActionIcon
                     radius={100}

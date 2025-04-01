@@ -13,7 +13,7 @@ import {
   Tooltip
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
-import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconPlus, IconReload, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 import { useSnapshot } from "valtio";
 import { useProxy } from "valtio/utils";
@@ -83,6 +83,15 @@ function View({ name, data }: { name: string; data: any[] | null }) {
           >
             <Tooltip label="Update">
               <IconEdit />
+            </Tooltip>
+          </Button>
+          <Button
+            onClick={() => server.reload()}
+            variant="light"
+            size="compact-xs"
+          >
+            <Tooltip label="Reload">
+              <IconReload />
             </Tooltip>
           </Button>
         </Button.Group>

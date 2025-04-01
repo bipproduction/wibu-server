@@ -26,6 +26,7 @@ import getVersion from "./_lib/version";
 import processLog from "./_lib/process/precess-log";
 import { processItem } from "./_lib/process/process-item";
 import buildLog from "./_lib/webhook/build-log";
+import { serverReload } from "./_lib/server/server-reload";
 
 const corsConfig = {
   origin: "*",
@@ -45,7 +46,8 @@ const Server = new Elysia({
   .get("/table-muku", serverConfig)
   .post("/server-edit", serverEdit)
   .post("/server-add", serverAdd)
-  .post("/server-remove", serverRemove);
+  .post("/server-remove", serverRemove)
+  .post("/server-reload", serverReload);
 
 const Process = new Elysia({
   prefix: "/process",
