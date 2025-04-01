@@ -17,7 +17,7 @@ async function projectReleases({
       path.join(root, params.name, params.namespace, "current")
     );
     const current = currentLink.split("/").pop();
-    return { project, current };
+    return { project: project.sort().reverse(), current };
   } catch (error) {
     console.error(error);
     return { project: [], current: null };
