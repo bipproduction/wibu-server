@@ -141,7 +141,7 @@ function ReleasesView() {
 }
 
 function LogView({namespace}: {namespace: string}) {
-  
+
   const { data, isLoading } = swr(
     `/api/config/config-log/logs/build/${namespace}/log`,
     (url) => fetch(url).then((res) => res.json()),
@@ -154,6 +154,7 @@ function LogView({namespace}: {namespace: string}) {
   if(data.body === null) return <Text>Log not found</Text>
   return (
     <Stack>
+      <Text>{`/api/config/config-log/logs/build/${namespace}/log`}</Text>
       <Text>Log View</Text>
       <CodeHighlight code={_.values(data.body).join("\n")} language="log" />
     </Stack>
