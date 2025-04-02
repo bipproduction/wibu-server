@@ -141,6 +141,7 @@ function ReleasesView() {
 }
 
 function LogView({namespace}: {namespace: string}) {
+  
   const { data, isLoading } = swr(
     `/api/config/config-log/logs/build/${namespace}/log`,
     (url) => fetch(url).then((res) => res.json()),

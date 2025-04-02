@@ -25,6 +25,12 @@ jobs:
           --health-timeout=5s
           --health-retries=5
     steps:
+      - name: update log start
+        continue-on-error: true
+        run: |
+          curl -X PUT -d 'true' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
+          curl -X PUT -d '{"start": "[INFO] start deploy"}' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -81,7 +87,14 @@ jobs:
       - name: build
         if: ${{ fromJson(inputs.data).options.build }}
         working-directory: ${{ env.WIBU_APP_VERSION }}
-        run: bun run build
+        run: bun run build 2>&1 | tee build.log
+
+      - name: update log build
+        if: ${{ fromJson(inputs.data).options.build }}
+        working-directory: ${{ env.WIBU_APP_VERSION }}
+        continue-on-error: true
+        run: |
+          curl -X POST -d '"$(cat build.log)"' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
 
       - name: remove node_modules
         working-directory: ${{ env.WIBU_APP_VERSION }}
@@ -207,10 +220,23 @@ jobs:
             | bun run - \
               --name "${{ env.WIBU_NAME }}" \
               --namespace "${{ env.WIBU_NAMESPACE }}" 
+              - name: update log finish
+              if: success()
+              continue-on-error: true
+              run: |
+                curl -X PUT -d 'false' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
+                curl -X POST -d '"[SUCCESS] finish deploy"' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
 
-      - name: finish
-        if: always()
+      - name: update log error
+        if: failure()
+        continue-on-error: true
         run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"text": "Finish Deploy"}' \
-          ${{ secrets.FBS_DB_URL }}/logs/build/${{ env.WIBU_NAMESPACE }}/log.json
+          curl -X PUT -d 'false' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
+          curl -X POST -d '"[ERROR] finish deploy"' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+
+      - name: update log success
+        if: success()
+        continue-on-error: true
+        run: |
+          curl -X PUT -d 'false' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
+          curl -X POST -d '"[SUCCESS] finish deploy"' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json

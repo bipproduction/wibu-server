@@ -49,5 +49,6 @@
 # -d "{\"log\": \"$LOG\"}" http://localhost:3006/api/webhook/build-log
 
 
-curl -X GET http://localhost:3006/api/config/config-log/logs
+# curl -X GET http://localhost:3006/api/config/config-log/logs
 
+curl -X PUT -d '{"log": "data log baru"}' https://wibu-5281e-default-rtdb.asia-southeast1.firebasedatabase.app/logs/build/hipmi-staging/log.json
