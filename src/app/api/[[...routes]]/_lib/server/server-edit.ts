@@ -22,7 +22,9 @@ async function serverEdit({
   };
 }) {
   const { name, data } = body;
-  const config = await serverConfigList({ domainId: name });
+  const config = await serverConfigList({ domainId: name })
+
+  console.log(config);
 
   if (!data.ports || data.ports.length < 1) {
     return {

@@ -55,9 +55,9 @@ const serverState = proxy({
       name: params.domainId,
       data: params,
     });
+
     serverState.load.load();
     toast(`${params.name} Updated!`);
-    serverState.event = null;
   },
   async onRemove({ domainId, id }: { domainId: string; id: string }) {
     await ApiFetch.api.server["server-remove"].post({

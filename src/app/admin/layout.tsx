@@ -41,7 +41,9 @@ export default function AdminLayout({
   const params = useSelectedLayoutSegments()[0];
   return (
     <Stack >
-      <Flex bg={"dark.9"} pos={"sticky"} top={0}>
+      <Flex p={"xs"} bg={"dark.9"} pos={"sticky"} top={0} style={{
+        zIndex: 9999
+      }}>
         <Button.Group>
           {listNav.map((item) => (
             <Button

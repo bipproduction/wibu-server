@@ -3,22 +3,46 @@ import serverState from "@/state/server";
 import {
   ActionIcon,
   Badge,
-  Box,
   Button,
+  Card,
+  Divider,
   Flex,
+  Group,
+  SimpleGrid,
+  Skeleton,
   Stack,
-  Table,
   Text,
-  Title,
   Tooltip
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
-import { IconEdit, IconPlus, IconReload, IconTrash } from "@tabler/icons-react";
+import {
+  IconEdit,
+  IconPlus,
+  IconReload,
+  IconServer2,
+  IconShare,
+  IconTrash,
+  IconWorldWww,
+  IconX,
+} from "@tabler/icons-react";
 import { useState } from "react";
 import { useSnapshot } from "valtio";
 import { useProxy } from "valtio/utils";
 import ServerAdd from "./ServerAdd";
 import ServerUpdate from "./ServerUpdate";
+
+const listMenu = [
+  {
+    label: "Add",
+    icon: <IconPlus />,
+    onClick: (name: string) => (serverState.event = { name, action: "add" }),
+  },
+  {
+    label: "Reload",
+    icon: <IconReload />,
+    onClick: () => serverState.reload(),
+  },
+];
 
 function ServerView() {
   const server = useSnapshot(serverState);
@@ -36,122 +60,138 @@ function ServerView() {
 
 function View({ name, data }: { name: string; data: any[] | null }) {
   const server = useProxy(serverState);
-  const [deleteCount, setDeleteCount] = useState(0);
-  if (!data) return <Text>loading ...</Text>;
+  // const [deleteCount, setDeleteCount] = useState(0);
+  if (!data) return <SimpleGrid cols={{
+    base: 1,
+    sm: 2,
+    md: 3,
+    lg: 4,
+    xl: 5,
+  }} >
+    {Array.from({ length: 5 }).map((_, index) => <Skeleton key={index} height={200} />)}
+  </SimpleGrid>
 
   if (server.event?.name === name && server.event.action === "add") {
     return <ServerAdd />;
   }
 
-  if (
-    server.event?.name === name &&
-    server.event.action === "update" &&
-    server.updateData
-  ) {
-    return <ServerUpdate />;
-  }
-
   return (
     <Stack>
-      <Stack bg={"dark.9"} p={"xs"}>
-        <Flex>
-          <Title order={4}>{name}</Title>
+      <Stack p={"xs"}>
+        <Flex gap={"md"} align={"center"}>
+          <IconServer2 />
+          <Text size="2rem">{name}</Text>
         </Flex>
         <Button.Group>
-          <Button
-            onClick={() => (server.event = { name, action: "add" })}
-            variant="light"
-            size="compact-xs"
-          >
-            <Tooltip label="Add">
-              <IconPlus />
-            </Tooltip>
-          </Button>
-          <Button
-            onClick={() => (server.event = { name, action: "remove" })}
-            variant="light"
-            size="compact-xs"
-          >
-            <Tooltip label="Remove">
-              <IconTrash />
-            </Tooltip>
-          </Button>
-          <Button
-            onClick={() => (server.event = { name, action: "update" })}
-            variant="light"
-            size="compact-xs"
-          >
-            <Tooltip label="Update">
-              <IconEdit />
-            </Tooltip>
-          </Button>
-          <Button
-            onClick={() => server.reload()}
-            variant="light"
-            size="compact-xs"
-          >
-            <Tooltip label="Reload">
-              <IconReload />
-            </Tooltip>
-          </Button>
+          {listMenu.map((item) => (
+            <Button
+              bg={"dark"}
+              key={item.label}
+              variant="light"
+              size="compact-xs"
+              onClick={() => item.onClick(name)}
+            >
+              <Tooltip label={item.label}>{item.icon}</Tooltip>
+            </Button>
+          ))}
         </Button.Group>
       </Stack>
       <Stack>
         {!data?.length && <Text>No servers found</Text>}
-        <Table>
-          <Table.Tbody>
-            {data.map((item, index) => (
-              <Table.Tr key={index}>
-                <Table.Td w={20}>
-                  {server.event?.name === name &&
-                    server.event?.action === "remove" && (
-                      <ActionIcon
-                        onClick={() => {
-                          setDeleteCount((prev) => prev + 1);
-                          if (deleteCount >= 3) {
-                            server.onRemove({ domainId: name, id: item.id });
-                            setDeleteCount(0);
-                            return;
-                          }
-
-                          setTimeout(() => {
-                            setDeleteCount(0);
-                          }, 3000);
-                        }}
-                        c={"red"}
-                        variant="transparent"
-                      >
-                        <IconTrash />
-                      </ActionIcon>
-                    )}
-                  {server.event?.name === name &&
-                    server.event?.action === "update" && (
-                      <ActionIcon
-                        onClick={() => (server.updateData = item)}
-                        variant="transparent"
-                      >
-                        <IconEdit />
-                      </ActionIcon>
-                    )}
-                </Table.Td>
-                <Table.Td w={20}>
-                  <Text>{index + 1}</Text>
-                </Table.Td>
-                <Table.Td w={220}>
-                  <Text>{item.name}</Text>
-                </Table.Td>
-                <Table.Td>
-                  <Box>
-                    {item.ports.map((port: number, index: number) => (
-                      <Badge key={index}>{port}</Badge>
-                    ))}
-                  </Box>
-                </Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
+        <SimpleGrid
+          cols={{
+            base: 1,
+            sm: 2,
+            md: 3,
+            lg: 4,
+            xl: 5,
+          }}
+        >
+          {data.map((item, index) => (
+            <Card key={index}>
+              <ItemView item={item} index={index} />
+            </Card>
+          ))}
+        </SimpleGrid>
       </Stack>
+    </Stack>
+  );
+}
+
+function ItemView({ item, index }: { item: any; index: number }) {
+  const [action, setAction] = useState<"delete" | "update" | null>(null);
+  const server = useProxy(serverState);
+  return (
+    <Stack key={index}>
+      <Stack display={action ? "none" : "block"}>
+        <Flex gap={"md"}>
+          <IconWorldWww />
+          <Text lineClamp={1} size="1.5rem">
+            {item.name}
+          </Text>
+        </Flex>
+        <Flex align={"center"} gap={"md"} justify={"end"}>
+          <ActionIcon
+            onClick={() => {
+              setAction("delete");
+            }}
+            c={"red"}
+            variant="transparent"
+          >
+            <IconTrash />
+          </ActionIcon>
+          <ActionIcon
+            onClick={() => {
+              setAction("update");
+            }}
+            variant="transparent"
+          >
+            <IconEdit />
+          </ActionIcon>
+        </Flex>
+        <Divider size={"0.1"} />
+        <Stack>
+          <Text>PORT:</Text>
+          <Group gap={"xs"}>
+            {item.ports.map((port: number, index: number) => (
+              <Badge
+                bg={"gray"}
+                leftSection={<IconShare size={16} />}
+                key={index}
+              >
+                {port}
+              </Badge>
+            ))}
+          </Group>
+        </Stack>
+      </Stack>
+      {action === "delete" && (
+        <Card>
+          <Stack>
+            <Flex align={"center"} gap={"md"} justify={"space-between"}>
+              <IconTrash size={42} />
+              <Text>Are you sure you want to delete this server?</Text>
+              <ActionIcon variant="transparent" onClick={() => setAction(null)}>
+                <IconX />
+              </ActionIcon>
+            </Flex>
+            <Button
+              onClick={() => {
+                server.onRemove({ domainId: item.domainId, id: item.id });
+                setAction(null);
+              }}
+            >
+              Delete
+            </Button>
+          </Stack>
+        </Card>
+      )}
+
+      {action === "update" && (
+        <Card>
+          <ServerUpdate item={item} onClose={() => setAction(null)} />
+        </Card>
+      )}
     </Stack>
   );
 }
