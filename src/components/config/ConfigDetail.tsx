@@ -1,16 +1,17 @@
 import configState from "@/state/config";
 import projectState from "@/state/projects";
+import { CodeHighlight } from "@mantine/code-highlight";
 import {
   ActionIcon,
   Button,
   Flex,
   Group,
+  Loader,
   SimpleGrid,
   Stack,
   Text,
   Title,
-  Tooltip,
-  Loader
+  Tooltip
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { Editor } from "@monaco-editor/react";
@@ -20,14 +21,13 @@ import {
   IconTrash,
   IconWorldWww,
 } from "@tabler/icons-react";
-import { useSnapshot } from "valtio";
-import { useProxy } from "valtio/utils";
-import swr from "swr";
 import _ from "lodash";
-import { CodeHighlight } from "@mantine/code-highlight";
+import toast from "react-simple-toasts";
+import swr from "swr";
+import { useProxy } from "valtio/utils";
 
 function ConfigDetail({ name }: { name: string }) {
-  const config = useSnapshot(configState);
+  const config = useProxy(configState);
   const project = useProxy(projectState);
 
   useShallowEffect(() => {
@@ -83,6 +83,8 @@ function ConfigDetail({ name }: { name: string }) {
                   name: config.detail.name!,
                   text: config.detail.text!,
                 });
+                config.isEdit = false;
+                toast("[SUCCESS] Config updated");
               }}
               variant="light"
             >
