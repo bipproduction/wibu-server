@@ -27,6 +27,7 @@ import processLog from "./_lib/process/precess-log";
 import { processItem } from "./_lib/process/process-item";
 import buildLog from "./_lib/webhook/build-log";
 import { serverReload } from "./_lib/server/server-reload";
+import configLog from "./_lib/config/config-log";
 
 const corsConfig = {
   origin: "*",
@@ -72,7 +73,8 @@ const Config = new Elysia({
   .get("/config-text/:name", configText)
   .get("/config-example", configExample)
   .post("/config-run/:name", configRun)
-  .post("/config-create", configCreate);
+  .post("/config-create", configCreate)
+  .all("/config-log/*", configLog);
 
 const Projects = new Elysia({
   prefix: "/projects",

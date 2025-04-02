@@ -9,7 +9,8 @@ import {
   Stack,
   Text,
   Title,
-  Tooltip
+  Tooltip,
+  Loader
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { Editor } from "@monaco-editor/react";
@@ -17,10 +18,13 @@ import {
   IconEdit,
   IconPlayerPlay,
   IconTrash,
-  IconWorldWww
+  IconWorldWww,
 } from "@tabler/icons-react";
 import { useSnapshot } from "valtio";
 import { useProxy } from "valtio/utils";
+import swr from "swr";
+import _ from "lodash";
+import { CodeHighlight } from "@mantine/code-highlight";
 
 function ConfigDetail({ name }: { name: string }) {
   const config = useSnapshot(configState);
@@ -88,6 +92,7 @@ function ConfigDetail({ name }: { name: string }) {
         </Button.Group>
       </Group>
       {project.releases.list && <ReleasesView />}
+      <LogView namespace={config.detail.name!} />
     </Stack>
   );
 }
@@ -113,7 +118,9 @@ function ReleasesView() {
             gap={"md"}
             align={"center"}
           >
-            <Text c={release === project.releases.current ? "green.9" : "dark"}>{release}</Text>
+            <Text c={release === project.releases.current ? "green.9" : "dark"}>
+              {release}
+            </Text>
             <ActionIcon
               onClick={() => project.releases.assign({ release })}
               loading={project.releases.loading}
@@ -127,6 +134,25 @@ function ReleasesView() {
           </Flex>
         ))}
       </SimpleGrid>
+    </Stack>
+  );
+}
+
+function LogView({namespace}: {namespace: string}) {
+  const { data, isLoading } = swr(
+    `/api/config/config-log/logs/build/${namespace}/log`,
+    (url) => fetch(url).then((res) => res.json()),
+    {
+      refreshInterval: 2000,
+    }
+  );
+
+  if(isLoading) return <Loader display={isLoading ? "block" : "none"} />
+  if(data.body === null) return <Text>Log not found</Text>
+  return (
+    <Stack>
+      <Text>Log View</Text>
+      <CodeHighlight code={_.values(data.body).join("\n")} language="log" />
     </Stack>
   );
 }

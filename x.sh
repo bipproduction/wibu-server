@@ -40,12 +40,14 @@
 
 # echo "$DCONFIG"
 
-echo "apa kabarnya ini darimana" 2>&1 | tee build.log
-LOG=$(cat build.log)
-curl -X POST \
--H "Content-Type: application/json" \
--H "x-api-key: makuro" \
--H "x-api-path: hipmi/hipmi-staging" \
--d "{\"log\": \"$LOG\"}" http://localhost:3006/api/webhook/build-log
+# echo "apa kabarnya ini darimana" 2>&1 | tee build.log
+# LOG=$(cat build.log)
+# curl -X POST \
+# -H "Content-Type: application/json" \
+# -H "x-api-key: makuro" \
+# -H "x-api-path: hipmi/hipmi-staging" \
+# -d "{\"log\": \"$LOG\"}" http://localhost:3006/api/webhook/build-log
 
+
+curl -X GET http://localhost:3006/api/config/config-log/logs
 
