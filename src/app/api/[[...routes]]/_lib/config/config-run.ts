@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import yml from "yaml";
 import { exec } from "child_process";
 import { promisify } from "util";
+import dayjs from "dayjs";
 const EX = promisify(exec);
 
 const OWNER = "bipproduction";
@@ -57,7 +58,7 @@ async function configRun({ params }: { params: { name: string } }) {
       `curl -X PUT -d 'true' ${FIREBASE_DB_URL}/logs/build/${configJson.namespace}/isRunning.json`
     );
     await EX(
-      `curl -X PUT -d '{"-0A": "[${new Date().toISOString()}] : start deploy ..."}' ${FIREBASE_DB_URL}/logs/build/${
+      `curl -X PUT -d '{"-0A": "[${dayjs().format("YYYY-MM-DD HH:mm:ss")}] : start deploy ..."}' ${FIREBASE_DB_URL}/logs/build/${
         configJson.namespace
       }/log.json`
     );
