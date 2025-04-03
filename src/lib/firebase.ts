@@ -15,6 +15,5 @@ const app = admin.initializeApp({
 });
 
 const db = app.database();
-db.ref("/").once("value").then((snapshot) => {
-    console.log(snapshot.val());
-});
+
+export { db };

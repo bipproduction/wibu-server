@@ -1,3 +1,4 @@
+import { db } from "@/lib/firebase";
 import fs from "fs/promises";
 import yml from "yaml";
 
@@ -47,6 +48,12 @@ async function configRun({ params }: { params: { name: string } }) {
   }
   const config = await fs.readFile(`${UPLOAD_DIR}/config/${name}.yml`, "utf-8");
   const configJson = yml.parse(config);
+
+  db.ref(`/logs/build/${configJson.namespace}/isRunning.json`).set(true);
+  db.ref(`/logs/build/${configJson.namespace}/log.json`).set([
+    { "-0A": `[INFO] ${new Date().toISOString()} : start deploy` },
+  ]);
+
   return await run(configJson);
 }
 

@@ -25,11 +25,11 @@ jobs:
           --health-timeout=5s
           --health-retries=5
     steps:
-      - name: update log start
-        continue-on-error: true
-        run: |
-          curl -X PUT -d 'true' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
-          curl -X PUT -d "{\"-0A\": \"[INFO] $(date +%Y-%m-%d_%H-%M-%S) : start deploy\"}" ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+      # - name: update log start
+      #   continue-on-error: true
+      #   run: |
+      #     curl -X PUT -d 'true' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
+      #     curl -X PUT -d '{"-0A": "[INFO] start deploy"}' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -94,7 +94,7 @@ jobs:
         working-directory: ${{ env.WIBU_APP_VERSION }}
         continue-on-error: true
         run: |
-          [ -f build.log ] && curl -X POST -d "[INFO] $(date +%Y-%m-%d_%H-%M-%S) : $(cat build.log | jq -Rsa .)" ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+          curl -X POST -d "$(cat build.log | jq -Rsa .)" ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
 
       - name: remove node_modules
         working-directory: ${{ env.WIBU_APP_VERSION }}
@@ -226,11 +226,11 @@ jobs:
         continue-on-error: true
         run: |
           curl -X PUT -d 'false' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
-          curl -X POST -d "[ERROR] $(date +%Y-%m-%d_%H-%M-%S) : finish deploy" ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+          curl -X POST -d '"[ERROR] finish deploy"' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
 
       - name: update log success
         if: success()
         continue-on-error: true
         run: |
           curl -X PUT -d 'false' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
-          curl -X POST -d "[SUCCESS] $(date +%Y-%m-%d_%H-%M-%S) : finish deploy" ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+          curl -X POST -d '"[SUCCESS] finish deploy"' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
