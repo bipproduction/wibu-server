@@ -42,20 +42,14 @@ const configState = proxy({
     },
   },
   configDelete: {
-    name: null as string | null,
-    async delete() {
-      if (!configState.configDelete.name) {
-        return {
-          status: 400,
-          body: {
-            message: "Name is required",
-          },
-        };
+    async delete({ name }: { name: string }) {
+      if (!name) {
+        return toast("Name is required");
       }
       const { data } = await ApiFetch.api.config["config-delete"]({
-        name: configState.configDelete.name!,
+        name,
       }).delete();
-      configState.configList.load();
+      window.location.href = "/admin/config";
       return data;
     },
   },
@@ -86,6 +80,7 @@ const configState = proxy({
         configState.run.message = (error as { message: string }).message;
       } finally {
         configState.run.loading = false;
+        toast("[INFO] start deploy");
       }
     },
   },

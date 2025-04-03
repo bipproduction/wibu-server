@@ -1,6 +1,6 @@
 "use client";
 import configState from "@/state/config";
-import { ActionIcon, Button, Flex, Grid, Stack, Text } from "@mantine/core";
+import { ActionIcon, Badge, Button, Flex, Grid, Stack, Text } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { IconChevronRight, IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <Grid>
       <Grid.Col
         span={{
-          xs: 12,
+          base: 12,
           md: 3,
         }}
       >
@@ -20,7 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </Grid.Col>
       <Grid.Col
         span={{
-          xs: 12,
+          base: 12,
           md: 9,
         }}
       >
@@ -35,14 +35,17 @@ function List() {
   const config = useProxy(configState);
 
   useShallowEffect(() => {
-    console.log(configName);
     configState.configList.load();
   }, []);
   return (
     <Stack bg={"dark.9"} p={"md"} flex={0}>
       <Flex gap={"md"} align={"center"} justify={"space-between"}>
         <Text size={"1.5rem"}>Config List</Text>
-        <ActionIcon variant="transparent"  component={Link} href={"/admin/config/create"}>
+        <ActionIcon
+          variant="transparent"
+          component={Link}
+          href={"/admin/config/create"}
+        >
           <IconPlus />
         </ActionIcon>
       </Flex>
@@ -59,10 +62,13 @@ function List() {
               key={index}
               gap={"md"}
               align={"center"}
+              justify={"space-between"}
               bg={item.name === configName?.[0] ? "dark" : "dark.9"}
             >
-              <Text>{index + 1}</Text>
-              <Text w={172}>{item.name}</Text>
+              <Flex gap={"md"} align={"center"}>
+                <Badge bg={"gray"}><Text>{index + 1}</Text></Badge>
+                <Text>{item.name}</Text>
+              </Flex>
               <Button
                 variant="transparent"
                 component={Link}

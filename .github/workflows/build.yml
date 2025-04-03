@@ -29,7 +29,7 @@ jobs:
         continue-on-error: true
         run: |
           curl -X PUT -d 'true' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
-          curl -X PUT -d '{"-a1": "[INFO] start deploy"}' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+          curl -X PUT -d '{"-0A": "[INFO] start deploy"}' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
 
       - name: Checkout code
         uses: actions/checkout@v3

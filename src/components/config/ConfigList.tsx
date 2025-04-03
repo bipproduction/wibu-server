@@ -46,7 +46,7 @@ function List() {
               bg={item.name === config.detail.name ? "dark.8" : "dark.9"}
             >
               <Text>{index + 1}</Text>
-              <Text w={172}>{item.name}</Text>
+              <Text >{item.name}</Text>
               <Button
                 variant="transparent"
                 onClick={() => configState.detail.load({ name: item.name })}

@@ -11,7 +11,7 @@ import {
   Stack,
   Text,
   Title,
-  Tooltip
+  Tooltip,
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { Editor } from "@monaco-editor/react";
@@ -57,9 +57,16 @@ function ConfigDetail({ name }: { name: string }) {
             <IconPlayerPlay />
           </Tooltip>
         </Button>
-        <Tooltip label="Delete">
+        <Tooltip
+          label="Delete"
+          onClick={() =>
+            config.configDelete.delete({ name: config.detail.name! })
+          }
+        >
           <ActionIcon variant="transparent">
-            <IconTrash />
+            <Tooltip label="Delete">
+              <IconTrash />
+            </Tooltip>
           </ActionIcon>
         </Tooltip>
       </Button.Group>
@@ -140,8 +147,7 @@ function ReleasesView() {
   );
 }
 
-function LogView({namespace}: {namespace: string}) {
-
+function LogView({ namespace }: { namespace: string }) {
   const { data, isLoading } = swr(
     `/api/config/config-log/logs/build/${namespace}/log`,
     (url) => fetch(url).then((res) => res.json()),
@@ -150,11 +156,16 @@ function LogView({namespace}: {namespace: string}) {
     }
   );
 
-  if(isLoading) return <Loader display={isLoading ? "block" : "none"} />
-  if(data.body === null) return <Text>Log not found</Text>
+  if (isLoading) return <Loader display={isLoading ? "block" : "none"} />;
+  if (data.body === null)
+    return (
+      <Stack>
+        {/* <Text>{`/api/config/config-log/logs/build/${namespace}/log`}</Text> */}
+        <Text>Log not found</Text>
+      </Stack>
+    );
   return (
     <Stack>
-      <Text>{`/api/config/config-log/logs/build/${namespace}/log`}</Text>
       <Text>Log View</Text>
       <CodeHighlight code={_.values(data.body).join("\n")} language="log" />
     </Stack>
