@@ -1,9 +1,11 @@
 import configState from "@/state/config";
 import projectState from "@/state/projects";
 import { CodeHighlight } from "@mantine/code-highlight";
+import stripAnsi from "strip-ansi";
 import {
   ActionIcon,
   Button,
+  Code,
   Flex,
   Group,
   Loader,
@@ -167,7 +169,10 @@ function LogView({ namespace }: { namespace: string }) {
   return (
     <Stack>
       <Text>Log View</Text>
-      <CodeHighlight code={_.values(data.body).join("\n")} language="log" />
+      <CodeHighlight
+        code={stripAnsi(stripAnsi(_.values(data.body).join("\n")))}
+        language="ruby"
+      />
     </Stack>
   );
 }
