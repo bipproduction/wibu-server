@@ -1,11 +1,10 @@
 import configState from "@/state/config";
 import projectState from "@/state/projects";
 import { CodeHighlight } from "@mantine/code-highlight";
-import stripAnsi from "strip-ansi";
 import {
   ActionIcon,
   Button,
-  Code,
+  Card,
   Flex,
   Group,
   Loader,
@@ -25,6 +24,7 @@ import {
 } from "@tabler/icons-react";
 import _ from "lodash";
 import toast from "react-simple-toasts";
+import stripAnsi from "strip-ansi";
 import swr from "swr";
 import { useProxy } from "valtio/utils";
 
@@ -39,71 +39,75 @@ function ConfigDetail({ name }: { name: string }) {
   }, [name]);
 
   return (
-    <Stack bg={"dark.9"} p={"md"}>
-      <Title order={3}>{name}</Title>
-      <Button.Group>
-        <Button
-          variant="transparent"
-          onClick={() => (configState.isEdit = !config.isEdit)}
-        >
-          <Tooltip label={"edit"}>
-            <IconEdit />
-          </Tooltip>
-        </Button>
-        <Button
-          loading={config.run.loading}
-          variant="transparent"
-          onClick={() => config.run.run({ name: config.detail.name! })}
-        >
-          <Tooltip label="Run">
-            <IconPlayerPlay />
-          </Tooltip>
-        </Button>
-        <Tooltip
-          label="Delete"
-          onClick={() =>
-            config.configDelete.delete({ name: config.detail.name! })
-          }
-        >
-          <ActionIcon variant="transparent">
-            <Tooltip label="Delete">
-              <IconTrash />
-            </Tooltip>
-          </ActionIcon>
-        </Tooltip>
-      </Button.Group>
-      <Editor
-        height="300px"
-        theme="vs-dark"
-        defaultLanguage="yaml"
-        value={config.detail.text ?? ""}
-        onChange={(e) => (configState.detail.text = e || null)}
-        options={{
-          readOnly: !config.isEdit,
-        }}
-      />
-      <Group justify="right">
+    <Stack>
+      <Stack bg={"dark.9"} p={"md"}>
+        <Title order={3}>{name}</Title>
         <Button.Group>
-          {config.isEdit && (
-            <Button
-              loading={config.create.loading}
-              onClick={() => {
-                config.create.create({
-                  name: config.detail.name!,
-                  text: config.detail.text!,
-                });
-                config.isEdit = false;
-                toast("[SUCCESS] Config updated");
-              }}
-              variant="light"
-            >
-              Update
-            </Button>
-          )}
+          <Button
+            variant="transparent"
+            onClick={() => (configState.isEdit = !config.isEdit)}
+          >
+            <Tooltip label={"edit"}>
+              <IconEdit />
+            </Tooltip>
+          </Button>
+          <Button
+            loading={config.run.loading}
+            variant="transparent"
+            onClick={() => config.run.run({ name: config.detail.name! })}
+          >
+            <Tooltip label="Run">
+              <IconPlayerPlay />
+            </Tooltip>
+          </Button>
+          <Tooltip
+            label="Delete"
+            onClick={() =>
+              config.configDelete.delete({ name: config.detail.name! })
+            }
+          >
+            <ActionIcon variant="transparent">
+              <Tooltip label="Delete">
+                <IconTrash />
+              </Tooltip>
+            </ActionIcon>
+          </Tooltip>
         </Button.Group>
-      </Group>
-      {project.releases.list && <ReleasesView />}
-      <LogView namespace={config.detail.name!} />
+        <Editor
+          height="300px"
+          theme="vs-dark"
+          defaultLanguage="yaml"
+          value={config.detail.text ?? ""}
+          onChange={(e) => (configState.detail.text = e || null)}
+          options={{
+            readOnly: !config.isEdit,
+          }}
+        />
+        <Group justify="right">
+          <Button.Group>
+            {config.isEdit && (
+              <Button
+                loading={config.create.loading}
+                onClick={() => {
+                  config.create.create({
+                    name: config.detail.name!,
+                    text: config.detail.text!,
+                  });
+                  config.isEdit = false;
+                  toast("[SUCCESS] Config updated");
+                }}
+                variant="light"
+              >
+                Update
+              </Button>
+            )}
+          </Button.Group>
+        </Group>
+      </Stack>
+      <Card bg={"dark.9"}>{project.releases.list && <ReleasesView />}</Card>
+      <Card bg={"dark.9"}>
+        <LogView namespace={config.detail.name!} />
+      </Card>
     </Stack>
   );
 }
@@ -111,7 +115,7 @@ function ConfigDetail({ name }: { name: string }) {
 function ReleasesView() {
   const project = useProxy(projectState);
   return (
-    <Stack bg={"dark.9"} p={"md"}>
+    <Stack>
       <Flex gap={"md"}>
         <Text size={"1.5rem"}>Releases</Text>
       </Flex>
