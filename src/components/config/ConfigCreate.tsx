@@ -1,29 +1,31 @@
 import configState from "@/state/config";
 import {
+  ActionIcon,
   Button,
   Divider,
+  Flex,
   Group,
-  Notification,
   Stack,
+  Text,
   TextInput,
   Title
 } from "@mantine/core";
 import { useFileDialog, useShallowEffect } from "@mantine/hooks";
 import { Editor } from "@monaco-editor/react";
+import { IconChevronLeft } from "@tabler/icons-react";
 import { useSnapshot } from "valtio";
 
 function ConfigCreate() {
   const { create } = useSnapshot(configState);
   return (
     <Stack bg={"dark.9"} p={"md"}>
-      {create.message && (
-        <Notification
-          title="Notification"
-          onClose={() => (configState.create.message = null)}
-        >
-          {create.message}
-        </Notification>
-      )}
+      <Flex gap={"md"}>
+        <ActionIcon variant="transparent" onClick={() => window.location.href = "/admin/config"}>
+          <IconChevronLeft />
+        </ActionIcon>
+        <Text size="1.5rem">Create New Config</Text>
+      </Flex>
+      <Divider />
       <Upload />
       <Divider label={"OR"} labelPosition="center" w={"100%"} />
       <Title order={2}>Create Config</Title>

@@ -28,6 +28,7 @@ import { processItem } from "./_lib/process/process-item";
 import buildLog from "./_lib/webhook/build-log";
 import { serverReload } from "./_lib/server/server-reload";
 import configLog from "./_lib/config/config-log";
+import betterAuthView from "@/lib/auth/auth-view";
 
 const corsConfig = {
   origin: "*",
@@ -85,12 +86,15 @@ const Projects = new Elysia({
   .get("/releases/:name/:namespace", projectReleases)
   .post("/releases-assign/:name/:namespace/:release", projectReleasesAssign);
 
+const Webhook = new Elysia({
+  prefix: "/webhook",
+  tags: ["Webhook"],
+}).post("/build-log", buildLog);
 
-  const Webhook = new Elysia({
-    prefix: "/webhook",
-    tags: ["Webhook"],
-  })
-    .post("/build-log", buildLog);
+const Auth = new Elysia({
+  prefix: "/auth",
+  tags: ["Auth"],
+}).all("/*", betterAuthView);
 
 const ApiServer = new Elysia({
   prefix: "/api",
@@ -102,6 +106,7 @@ const ApiServer = new Elysia({
   .use(Config)
   .use(Projects)
   .use(Webhook)
+  .use(Auth)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {

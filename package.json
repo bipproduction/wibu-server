@@ -24,6 +24,7 @@
     "@types/lodash": "^4.17.16",
     "@types/minimist": "^1.2.5",
     "@types/nanoid": "^3.0.0",
+    "better-auth": "^1.2.5",
     "bun": "^1.2.5",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",

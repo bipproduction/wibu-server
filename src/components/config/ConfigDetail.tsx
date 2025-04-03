@@ -17,6 +17,7 @@ import {
 import { useShallowEffect } from "@mantine/hooks";
 import { Editor } from "@monaco-editor/react";
 import {
+  IconChevronLeft,
   IconEdit,
   IconPlayerPlay,
   IconTrash,
@@ -41,7 +42,12 @@ function ConfigDetail({ name }: { name: string }) {
   return (
     <Stack>
       <Stack bg={"dark.9"} p={"md"}>
-        <Title order={3}>{name}</Title>
+        <Flex gap={"md"} align={"center"}>
+          <ActionIcon variant="transparent" onClick={() => (window.location.href = "/admin/config")}>
+            <IconChevronLeft />
+          </ActionIcon>
+          <Title order={3}>{name}</Title>
+        </Flex>
         <Button.Group>
           <Button
             variant="transparent"

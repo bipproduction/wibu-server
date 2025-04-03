@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import serverState from "@/state/server";
 import {
   Group,
