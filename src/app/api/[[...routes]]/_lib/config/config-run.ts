@@ -57,7 +57,7 @@ async function configRun({ params }: { params: { name: string } }) {
       `curl -X PUT -d 'true' ${FIREBASE_DB_URL}/logs/build/${configJson.namespace}/isRunning.json`
     );
     await EX(
-      `curl -X PUT -d "{\"-0A\": \"[${new Date().toISOString()}] : start deploy ...\"}" ${FIREBASE_DB_URL}/logs/build/${
+      `curl -X PUT -d '{"-0A": "[${new Date().toISOString()}] : start deploy ..."}' ${FIREBASE_DB_URL}/logs/build/${
         configJson.namespace
       }/log.json`
     );

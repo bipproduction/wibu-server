@@ -10,7 +10,7 @@ if(!FIREBASE_DB_URL) {
 }
 
 await EX(
-    `curl -X PUT -d "{/"-0A/": /"[START] ${new Date().toISOString()} : start deploy .../"}" ${FIREBASE_DB_URL}/logs/build/wibu-server-production/log.json`
+    `curl -X PUT -d '{"-0A": "[${new Date().toISOString()}] : start deploy ..."}' ${FIREBASE_DB_URL}/logs/build/wibu-server-production/log.json`
   );
 
 // console.log(FIREBASE_DB_URL)
