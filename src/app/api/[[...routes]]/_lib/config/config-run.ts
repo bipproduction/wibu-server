@@ -1,12 +1,15 @@
-import { db } from "@/lib/firebase";
 import fs from "fs/promises";
 import yml from "yaml";
+import { exec } from "child_process";
+import { promisify } from "util";
+const EX = promisify(exec);
 
 const OWNER = "bipproduction";
 const REPO = "wibu-server";
 const WORKFLOW_ID = "build.yml";
 const WIBU_GH_TOKEN = process.env.WIBU_GH_TOKEN;
 const UPLOAD_DIR = process.env.WIBU_UPLOAD_DIR;
+const FIREBASE_DB_URL = process.env.FIREBASE_DB_URL;
 
 if (!WIBU_GH_TOKEN) {
   throw new Error("WIBU_GH_TOKEN is not defined");
@@ -48,11 +51,12 @@ async function configRun({ params }: { params: { name: string } }) {
   }
   const config = await fs.readFile(`${UPLOAD_DIR}/config/${name}.yml`, "utf-8");
   const configJson = yml.parse(config);
-
-  db.ref(`/logs/build/${configJson.namespace}/isRunning.json`).set(true);
-  db.ref(`/logs/build/${configJson.namespace}/log.json`).set([
-    { "-0A": `[INFO] ${new Date().toISOString()} : start deploy` },
-  ]);
+  await EX(
+    `curl -X PUT -d 'true' ${FIREBASE_DB_URL}/logs/build/${configJson.namespace}/isRunning.json`
+  );
+  await EX(
+    `curl -X PUT -d "{/"-0A/": /"[START] ${new Date().toISOString()} : start deploy .../"}" ${FIREBASE_DB_URL}/logs/build/${configJson.namespace}/log.json`
+  );
 
   return await run(configJson);
 }
