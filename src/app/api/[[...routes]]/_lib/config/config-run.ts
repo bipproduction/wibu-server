@@ -51,12 +51,19 @@ async function configRun({ params }: { params: { name: string } }) {
   }
   const config = await fs.readFile(`${UPLOAD_DIR}/config/${name}.yml`, "utf-8");
   const configJson = yml.parse(config);
-  await EX(
-    `curl -X PUT -d 'true' ${FIREBASE_DB_URL}/logs/build/${configJson.namespace}/isRunning.json`
-  );
-  await EX(
-    `curl -X PUT -d "{\"-0A\": \"[START] ${new Date().toISOString()} : start deploy ...\"}" ${FIREBASE_DB_URL}/logs/build/${configJson.namespace}/log.json`
-  );
+
+  try {
+    await EX(
+      `curl -X PUT -d 'true' ${FIREBASE_DB_URL}/logs/build/${configJson.namespace}/isRunning.json`
+    );
+    await EX(
+      `curl -X PUT -d "{\"-0A\": \"[${new Date().toISOString()}] : start deploy ...\"}" ${FIREBASE_DB_URL}/logs/build/${
+        configJson.namespace
+      }/log.json`
+    );
+  } catch (error) {
+    console.error(error);
+  }
 
   return await run(configJson);
 }
