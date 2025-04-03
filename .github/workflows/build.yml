@@ -29,7 +29,7 @@ jobs:
         continue-on-error: true
         run: |
           curl -X PUT -d 'true' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
-          curl -X PUT -d '{"-0A": "[INFO] $(date +%Y-%m-%d_%H-%M-%S) : start deploy"}' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+          curl -X PUT -d "{/"-0A/": /"[INFO] $(date +%Y-%m-%d_%H-%M-%S) : start deploy/"}" ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -226,11 +226,11 @@ jobs:
         continue-on-error: true
         run: |
           curl -X PUT -d 'false' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
-          curl -X POST -d '[ERROR] $(date +%Y-%m-%d_%H-%M-%S) : finish deploy' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+          curl -X POST -d "[ERROR] $(date +%Y-%m-%d_%H-%M-%S) : finish deploy" ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
 
       - name: update log success
         if: success()
         continue-on-error: true
         run: |
           curl -X PUT -d 'false' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
-          curl -X POST -d '[SUCCESS] $(date +%Y-%m-%d_%H-%M-%S) : finish deploy' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+          curl -X POST -d "[SUCCESS] $(date +%Y-%m-%d_%H-%M-%S) : finish deploy" ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
