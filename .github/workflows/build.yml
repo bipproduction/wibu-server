@@ -226,11 +226,11 @@ jobs:
         continue-on-error: true
         run: |
           curl -X PUT -d 'false' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
-          curl -X POST -d "{\"-0A0\": \"[$(date +%Y-%m-%d\ %H:%M:%S)] ERROR!\"}" ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+          curl -X POST -d "[$(date +%Y-%m-%d\ %H:%M:%S)] ERROR!" ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
 
       - name: update log success
         if: success()
         continue-on-error: true
         run: |
           curl -X PUT -d 'false' ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/isRunning.json
-          curl -X POST -d "{\"-0A1\": \"[$(date +%Y-%m-%d\ %H:%M:%S)] SUCCESS!\"}" ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
+          curl -X POST -d "[$(date +%Y-%m-%d\ %H:%M:%S)] SUCCESS!" ${{ secrets.FBS_DB_URL }}/logs/build/${{ fromJson(inputs.data).namespace }}/log.json
