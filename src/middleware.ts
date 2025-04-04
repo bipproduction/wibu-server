@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { SESSION } from "../types/session";
 
 const isAdminRoute = (pathname: string) => {
   return pathname.startsWith("/admin");
@@ -14,9 +15,9 @@ export async function middleware(request: NextRequest) {
   const sessionRes = await fetch(origin + "/api/user/session", {
     headers: request.headers
   });
-  const session = await sessionRes.json().catch(() => null);
+  const session: SESSION | null = await sessionRes.json().catch(() => null);
 
-  if (!session) {
+  if (!session?.user) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);

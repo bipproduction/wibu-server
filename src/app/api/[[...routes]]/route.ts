@@ -28,9 +28,10 @@ import { processItem } from "./_lib/process/process-item";
 import buildLog from "./_lib/webhook/build-log";
 import { serverReload } from "./_lib/server/server-reload";
 import configLog from "./_lib/config/config-log";
-import betterAuthView from "@/lib/auth-view";
+import authView from "@/lib/auth-view";
 import { getSession } from "./_lib/user/get-session";
-import { userMiddleware } from "@/middlewares/auth-middleware";
+import { auth } from "@/lib/auth";
+// import { userMiddleware } from "@/middlewares/auth-middleware";
 
 const corsConfig = {
   origin: "*",
@@ -96,7 +97,7 @@ const Webhook = new Elysia({
 const Auth = new Elysia({
   prefix: "/auth",
   tags: ["Auth"],
-}).all("/*", betterAuthView);
+}).all("/*", authView);
 
 const User = new Elysia({
   prefix: "/user",
@@ -122,10 +123,8 @@ const ApiServer = new Elysia({
     }
   })
   .onBeforeHandle(async (c) => {
-    const { user } = await userMiddleware(c);
-    const pathName = new URL(c.request.url).pathname;
-    if (!user) {
-      console.log("[INFO]", pathName);
+    const session = await auth.api.getSession({ headers: c.request.headers });
+    if (!session?.user) {
       return {
         success: false,
         message: "Unauthorized Access: Token is missing",

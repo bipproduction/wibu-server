@@ -1,7 +1,7 @@
 import { Context } from "elysia";
 import { auth } from "@/lib/auth";
 
-const betterAuthView = (context: Context) => {
+const authView = (context: Context) => {
     const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"]
     if(BETTER_AUTH_ACCEPT_METHODS.includes(context.request.method)) {
       console.log(context.request)
@@ -13,4 +13,4 @@ const betterAuthView = (context: Context) => {
   }
 
 
-export default betterAuthView;
+export default authView;
