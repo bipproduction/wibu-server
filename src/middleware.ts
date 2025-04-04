@@ -18,8 +18,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const fetchHeaders = new Headers(request.headers);
+  fetchHeaders.delete("connection"); // Hapus header Connection
+
   const sessionRes = await fetch(url + "/api/user/session", {
-    headers: request.headers
+    headers: fetchHeaders,
   });
   const session: SESSION | null = await sessionRes.json().catch(() => null);
 
