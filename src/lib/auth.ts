@@ -20,6 +20,7 @@ export const auth = betterAuth({
   },
   trustedOrigins: [
     process.env.BASE_URL as string,
-    "http://85.31.224.193:3006"
+    "http://85.31.224.193:3006",
+    "https://wibu-server.wibudev.com"
   ],
 });
