@@ -1,18 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SESSION } from "../types/session";
 
+const url = process.env.BASE_URL;
+
+if (!url) {
+  throw new Error("NEXT_PUBLIC_WIBU_URL is not defined");
+}
+
 const isAdminRoute = (pathname: string) => {
   return pathname.startsWith("/admin");
 };
 
 export async function middleware(request: NextRequest) {
-  const { pathname, origin } = request.nextUrl;
+  const { pathname } = request.nextUrl;
 
   if (!isAdminRoute(pathname)) {
     return NextResponse.next();
   }
 
-  const sessionRes = await fetch(origin + "/api/user/session", {
+  const sessionRes = await fetch(url + "/api/user/session", {
     headers: request.headers
   });
   const session: SESSION | null = await sessionRes.json().catch(() => null);
