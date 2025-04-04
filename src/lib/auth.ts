@@ -10,6 +10,8 @@ export const auth = betterAuth({
     emailAndPassword: {  
         enabled: true
     },
+    redirectTo: "/profile",
+    
     socialProviders: { 
         github: { 
            clientId: process.env.GITHUB_CLIENT_ID as string, 

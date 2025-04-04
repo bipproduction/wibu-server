@@ -43,7 +43,10 @@ function ConfigDetail({ name }: { name: string }) {
     <Stack>
       <Stack bg={"dark.9"} p={"md"}>
         <Flex gap={"md"} align={"center"}>
-          <ActionIcon variant="transparent" onClick={() => (window.location.href = "/admin/config")}>
+          <ActionIcon
+            variant="transparent"
+            onClick={() => (window.location.href = "/admin/config")}
+          >
             <IconChevronLeft />
           </ActionIcon>
           <Title order={3}>{name}</Title>
@@ -172,8 +175,9 @@ function LogView({ namespace }: { namespace: string }) {
   if (data.body === null)
     return (
       <Stack>
-        {/* <Text>{`/api/config/config-log/logs/build/${namespace}/log`}</Text> */}
-        <Text>Log not found</Text>
+        <Text bg={"orange"} p={"md"}>
+          Log not found
+        </Text>
       </Stack>
     );
   return (

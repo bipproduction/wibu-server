@@ -28,7 +28,9 @@ import { processItem } from "./_lib/process/process-item";
 import buildLog from "./_lib/webhook/build-log";
 import { serverReload } from "./_lib/server/server-reload";
 import configLog from "./_lib/config/config-log";
-import betterAuthView from "@/lib/auth/auth-view";
+import betterAuthView from "@/lib/auth-view";
+import { getSession } from "./_lib/user/get-session";
+import { userMiddleware } from "@/middlewares/auth-middleware";
 
 const corsConfig = {
   origin: "*",
@@ -96,17 +98,47 @@ const Auth = new Elysia({
   tags: ["Auth"],
 }).all("/*", betterAuthView);
 
+const User = new Elysia({
+  prefix: "/user",
+  tags: ["User"],
+}).get("/session", getSession);
+
+const Util = new Elysia({
+  prefix: "/util",
+}).get("/origin", (c) => {
+  const origin = new URL(c.request.url).origin;
+  return { origin };
+});
+
 const ApiServer = new Elysia({
   prefix: "/api",
 })
   .use(swagger({ path: "/docs" }))
   .use(cors(corsConfig))
+  .use(Auth)
+  .get("/", () => {
+    return {
+      online: true
+    }
+  })
+  .onBeforeHandle(async (c) => {
+    const { user } = await userMiddleware(c);
+    const pathName = new URL(c.request.url).pathname;
+    if (!user) {
+      console.log("[INFO]", pathName);
+      return {
+        success: false,
+        message: "Unauthorized Access: Token is missing",
+      };
+    }
+  })
   .use(Server)
   .use(Process)
   .use(Config)
   .use(Projects)
   .use(Webhook)
-  .use(Auth)
+  .use(User)
+  .use(Util)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {

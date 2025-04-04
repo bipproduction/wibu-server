@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ApiFetch from "@/lib/api-fetch";
+import apiFetch from "@/lib/api-fetch";
 import { proxy } from "valtio";
 import projectState from "./projects";
 import toast from "react-simple-toasts";
@@ -27,13 +27,13 @@ const configState = proxy({
   configList: {
     list: [] as any[],
     async load() {
-      const list = await ApiFetch.api.config["config-list"].get();
+      const list = await apiFetch.api.config["config-list"].get();
       configState.configList.list = list.data as any[];
     },
   },
   configUpload: {
     async upload({ file, name }: { file: File; name: string }) {
-      const { data } = await ApiFetch.api.config["config-upload"].post({
+      const { data } = await apiFetch.api.config["config-upload"].post({
         file,
         name,
       });
@@ -46,7 +46,7 @@ const configState = proxy({
       if (!name) {
         return toast("Name is required");
       }
-      const { data } = await ApiFetch.api.config["config-delete"]({
+      const { data } = await apiFetch.api.config["config-delete"]({
         name,
       }).delete();
       window.location.href = "/admin/config";
@@ -59,7 +59,7 @@ const configState = proxy({
     async run({ name }: { name: string }) {
       try {
         configState.run.loading = true;
-        const { data } = await ApiFetch.api.config["config-run"]({
+        const { data } = await apiFetch.api.config["config-run"]({
           name,
         }).post();
 
@@ -97,10 +97,10 @@ const configState = proxy({
           },
         };
       }
-      const { data } = await ApiFetch.api.config["config-text"]({
+      const { data } = await apiFetch.api.config["config-text"]({
         name,
       }).get();
-      const { data: json } = await ApiFetch.api.config["config-json"]({
+      const { data: json } = await apiFetch.api.config["config-json"]({
         name,
       }).get();
 
@@ -128,7 +128,7 @@ const configState = proxy({
         }
 
         // console.log(name, text);
-        const { data } = await ApiFetch.api.config["config-create"].post({
+        const { data } = await apiFetch.api.config["config-create"].post({
           name,
           text,
         });

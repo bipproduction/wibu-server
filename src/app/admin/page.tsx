@@ -6,6 +6,7 @@ export default function Page(){
        <Card>
         <Flex gap={"md"} align={"center"}>
             <Text size="1.5rem">Admin</Text>
+
         </Flex>
        </Card>
     </Stack>

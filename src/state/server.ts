@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ApiFetch from "@/lib/api-fetch";
+import apiFetch from "@/lib/api-fetch";
 import toast from "react-simple-toasts";
 import { proxy } from "valtio";
 
@@ -25,7 +25,7 @@ const serverState = proxy({
     async load() {
       try {
         serverState.load.loading = true;
-        const { data } = await ApiFetch.api.server["server-config"].get();
+        const { data } = await apiFetch.api.server["server-config"].get();
         const lsMuku = data?.data.muku as any[];
         if (lsMuku) {
           serverState.muku = lsMuku;
@@ -51,7 +51,7 @@ const serverState = proxy({
     name: string;
     ports: number[];
   }) {
-    await ApiFetch.api.server["server-edit"].post({
+    await apiFetch.api.server["server-edit"].post({
       name: params.domainId,
       data: params,
     });
@@ -60,7 +60,7 @@ const serverState = proxy({
     toast(`${params.name} Updated!`);
   },
   async onRemove({ domainId, id }: { domainId: string; id: string }) {
-    await ApiFetch.api.server["server-remove"].post({
+    await apiFetch.api.server["server-remove"].post({
       name: domainId,
       data: { id },
     });
@@ -77,7 +77,7 @@ const serverState = proxy({
     ports: number[];
   }) {
     // console.log(params.ports);
-    const res = await ApiFetch.api.server["server-add"].post({
+    const res = await apiFetch.api.server["server-add"].post({
       name: params.domainId,
       data: params,
     });
@@ -87,7 +87,7 @@ const serverState = proxy({
     serverState.form = undefined;
   },
   async reload() {
-    await ApiFetch.api.server["server-reload"].post();
+    await apiFetch.api.server["server-reload"].post();
     serverState.load.load();
     toast("[SUCCESS] Server Reloaded!");
   },

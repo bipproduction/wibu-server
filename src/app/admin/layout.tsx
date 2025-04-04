@@ -1,10 +1,11 @@
 "use client";
+import { UserView } from "@/components/user/UserView";
 import { Button, Flex, Stack } from "@mantine/core";
 import {
   IconAdjustments,
   IconHome,
   IconProgress,
-  IconServer
+  IconServer,
 } from "@tabler/icons-react";
 import _ from "lodash";
 import Link from "next/link";
@@ -40,10 +41,17 @@ export default function AdminLayout({
 }) {
   const params = useSelectedLayoutSegments()[0];
   return (
-    <Stack >
-      <Flex p={"xs"} bg={"dark.9"} pos={"sticky"} top={0} style={{
-        zIndex: 9999
-      }}>
+    <Stack>
+      <Flex
+        justify={"space-between"}
+        p={"xs"}
+        bg={"dark.9"}
+        pos={"sticky"}
+        top={0}
+        style={{
+          zIndex: 9999,
+        }}
+      >
         <Button.Group>
           {listNav.map((item) => (
             <Button
@@ -52,13 +60,20 @@ export default function AdminLayout({
               variant="transparent"
               component={Link}
               href={item.href}
-              c={_.startCase(params) === item.label ? "blue.9" : params == null && item.label === "Home" ? "blue.9" : "grey"}
+              c={
+                _.startCase(params) === item.label
+                  ? "blue.9"
+                  : params == null && item.label === "Home"
+                  ? "blue.9"
+                  : "grey"
+              }
               size="compact-xs"
             >
               {item.label}
             </Button>
           ))}
         </Button.Group>
+        <UserView />
       </Flex>
       {children}
     </Stack>

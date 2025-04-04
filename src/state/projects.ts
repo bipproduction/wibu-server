@@ -1,4 +1,4 @@
-import ApiFetch from "@/lib/api-fetch";
+import apiFetch from "@/lib/api-fetch";
 import toast from "react-simple-toasts";
 import { proxy } from "valtio";
 
@@ -12,7 +12,7 @@ const projectState = proxy({
     async load({ name, namespace }: { name: string; namespace: string }) {
       projectState.releases.name = name;
       projectState.releases.namespace = namespace;
-      const { data } = await ApiFetch.api.projects["releases"]({
+      const { data } = await apiFetch.api.projects["releases"]({
         name,
       })({ namespace }).get();
       projectState.releases.list = data?.project ?? null;
@@ -20,7 +20,7 @@ const projectState = proxy({
     },
     async assign({ release }: { release: string }) {
       projectState.releases.loading = true;
-      const { data } = await ApiFetch.api.projects["releases-assign"]({
+      const { data } = await apiFetch.api.projects["releases-assign"]({
         name: projectState.releases.name!,
       })({
         namespace: projectState.releases.namespace!,

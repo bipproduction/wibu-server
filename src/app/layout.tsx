@@ -4,7 +4,7 @@ import "@mantine/core/styles.css";
 import { toastConfig } from "react-simple-toasts";
 import "react-simple-toasts/dist/style.css";
 import "react-simple-toasts/dist/theme/dark.css";
-import '@mantine/code-highlight/styles.css';
+import "@mantine/code-highlight/styles.css";
 
 toastConfig({ theme: "dark" });
 
@@ -13,6 +13,7 @@ import {
   MantineProvider,
   mantineHtmlProps,
 } from "@mantine/core";
+import { UserProvider } from "@/components/user/UserProvider";
 
 export const metadata = {
   title: "My Mantine app",
@@ -30,7 +31,10 @@ export default function RootLayout({
         <ColorSchemeScript defaultColorScheme="dark" />
       </head>
       <body>
-        <MantineProvider defaultColorScheme="dark">{children}</MantineProvider>
+        <MantineProvider defaultColorScheme="dark">
+          <UserProvider />
+          {children}
+        </MantineProvider>
       </body>
     </html>
   );
