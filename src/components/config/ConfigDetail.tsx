@@ -1,18 +1,14 @@
 import configState from "@/state/config";
 import projectState from "@/state/projects";
-import { CodeHighlight } from "@mantine/code-highlight";
 import {
   ActionIcon,
   Button,
   Card,
   Flex,
   Group,
-  Loader,
-  SimpleGrid,
   Stack,
-  Text,
   Title,
-  Tooltip,
+  Tooltip
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { Editor } from "@monaco-editor/react";
@@ -20,14 +16,12 @@ import {
   IconChevronLeft,
   IconEdit,
   IconPlayerPlay,
-  IconTrash,
-  IconWorldWww,
+  IconTrash
 } from "@tabler/icons-react";
-import _ from "lodash";
 import toast from "react-simple-toasts";
-import stripAnsi from "strip-ansi";
-import swr from "swr";
 import { useProxy } from "valtio/utils";
+import ConfigLogView from "./ConfigLogView";
+import ReleasesView from "./ConfigReleasesView";
 
 function ConfigDetail({ name }: { name: string }) {
   const config = useProxy(configState);
@@ -115,80 +109,14 @@ function ConfigDetail({ name }: { name: string }) {
       </Stack>
       <Card bg={"dark.9"}>{project.releases.list && <ReleasesView />}</Card>
       <Card bg={"dark.9"}>
-        <LogView namespace={config.detail.name!} />
+        <ConfigLogView namespace={config.detail.name!} />
       </Card>
     </Stack>
   );
 }
 
-function ReleasesView() {
-  const project = useProxy(projectState);
-  return (
-    <Stack>
-      <Flex gap={"md"}>
-        <Text size={"1.5rem"}>Releases</Text>
-      </Flex>
-      <SimpleGrid
-        cols={{
-          base: 1,
-          md: 4,
-        }}
-      >
-        {project.releases.list?.map((release) => (
-          <Flex
-            bg={release === project.releases.current ? "dark" : ""}
-            justify={"space-between"}
-            key={release}
-            gap={"md"}
-            align={"center"}
-          >
-            <Text c={release === project.releases.current ? "green.9" : "dark"}>
-              {release}
-            </Text>
-            <ActionIcon
-              onClick={() => project.releases.assign({ release })}
-              loading={project.releases.loading}
-              c={release === project.releases.current ? "green.9" : "dark"}
-              variant="transparent"
-            >
-              <Tooltip label="Assign">
-                <IconWorldWww />
-              </Tooltip>
-            </ActionIcon>
-          </Flex>
-        ))}
-      </SimpleGrid>
-    </Stack>
-  );
-}
 
-function LogView({ namespace }: { namespace: string }) {
-  const { data, isLoading } = swr(
-    `/api/config/config-log/logs/build/${namespace}/log`,
-    (url) => fetch(url).then((res) => res.json()),
-    {
-      refreshInterval: 2000,
-    }
-  );
 
-  if (isLoading) return <Loader display={isLoading ? "block" : "none"} />;
-  if (data.body === null)
-    return (
-      <Stack>
-        <Text bg={"orange"} p={"md"}>
-          Log not found
-        </Text>
-      </Stack>
-    );
-  return (
-    <Stack>
-      <Text>Log View</Text>
-      <CodeHighlight
-        code={stripAnsi(stripAnsi(_.values(data.body).join("\n")))}
-        language="ruby"
-      />
-    </Stack>
-  );
-}
+
 
 export default ConfigDetail;

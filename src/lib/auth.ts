@@ -15,7 +15,7 @@ export const auth = betterAuth({
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string
     },
   },
   trustedOrigins: [
@@ -25,5 +25,5 @@ export const auth = betterAuth({
     "http://85.31.224.193",
     "http://localhost"
   ],
-  
+
 });
