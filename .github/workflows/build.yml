@@ -221,6 +221,34 @@ jobs:
               --name "${{ env.WIBU_NAME }}" \
               --namespace "${{ env.WIBU_NAMESPACE }}" 
 
+      - name: bun install on source
+        working-directory: ${{ env.WIBU_APP_VERSION }}
+        run: bun run start --port 3000
+
+      - name: Take screenshot
+        run: |
+          bun add playwright
+          echo "Installing playwright..."
+          bunx playwright install  
+          E=$(cat <<EOF
+          import { chromium } from 'playwright';
+
+          (async () => {
+            console.log("Launching browser...");
+            const browser = await chromium.launch();
+            const page = await browser.newPage();
+            console.log("Navigating to URL...");
+            await page.goto('http://localhost:3000');
+            console.log("Taking screenshot...");
+            await page.screenshot({ fullPage: true, path: 'screenshot.png' });
+            await browser.close();
+          })();
+          EOF
+          )
+
+          bun -e "$E"
+          ls
+
       - name: update log error
         if: failure()
         continue-on-error: true

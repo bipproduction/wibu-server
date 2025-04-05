@@ -37,6 +37,7 @@
     "minimist": "^1.2.8",
     "nanoid": "^5.1.5",
     "next": "15.1.1",
+    "octokit": "^4.1.2",
     "openapi-fetch": "^0.13.5",
     "pm2": "^5.4.3",
     "prisma": "^6.3.1",

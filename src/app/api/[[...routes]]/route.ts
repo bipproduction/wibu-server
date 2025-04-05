@@ -31,6 +31,9 @@ import configLog from "./_lib/config/config-log";
 import authView from "@/lib/auth-view";
 import { getSession } from "./_lib/user/get-session";
 import { auth } from "@/lib/auth";
+import { workflowsList } from "./_lib/workflows/workflows-list";
+import { workflowsGet } from "./_lib/workflows/workflows-get";
+import { workflowActionList } from "./_lib/workflows/workflows-action-list";
 // import { userMiddleware } from "@/middlewares/auth-middleware";
 
 const corsConfig = {
@@ -111,6 +114,14 @@ const Util = new Elysia({
   return { origin };
 });
 
+const WorkFlows = new Elysia({
+  prefix: "/workflows",
+  tags: ["Workflows"],
+})
+  .get("/list", workflowsList)
+  .get("/get/:workflow_id", workflowsGet)
+  .get("/action-list", workflowActionList);
+
 const ApiServer = new Elysia({
   prefix: "/api",
 })
@@ -119,8 +130,8 @@ const ApiServer = new Elysia({
   .use(Auth)
   .get("/", () => {
     return {
-      online: true
-    }
+      online: true,
+    };
   })
   .onBeforeHandle(async (c) => {
     const session = await auth.api.getSession({ headers: c.request.headers });
@@ -138,6 +149,7 @@ const ApiServer = new Elysia({
   .use(Webhook)
   .use(User)
   .use(Util)
+  .use(WorkFlows)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
       return {
