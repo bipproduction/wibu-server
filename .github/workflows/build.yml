@@ -221,33 +221,48 @@ jobs:
               --name "${{ env.WIBU_NAME }}" \
               --namespace "${{ env.WIBU_NAMESPACE }}" 
 
-      - name: bun install on source
+      - name: Start Next.js app and run Playwright
         working-directory: ${{ env.WIBU_APP_VERSION }}
-        run: bun run start --port 3000
-
-      - name: Take screenshot
         run: |
-          bun add playwright
+          # Jalankan server di background
+          bun run start --port 3000 &
+      
+          # Simpan PID untuk nanti di-kill
+          SERVER_PID=$!
+      
+          # Tunggu server siap (ganti sesuai kebutuhan kalau perlu)
+          echo "Waiting for server to be ready..."
+          sleep 10
+      
+          # Install playwright
           echo "Installing playwright..."
+          bun add playwright
           bunx playwright install  
-          E=$(cat <<EOF
+      
+          # Jalankan skrip Playwright
+          bun -e "$(cat <<EOF
           import { chromium } from 'playwright';
-
+      
           (async () => {
-            console.log("Launching browser...");
+            console.log('Launching browser...');
             const browser = await chromium.launch();
             const page = await browser.newPage();
-            console.log("Navigating to URL...");
+            console.log('Navigating to URL...');
             await page.goto('http://localhost:3000');
-            console.log("Taking screenshot...");
+            console.log('Taking screenshot...');
             await page.screenshot({ fullPage: true, path: 'screenshot.png' });
             await browser.close();
           })();
           EOF
-          )
-
-          bun -e "$E"
+          )"
+      
+          # Tampilkan isi direktori
           ls
+      
+          # Matikan server
+          echo "Killing server with PID $SERVER_PID"
+          kill $SERVER_PID
+            
 
       - name: update log error
         if: failure()
