@@ -221,9 +221,11 @@ jobs:
               --name "${{ env.WIBU_NAME }}" \
               --namespace "${{ env.WIBU_NAMESPACE }}" 
 
-      - name: Start Next.js app and run Playwright
+      - name: Start Next.js app and run Playwright and save screenshot
         working-directory: ${{ env.WIBU_APP_VERSION }}
         run: |
+          set -e  # Fail fast
+
           # Jalankan server di background
           bun run start --port 3000 &
       
@@ -237,33 +239,54 @@ jobs:
           # Install playwright
           echo "Installing playwright..."
           bun add playwright
+          bun add wait-on
+
+          # Install browser
           bunx playwright install  
-      
-          # Jalankan skrip Playwright
-          bun -e "$(cat <<EOF
+
+          # Buat file sementara untuk script Playwright
+          cat <<EOF > take-screenshot.ts
           import { chromium } from 'playwright';
-      
+
           (async () => {
             console.log('Launching browser...');
             const browser = await chromium.launch();
             const page = await browser.newPage();
-            console.log('Navigating to URL...');
+            console.log('Navigating to localhost...');
             await page.goto('http://localhost:3000');
             console.log('Taking screenshot...');
             await page.screenshot({ fullPage: true, path: 'screenshot.png' });
             await browser.close();
           })();
           EOF
-          )"
+
+          bunx wait-on http://localhost:3000
+
+          # Jalankan script Playwright
+          echo "Running Playwright script..."
+          bun run take-screenshot.ts
       
           # Tampilkan isi direktori
-          ls
+           ls -lh
+
+          # Konversi screenshot ke base64
+          BASE64_CONTENT=$(base64 screenshot.png | tr -d '\n')
+          echo "BASE64_CONTENT=$BASE64_CONTENT" >> $GITHUB_ENV
       
           # Matikan server
           echo "Killing server with PID $SERVER_PID"
           kill $SERVER_PID
-            
-
+         
+      - name: upload screenshot
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          script: |
+            echo "${{ env.BASE64_CONTENT }}" | base64 -d > ${{ env.WIBU_TARGET_WORKER_DIR }}/screenshot.png
+            chmod 644 ${{ env.WIBU_TARGET_WORKER_DIR }}/screenshot.png
+          
       - name: update log error
         if: failure()
         continue-on-error: true
