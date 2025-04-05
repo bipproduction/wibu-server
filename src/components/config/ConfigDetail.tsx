@@ -16,7 +16,7 @@ import {
   IconChevronLeft,
   IconEdit,
   IconPlayerPlay,
-  IconTrash
+  IconTrash,
 } from "@tabler/icons-react";
 import toast from "react-simple-toasts";
 import { useProxy } from "valtio/utils";
@@ -28,7 +28,7 @@ function ConfigDetail({ name }: { name: string }) {
   const project = useProxy(projectState);
 
   useShallowEffect(() => {
-    if (name) {
+    if (name && !config.detail.text) {
       config.detail.load({ name });
     }
   }, [name]);
@@ -114,9 +114,5 @@ function ConfigDetail({ name }: { name: string }) {
     </Stack>
   );
 }
-
-
-
-
 
 export default ConfigDetail;

@@ -34,6 +34,7 @@ import { auth } from "@/lib/auth";
 import { workflowsList } from "./_lib/workflows/workflows-list";
 import { workflowsGet } from "./_lib/workflows/workflows-get";
 import { workflowActionList } from "./_lib/workflows/workflows-action-list";
+import { configScreenshot } from "./_lib/config/config-screenshoot";
 // import { userMiddleware } from "@/middlewares/auth-middleware";
 
 const corsConfig = {
@@ -78,6 +79,7 @@ const Config = new Elysia({
   .get("/config-list", configList)
   .get("/config-json/:name", configJson)
   .get("/config-text/:name", configText)
+  .get("/screenshot/:name/:namespace", configScreenshot) // TODO: remove i
   .get("/config-example", configExample)
   .post("/config-run/:name", configRun)
   .post("/config-create", configCreate)
