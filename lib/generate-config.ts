@@ -1,13 +1,13 @@
 #!/usr/bin/env bun
 import * as net from "net";
 
-// Tipe untuk hasil parsing
+// Type untuk hasil parsing
 interface ParsedArgs {
   _: string[]; // Argumen non-opsi
   [key: string]: string | boolean | string[]; // Opsi lainnya bisa string, boolean, atau array untuk _
 }
 
-// Tipe untuk aliases
+// Type untuk aliases
 type Aliases = Record<string, string>;
 
 function parseArgs(args: string[], aliases: Aliases = {}): ParsedArgs {

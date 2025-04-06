@@ -62,7 +62,6 @@ function ReleaseListView() {
         {project.releases.list?.map((release) => (
           <Flex
             bg={release === project.releases.current ? "dark" : ""}
-            justify={"space-between"}
             key={release}
             gap={"md"}
             align={"center"}

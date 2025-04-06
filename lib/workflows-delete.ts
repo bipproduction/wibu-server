@@ -1,50 +1,67 @@
 #!/usr/bin/env bun
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-// Konfigurasi
-const GITHUB_TOKEN = process.env.TOKEN;
+const GITHUB_TOKEN = process.env.WIBU_GH_TOKEN;
 const REPO_OWNER = "bipproduction";
-const REPO_NAME = "obake";
+const REPO_NAME = "wibu-server";
 
-// Header untuk autentikasi
 const headers = {
   Authorization: `token ${GITHUB_TOKEN}`,
   Accept: "application/vnd.github+json",
 };
 
-// Fungsi untuk menghapus semua workflow runs
 async function deleteAllWorkflowRuns(page = 1) {
   try {
-    // Ambil semua workflow runs (dengan pagination)
     const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs?page=${page}&per_page=100`;
     const response = await fetch(url, { headers });
-    const runs = await response.json();
 
-    // Hentikan jika tidak ada workflow runs
-    if (runs.length === 0) {
-      console.log("No more workflow runs to delete.");
+    if (!response.ok) {
+      console.error(
+        `Failed to fetch workflow runs. Status: ${response.status}`
+      );
       return;
     }
 
-    // Hapus setiap workflow run
-    for (const run of runs) {
-      const runId = run.id;
-      const deleteUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs/${runId}`;
-      const deleteResponse = await fetch(deleteUrl, { headers, method: "DELETE" });
+    const data = await response.json();
+    const runs = data.workflow_runs || [];
 
-      if (deleteResponse.status === 204) {
-        console.log(`Deleted run ID: ${runId}`);
-      } else {
-        console.log(`Failed to delete run ID: ${runId}`);
-      }
+    if (runs.length === 0) {
+      console.log("✅ No more workflow runs to delete.");
+      return;
     }
 
-    // Lanjutkan ke halaman berikutnya
-    console.log(`Moving to the next page: ${page + 1}`);
+    // Filter hanya run yang sudah selesai
+    const filteredRuns = runs.filter(
+      (run: any) =>
+        run.status === "completed" &&
+        (run.conclusion === "success" || run.conclusion === "failure")
+    );
+
+    console.log(
+      `📄 Found ${filteredRuns.length} deletable runs on page ${page}`
+    );
+
+    // Hapus secara paralel
+    const deletePromises = filteredRuns.map(async (run: any) => {
+      const deleteUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs/${run.id}`;
+      const res = await fetch(deleteUrl, { headers, method: "DELETE" });
+
+      if (res.status === 204) {
+        console.log(`✅ Deleted run ID: ${run.id}`);
+      } else {
+        console.warn(
+          `⚠️ Failed to delete run ID: ${run.id} (status: ${res.status})`
+        );
+      }
+    });
+
+    await Promise.all(deletePromises);
+
+    console.log(`➡️ Moving to next page: ${page + 1}`);
     await deleteAllWorkflowRuns(page + 1);
   } catch (error) {
-    console.error("Error occurred:", error);
+    console.error("💥 Error occurred:", error);
   }
 }
 
-// Jalankan fungsi
 deleteAllWorkflowRuns();
