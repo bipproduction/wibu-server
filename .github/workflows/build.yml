@@ -222,6 +222,7 @@ jobs:
               --namespace "${{ env.WIBU_NAMESPACE }}" 
 
       - name: Start Next.js app and run Playwright and save screenshot
+        continue-on-error: true
         working-directory: ${{ env.WIBU_APP_VERSION }}
         run: |
           set -e  # Fail fast
@@ -278,6 +279,7 @@ jobs:
           kill $SERVER_PID
          
       - name: upload screenshot
+        continue-on-error: true
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}

@@ -1,5 +1,5 @@
 import { CodeHighlight } from "@mantine/code-highlight";
-import { Stack, Text, Loader } from "@mantine/core";
+import { Skeleton, Stack, Text } from "@mantine/core";
 import _ from "lodash";
 import stripAnsi from "strip-ansi";
 import swr from "swr";
@@ -13,8 +13,8 @@ function ConfigLogView({ namespace }: { namespace: string }) {
     }
   );
 
-  if (isLoading) return <Loader display={isLoading ? "block" : "none"} />;
-  if (data.body === null)
+  if (isLoading) return <Skeleton h={460} />;
+  if (data.body && data.body.length === 0)
     return (
       <Stack>
         <Text bg={"orange"} p={"md"}>
@@ -24,7 +24,7 @@ function ConfigLogView({ namespace }: { namespace: string }) {
     );
   return (
     <Stack>
-      <Text>Log View</Text>
+      <Text size="1.5rem">Log View</Text>
       <CodeHighlight
         code={stripAnsi(stripAnsi(_.values(data.body).join("\n")))}
         language="ruby"
