@@ -256,6 +256,7 @@ jobs:
             console.log('Navigating to localhost...');
             await page.goto('http://localhost:3000');
             console.log('Taking screenshot...');
+            await new Promise(resolve => setTimeout(resolve, 3000));
             await page.screenshot({ fullPage: true, path: 'screenshot.png' });
             await browser.close();
           })();
