@@ -122,7 +122,7 @@ jobs:
 
           # Tunggu server siap (ganti sesuai kebutuhan kalau perlu)
           echo "Waiting for server to be ready..."
-          sleep 180
+          sleep 60
 
           # Install playwright
           echo "Installing playwright..."
@@ -141,7 +141,7 @@ jobs:
             const page = await browser.newPage();
             console.log('Navigating to localhost...');
             await page.goto('http://localhost:3000');
-            await new Promise(resolve => setTimeout(resolve, 180000));
+            await new Promise(resolve => setTimeout(resolve, 120000));
             console.log('Taking screenshot...');
             await page.screenshot({ fullPage: true, path: 'screenshot.png' });
             await browser.close();
