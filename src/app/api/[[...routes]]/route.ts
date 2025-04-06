@@ -145,6 +145,7 @@ const ApiServer = new Elysia({
       online: true,
     };
   })
+  .use(Util)
   .onBeforeHandle(async (c) => {
     const session = await auth.api.getSession({ headers: c.request.headers });
     if (!session?.user) {
@@ -160,7 +161,6 @@ const ApiServer = new Elysia({
   .use(Projects)
   .use(Webhook)
   .use(User)
-  .use(Util)
   .use(WorkFlows)
   .onError(({ code }) => {
     if (code === "NOT_FOUND") {
