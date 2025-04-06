@@ -11,7 +11,7 @@ import {
   Skeleton,
   Stack,
   Text,
-  Title
+  Title,
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import Link from "next/link";
@@ -46,14 +46,17 @@ export default function Home() {
           sm: "70%",
         }}
       >
-        {!utils.anime.list && <Loading />}
-        {utils.anime.list && <AnimeView list={utils.anime.list} />}
+        <AnimeView />
       </Container>
     </Stack>
   );
 }
 
-function AnimeView({ list }: { list: any[] }) {
+function AnimeView() {
+  const utils = useProxy(utilState);
+  if (!utils.anime.list) {
+    return <Loading />;
+  }
   return (
     <SimpleGrid
       cols={{
@@ -64,7 +67,7 @@ function AnimeView({ list }: { list: any[] }) {
         xl: 5,
       }}
     >
-      {list.map((item, i) => {
+      {utils.anime.list.map((item, i) => {
         return (
           <Paper key={i} withBorder>
             <BackgroundImage h={170} key={i} src={item.img}>
