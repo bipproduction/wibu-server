@@ -1,11 +1,11 @@
 "use client";
 import { UserView } from "@/components/user/UserView";
-import { Button, Flex, Stack } from "@mantine/core";
+import { Avatar, Button, Flex, Stack } from "@mantine/core";
 import {
   IconAdjustments,
   IconHome,
   IconProgress,
-  IconServer,
+  IconServer
 } from "@tabler/icons-react";
 import _ from "lodash";
 import Link from "next/link";
@@ -53,6 +53,7 @@ export default function AdminLayout({
         }}
       >
         <Button.Group>
+          <Avatar c={"cyan"} size={24} src={"/globe.svg"} component={Link} href={"/"} />
           {listNav.map((item) => (
             <Button
               leftSection={item.icon}
@@ -79,3 +80,4 @@ export default function AdminLayout({
     </Stack>
   );
 }
+

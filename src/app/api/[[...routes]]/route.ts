@@ -1,3 +1,5 @@
+import { auth } from "@/lib/auth";
+import authView from "@/lib/auth-view";
 import cors, { HTTPMethod } from "@elysiajs/cors";
 import swagger from "@elysiajs/swagger";
 import { Elysia } from "elysia";
@@ -6,9 +8,13 @@ import configDelete from "./_lib/config/config-delete";
 import configExample from "./_lib/config/config-example";
 import configJson from "./_lib/config/config-json";
 import configList from "./_lib/config/config-list";
+import configLog from "./_lib/config/config-log";
 import configRun from "./_lib/config/config-run";
+import { configScreenshot } from "./_lib/config/config-screenshoot";
 import configText from "./_lib/config/config-text";
 import configUpload from "./_lib/config/config-upload";
+import processLog from "./_lib/process/precess-log";
+import { processItem } from "./_lib/process/process-item";
 import processList from "./_lib/process/process-list";
 import processReload from "./_lib/process/process-reload";
 import processRemove from "./_lib/process/process-remove";
@@ -21,20 +27,18 @@ import projectReleasesAssign from "./_lib/projects/project-releases-assign";
 import serverAdd from "./_lib/server/server-add";
 import serverConfig from "./_lib/server/server-config";
 import serverEdit from "./_lib/server/server-edit";
-import serverRemove from "./_lib/server/server-remove";
-import getVersion from "./_lib/version";
-import processLog from "./_lib/process/precess-log";
-import { processItem } from "./_lib/process/process-item";
-import buildLog from "./_lib/webhook/build-log";
 import { serverReload } from "./_lib/server/server-reload";
-import configLog from "./_lib/config/config-log";
-import authView from "@/lib/auth-view";
+import serverRemove from "./_lib/server/server-remove";
 import { getSession } from "./_lib/user/get-session";
-import { auth } from "@/lib/auth";
-import { workflowsList } from "./_lib/workflows/workflows-list";
-import { workflowsGet } from "./_lib/workflows/workflows-get";
+import getVersion from "./_lib/version";
+import buildLog from "./_lib/webhook/build-log";
 import { workflowActionList } from "./_lib/workflows/workflows-action-list";
-import { configScreenshot } from "./_lib/config/config-screenshoot";
+import { workflowsGet } from "./_lib/workflows/workflows-get";
+import { workflowsGetRun } from "./_lib/workflows/workflows-get-run";
+import { workflowsList } from "./_lib/workflows/workflows-list";
+import { workflowsListRun } from "./_lib/workflows/workflows-list-run";
+import { workflowsLog } from "./_lib/workflows/workflow-log";
+import { animeList } from "./_lib/utils/anime-list";
 // import { userMiddleware } from "@/middlewares/auth-middleware";
 
 const corsConfig = {
@@ -111,10 +115,13 @@ const User = new Elysia({
 
 const Util = new Elysia({
   prefix: "/util",
-}).get("/origin", (c) => {
-  const origin = new URL(c.request.url).origin;
-  return { origin };
-});
+  tags: ["Util"],
+})
+  .get("/origin", (c) => {
+    const origin = new URL(c.request.url).origin;
+    return { origin };
+  })
+  .get("/anime-list", animeList);
 
 const WorkFlows = new Elysia({
   prefix: "/workflows",
@@ -122,7 +129,10 @@ const WorkFlows = new Elysia({
 })
   .get("/list", workflowsList)
   .get("/get/:workflow_id", workflowsGet)
-  .get("/action-list", workflowActionList);
+  .get("/action-list", workflowActionList)
+  .get("/list-run", workflowsListRun)
+  .get("/list-run/:run_id", workflowsGetRun)
+  .get("/log/:run_id/:attempt_number", workflowsLog);
 
 const ApiServer = new Elysia({
   prefix: "/api",
