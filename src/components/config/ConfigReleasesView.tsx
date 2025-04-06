@@ -55,25 +55,24 @@ function ReleaseListView() {
     <Box>
       <SimpleGrid
         cols={{
-          base: 1,
-          md: 3,
+          base: 2,
+          md: 4,
         }}
       >
         {project.releases.list?.map((release) => (
           <Flex
-            bg={release === project.releases.current ? "dark" : ""}
             key={release}
             gap={"md"}
             align={"center"}
           >
-            <Text c={release === project.releases.current ? "green.9" : "dark"}>
+            <Text >
               {release}
             </Text>
             <ActionIcon
               onClick={() => project.releases.assign({ release })}
               loading={project.releases.loading}
-              c={release === project.releases.current ? "green.9" : "dark"}
               variant="transparent"
+              c={release === project.releases.current ? "green" : "dark"}
             >
               <Tooltip label="Assign">
                 <IconWorldWww />

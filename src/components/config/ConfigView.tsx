@@ -1,16 +1,14 @@
 import configState from "@/state/config";
-import projectState from "@/state/projects";
 import { ActionIcon, Container, Flex, Stack, Text } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
+import { IconChevronLeft } from "@tabler/icons-react";
 import { useProxy } from "valtio/utils";
 import ConfigLogView from "./ConfigLogView";
 import { ConfigOption } from "./ConfigOption";
 import ReleasesView from "./ConfigReleasesView";
-import { IconChevronLeft } from "@tabler/icons-react";
 
 function ConfigView({ name }: { name: string }) {
   const config = useProxy(configState);
-  const project = useProxy(projectState);
 
   useShallowEffect(() => {
     if (name && !config.detail.text) {
@@ -29,7 +27,7 @@ function ConfigView({ name }: { name: string }) {
         </ActionIcon>
         <Text size="1.5rem">{name}</Text>
       </Flex>
-      {project.releases.list && <ReleasesView />}
+      <ReleasesView />
       <Container
         fluid
         w={{
