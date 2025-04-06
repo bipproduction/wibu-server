@@ -1,7 +1,7 @@
 "use client";
 import ConfigCreate from "@/components/config/ConfigCreate";
-import ConfigDetail from "@/components/config/ConfigDetail";
-import { Container, Stack } from "@mantine/core";
+import ConfigView from "@/components/config/ConfigView";
+import { Container } from "@mantine/core";
 import { useParams } from "next/navigation";
 
 export default function Page() {
@@ -20,9 +20,5 @@ export default function Page() {
       </Container>
     );
   }
-  return (
-    <Stack>
-      <ConfigDetail name={config?.[0] as string} />
-    </Stack>
-  );
+  return <ConfigView name={config?.[0] as string} />;
 }

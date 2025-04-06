@@ -17,7 +17,7 @@ import { useProxy } from "valtio/utils";
 
 function ReleasesView() {
   return (
-    <Stack>
+    <Stack bg={"dark.9"} p={"md"}>
       <Flex gap={"md"}>
         <Text size={"1.5rem"}>Releases</Text>
       </Flex>

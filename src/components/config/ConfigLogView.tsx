@@ -23,7 +23,7 @@ function ConfigLogView({ namespace }: { namespace: string }) {
       </Stack>
     );
   return (
-    <Stack>
+    <Stack bg={"dark.9"} p={"md"}>
       <Text size="1.5rem">Log View</Text>
       <CodeHighlight
         code={stripAnsi(stripAnsi(_.values(data.body).join("\n")))}
