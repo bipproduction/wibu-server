@@ -11,8 +11,7 @@ import {
   SimpleGrid,
   Skeleton,
   Stack,
-  Text,
-  Tooltip
+  Text
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import {
@@ -91,7 +90,7 @@ function View({ name, data }: { name: string; data: any[] | null }) {
               size="compact-xs"
               onClick={() => item.onClick(name)}
             >
-              <Tooltip label={item.label}>{item.icon}</Tooltip>
+              {item.icon}
             </Button>
           ))}
         </Button.Group>

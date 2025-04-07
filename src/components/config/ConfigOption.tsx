@@ -1,18 +1,7 @@
 import configState from "@/state/config";
-import {
-    ActionIcon,
-    Button,
-    Group,
-    Stack,
-    Text,
-    Tooltip
-} from "@mantine/core";
+import { ActionIcon, Button, Group, Stack, Text } from "@mantine/core";
 import { Editor } from "@monaco-editor/react";
-import {
-    IconEdit,
-    IconPlayerPlay,
-    IconTrash
-} from "@tabler/icons-react";
+import { IconEdit, IconPlayerPlay, IconTrash } from "@tabler/icons-react";
 import toast from "react-simple-toasts";
 import { useProxy } from "valtio/utils";
 
@@ -20,37 +9,29 @@ export function ConfigOption() {
   const config = useProxy(configState);
   return (
     <Stack bg={"dark.9"} p={"md"}>
-        <Text size="1.5rem">Config</Text>
+      <Text size="1.5rem">Config</Text>
       <Button.Group>
         <Button
           variant="transparent"
           onClick={() => (configState.isEdit = !config.isEdit)}
         >
-          <Tooltip label={"edit"}>
-            <IconEdit />
-          </Tooltip>
+          <IconEdit />
         </Button>
         <Button
           loading={config.run.loading}
           variant="transparent"
           onClick={() => config.run.run({ name: config.detail.name! })}
         >
-          <Tooltip label="Run">
-            <IconPlayerPlay />
-          </Tooltip>
+          <IconPlayerPlay />
         </Button>
-        <Tooltip
-          label="Delete"
+        <ActionIcon
+          variant="transparent"
           onClick={() =>
             config.configDelete.delete({ name: config.detail.name! })
           }
         >
-          <ActionIcon variant="transparent">
-            <Tooltip label="Delete">
-              <IconTrash />
-            </Tooltip>
-          </ActionIcon>
-        </Tooltip>
+          <IconTrash />
+        </ActionIcon>
       </Button.Group>
       <Editor
         height="300px"

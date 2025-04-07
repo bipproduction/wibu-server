@@ -9,8 +9,7 @@ import {
   SimpleGrid,
   Skeleton,
   Stack,
-  Text,
-  Tooltip,
+  Text
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { IconChevronRight, IconPlus, IconSettings } from "@tabler/icons-react";
@@ -34,9 +33,7 @@ function Page() {
           component={Link}
           href={"/admin/config/create"}
         >
-          <Tooltip label={"create config"}>
-            <IconPlus />
-          </Tooltip>
+          <IconPlus />
         </ActionIcon>
       </Flex>
       <Loading list={config.configList.list} />

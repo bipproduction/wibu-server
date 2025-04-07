@@ -9,8 +9,7 @@ import {
   SimpleGrid,
   Skeleton,
   Stack,
-  Text,
-  Tooltip
+  Text
 } from "@mantine/core";
 import { IconWorldWww } from "@tabler/icons-react";
 import { useProxy } from "valtio/utils";
@@ -60,23 +59,15 @@ function ReleaseListView() {
         }}
       >
         {project.releases.list?.map((release) => (
-          <Flex
-            key={release}
-            gap={"md"}
-            align={"center"}
-          >
-            <Text >
-              {release}
-            </Text>
+          <Flex key={release} gap={"md"} align={"center"}>
+            <Text>{release}</Text>
             <ActionIcon
               onClick={() => project.releases.assign({ release })}
               loading={project.releases.loading}
               variant="transparent"
               c={release === project.releases.current ? "green" : "dark"}
             >
-              <Tooltip label="Assign">
-                <IconWorldWww />
-              </Tooltip>
+              <IconWorldWww />
             </ActionIcon>
           </Flex>
         ))}

@@ -1,7 +1,7 @@
 "use client";
 import ServerView from "@/components/server/ServerView";
 import serverState from "@/state/server";
-import { ActionIcon, Box, Flex, Loader, Stack, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Box, Flex, Loader, Stack, Text } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
 import { useProxy } from "valtio/utils";
 
@@ -20,9 +20,7 @@ export default function Page() {
             server.load.load();
           }}
         >
-          <Tooltip label="Reload" position="bottom">
-            <IconRefresh />
-          </Tooltip>
+          <IconRefresh />
         </ActionIcon>
         <Loader display={server.load.loading ? "block" : "none"} size={"sm"} />
       </Flex>
