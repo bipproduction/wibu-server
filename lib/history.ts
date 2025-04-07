@@ -67,7 +67,7 @@ async function main() {
   }
 
   try {
-    const keep = 20;
+    const keep = 5;
     // Baca symlink untuk rilis saat ini
     const current = await fs.readlink(currentDir);
 
