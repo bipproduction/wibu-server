@@ -234,7 +234,7 @@ jobs:
             )
             echo "$DATA" > ecosystem.config.json
 
-      - name: Clean current directory
+      - name: handl;e current on server
         uses: appleboy/ssh-action@v1
         continue-on-error: true
         with:
@@ -248,13 +248,6 @@ jobs:
               echo "Current directory cleaned up"
             fi
 
-      - name: handle current on server
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_KEY }}
-          script: |
             git config --global --add safe.directory ${{ env.WIBU_TARGET_WORKER_DIR }}
 
             # Buat symlink baru ke direktori worker terbaru
@@ -266,6 +259,25 @@ jobs:
 
             # Simpan konfigurasi PM2 agar persisten setelah reboot
             pm2 save
+
+      # - name: handle current on server
+      #   uses: appleboy/ssh-action@v1
+      #   with:
+      #     host: ${{ secrets.VPS_HOST }}
+      #     username: ${{ secrets.VPS_USER }}
+      #     key: ${{ secrets.VPS_KEY }}
+      #     script: |
+      #       git config --global --add safe.directory ${{ env.WIBU_TARGET_WORKER_DIR }}
+
+      #       # Buat symlink baru ke direktori worker terbaru
+      #       ln -sf ${{ env.WIBU_TARGET_WORKER_DIR }} ${{ env.WIBU_TARGET_CURRENT_DIR }}
+
+      #       # Reload PM2 jika sudah berjalan, atau mulai PM2 jika belum berjalan
+      #       pm2 reload ${{ env.WIBU_TARGET_PROJECT_DIR }}/ecosystem.config.json || \
+      #       pm2 start ${{ env.WIBU_TARGET_PROJECT_DIR }}/ecosystem.config.json
+
+      #       # Simpan konfigurasi PM2 agar persisten setelah reboot
+      #       pm2 save
 
       - name: update history
         uses: appleboy/ssh-action@v1

@@ -25,10 +25,12 @@ async function processGetList() {
     });
 
     const processGroup = _.sortBy(newData, "status");
+    console.log(processGroup);
     return {
       data: processGroup,
     };
   } catch (error) {
+    console.log(error);
     return {
       data: [],
     };
