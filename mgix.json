@@ -1,0 +1,153 @@
+{
+  "subdomainMap": {
+    "default": "default_backend",
+    "noc": "noc_backend",
+    "wibu-dock": "wibu-dock_backend",
+    "stg-darmasaba": "stg-darmasaba_backend",
+    "stg-hipmi": "stg-hipmi_backend",
+    "wa": "wa_backend",
+    "hipmi": "hipmi_backend",
+    "wibu-storage": "wibu-storage_backend",
+    "io": "io_backend",
+    "desa-darmasaba": "desa-darmasaba_backend",
+    "wibu-bot": "wibu-bot_backend",
+    "wibu-server": "wibu-server_backend",
+    "tele-server": "tele-server_backend"
+  },
+  "upstreams": {
+    "default_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120"
+      },
+      "servers": ["localhost:2000"]
+    },
+    "noc_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120"
+      },
+      "servers": ["localhost:3012"]
+    },
+    "wibu-dock_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120"
+      },
+      "servers": ["localhost:3002"]
+    },
+    "stg-darmasaba_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120"
+      },
+      "servers": ["localhost:3007"]
+    },
+    "stg-hipmi_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120"
+      },
+      "servers": ["localhost:3005"]
+    },
+    "wa_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120"
+      },
+      "servers": ["localhost:3001"]
+    },
+    "hipmi_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120"
+      },
+      "servers": [
+        "localhost:3037",
+        "localhost:3038",
+        "localhost:3039",
+        "localhost:3040"
+      ]
+    },
+    "wibu-storage_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120",
+        "#": "server"
+      },
+      "servers": [
+        "localhost:3120",
+        "localhost:3121",
+        {
+          "server": "localhost:3122",
+          "enabled": false
+        },
+        {
+          "server": "localhost:3123",
+          "enabled": false
+        }
+      ]
+    },
+    "io_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120"
+      },
+      "servers": ["localhost:3003"]
+    },
+    "desa-darmasaba_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120"
+      },
+      "servers": ["localhost:3009"]
+    },
+    "wibu-bot_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120"
+      },
+      "servers": ["localhost:3150"]
+    },
+    "wibu-server_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120"
+      },
+      "servers": ["localhost:3006"]
+    },
+    "tele-server_backend": {
+      "options": {
+        "least_conn": true,
+        "keepalive": "32",
+        "keepalive_requests": "200",
+        "keepalive_timeout": "120"
+      },
+      "servers": ["localhost:3008"]
+    }
+  }
+}

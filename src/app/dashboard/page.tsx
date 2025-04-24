@@ -1,18 +1,12 @@
 "use client";
-import { Container } from "@mantine/core";
-import { ProjectView } from "./_components/project/ProjectView";
+
+import { Stack, Text } from "@mantine/core";
 
 export default function Page() {
   return (
-    <Container
-      fluid
-      bg={"100%"}
-      w={{
-        base: `100%`,
-        md: "90%",
-      }}
-    >
-      <ProjectView />
-    </Container>
+    <Stack>
+      <Text>Dashboard</Text>
+    </Stack>
   );
 }
+

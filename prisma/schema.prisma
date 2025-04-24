@@ -89,7 +89,10 @@ model Repos {
   language    String
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  Projects    Projects[]
+  projects    Projects[]
+  isActive    Boolean    @default(true)
+  deletedAt   DateTime?
+  Branches    Branches[]
 
   @@map("repos")
 }
@@ -101,59 +104,90 @@ model Projects {
   description        String
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
-  ProjectEnvironment ProjectEnvironment[]
-  Repos              Repos?               @relation(fields: [reposId], references: [id])
+  projectEnvironment ProjectEnvironment[]
+  repos              Repos?               @relation(fields: [reposId], references: [id], onDelete: Cascade)
   reposId            String?
   push               Boolean              @default(false)
   seed               Boolean              @default(false)
   build              Boolean              @default(false)
-  Config             Config[]
-  Env                Env[]
+  isActive           Boolean              @default(true)
+  deletedAt          DateTime?
 
   @@map("projects")
 }
 
 model ProjectEnvironment {
-  projectId String
-  name      String
-  branch    String
-  isActive  Boolean
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  project   Projects? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  Env       Env[]
-  Config    Config[]
+  id         String    @id @default(cuid())
+  projectId  String
+  name       String
+  branch     String
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  project    Projects? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  env        Env?
+  config     Config?
+  deletedAt  DateTime?
+  previewUrl String?
 
-  @@id([projectId, name])
   @@map("project_environment")
 }
 
 model Config {
-  json                        Json?               @default("{}") @db.Json
-  createdAt                   DateTime            @default(now())
-  updatedAt                   DateTime            @updatedAt
-  Project                     Projects?           @relation(fields: [projectsId], references: [id])
-  projectsId                  String
-  ProjectEnvironment          ProjectEnvironment? @relation(fields: [projectEnvironmentProjectId, projectEnvironmentName], references: [projectId, name])
-  projectEnvironmentProjectId String
-  projectEnvironmentName      String
+  id                   String              @id @default(cuid())
+  json                 Json                @default("{}") @db.Json
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  projectEnvironment   ProjectEnvironment? @relation(fields: [projectEnvironmentId], references: [id], onDelete: Cascade)
+  projectEnvironmentId String?             @unique
+  isActive             Boolean             @default(true)
+  deletedAt            DateTime?
+  instance             Int                 @default(1)
+  ports                Json                @default("[]")
 
-  @@id([projectsId, projectEnvironmentProjectId, projectEnvironmentName])
   @@map("config")
 }
 
 model Env {
-  key                         String
-  value                       String              @db.Text
-  createdAt                   DateTime            @default(now())
-  updatedAt                   DateTime            @updatedAt
-  projectEnvironmentId        String
-  projectEnvironment          ProjectEnvironment? @relation(fields: [projectEnvironmentProjectId, projectEnvironmentName], references: [projectId, name])
-  Project                     Projects?           @relation(fields: [projectsId], references: [id])
-  projectsId                  String
-  projectEnvironmentProjectId String
-  projectEnvironmentName      String
+  id                   String              @id @default(cuid())
+  json                 Json                @default("{}") @db.Json
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  projectEnvironment   ProjectEnvironment? @relation(fields: [projectEnvironmentId], references: [id], onDelete: Cascade)
+  projectEnvironmentId String?             @unique
+  isActive             Boolean             @default(true)
+  deletedAt            DateTime?
 
-  @@id([projectsId, projectEnvironmentProjectId, projectEnvironmentName])
   @@map("env")
+}
+
+model Domain {
+  id          String    @id @default(cuid())
+  domain_name String    @unique
+  sub_domains Json      @default("[]")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@map("domain")
+}
+
+model Process {
+  id        String   @id @default(cuid())
+  jsonData  Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("process")
+}
+
+model Branches {
+  id        String   @id @default(cuid())
+  name      String
+  repoId    String
+  repo      Repos?   @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("branches")
 }

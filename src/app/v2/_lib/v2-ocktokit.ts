@@ -1,0 +1,23 @@
+import { Octokit } from "octokit";
+const WIBU_GH_TOKEN = process.env.WIBU_GH_TOKEN;
+const REPO_OWNER = "bipproduction";
+
+if (!WIBU_GH_TOKEN) {
+  throw new Error("WIBU_GH_TOKEN is not defined in environment variables");
+}
+
+const v2Octokit = new Octokit({
+  auth: WIBU_GH_TOKEN,
+});
+
+const options = {
+  owner: REPO_OWNER,
+  headers: {
+    "X-GitHub-Api-Version": "2022-11-28",
+  },
+}
+
+export {
+  v2Octokit,
+  options,
+};

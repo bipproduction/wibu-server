@@ -1,0 +1,93 @@
+{
+  "data": null,
+  "error": {
+    "status": 422,
+    "value": {
+      "status": 400,
+      "body": {
+        "type": "body",
+        "validator": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "full_name": {
+                "type": "string"
+              },
+              "build": {
+                "default": false,
+                "type": "boolean"
+              },
+              "push": {
+                "default": false,
+                "type": "boolean"
+              },
+              "seed": {
+                "default": false,
+                "type": "boolean"
+              },
+              "projectEnvironment": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "branch": {
+                    "type": "string"
+                  }
+                },
+                "required": ["name", "branch"]
+              },
+              "env": {
+                "type": "object",
+                "properties": {}
+              },
+              "instance": {
+                "type": "number"
+              },
+              "reposId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "full_name",
+              "build",
+              "push",
+              "seed",
+              "projectEnvironment",
+              "env",
+              "instance",
+              "reposId"
+            ],
+            "additionalProperties": false
+          },
+          "references": [],
+          "code": "return function check(value) {\n  return (\n    (typeof value === 'object' && value !== null && !Array.isArray(value)) &&\n    (typeof value.name === 'string') &&\n    (typeof value.full_name === 'string') &&\n    (typeof value.build === 'boolean') &&\n    (typeof value.push === 'boolean') &&\n    (typeof value.seed === 'boolean') &&\n    (typeof value.projectEnvironment === 'object' && value.projectEnvironment !== null && !Array.isArray(value.projectEnvironment)) &&\n    (typeof value.projectEnvironment.name === 'string') &&\n    (typeof value.projectEnvironment.branch === 'string') &&\n    (typeof value.env === 'object' && value.env !== null && !Array.isArray(value.env)) &&\n    Number.isFinite(value.instance) &&\n    (typeof value.reposId === 'string') &&\n    Object.getOwnPropertyNames(value).length === 9\n  )\n}",
+          "hasTransform": false
+        },
+        "value": {
+          "build": false,
+          "push": false,
+          "seed": false,
+          "name": "Baileys",
+          "full_name": "bipproduction/Baileys",
+          "projectEnvironment": {
+            "name": "",
+            "branch": ""
+          },
+          "env": {},
+          "instance": null,
+          "reposId": "bipproduction/Baileys"
+        },
+        "code": "VALIDATION",
+        "status": 422
+      }
+    }
+  },
+  "response": {},
+  "status": 422,
+  "headers": {}
+}

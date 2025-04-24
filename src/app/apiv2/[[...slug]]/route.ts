@@ -5,6 +5,9 @@ import swagger from "@elysiajs/swagger";
 import Elysia, { HTTPMethod } from "elysia";
 import ApiGithub from "../_lib/github";
 import Project from "../_lib/project";
+import Domain from "../_lib/domain";
+import Process from "../_lib/process";
+
 
 const corsConfig = {
   origin: "*",
@@ -28,6 +31,8 @@ const ApiV2 = new Elysia({
   .use(Auth)
   .use(ApiGithub)
   .use(Project)
+  .use(Domain)
+  .use(Process)
   .onBeforeHandle(async (c) => {
     const session = await auth.api.getSession({ headers: c.request.headers });
     if (!session?.user) {

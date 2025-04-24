@@ -32,11 +32,11 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript defaultColorScheme="dark" />
       </head>
-      <body>
+      <body suppressHydrationWarning={true}>
         <MantineProvider defaultColorScheme="dark">
           <UserProvider />
-          <ToastContainer position="bottom-center" closeOnClick theme="dark"/>
           {children}
+          <ToastContainer position="bottom-center" closeOnClick theme="dark" autoClose={2000}  hideProgressBar/>
         </MantineProvider>
       </body>
     </html>

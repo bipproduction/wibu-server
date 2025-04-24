@@ -7,6 +7,9 @@ export async function projectList(c: Context) {
   const projects = await prisma.projects.findMany({
     skip: (Number(page) - 1) * Number(per_page),
     take: Number(per_page),
+    where: {
+      isActive: true
+    }
   });
   return { data: projects };
 }

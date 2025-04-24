@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { exec } from "child_process";
 import _ from "lodash";
 import { promisify } from "util";

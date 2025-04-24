@@ -1,7 +1,7 @@
 import { Octokit } from "octokit";
 const WIBU_GH_TOKEN = process.env.WIBU_GH_TOKEN;
 const REPO_OWNER = "bipproduction";
-const REPO_NAME = "obake";
+// const REPO_NAME = "obake";
 
 // Validasi token
 if (!WIBU_GH_TOKEN) {
@@ -14,7 +14,6 @@ const octokit = new Octokit({
 
 const options = {
   owner: REPO_OWNER,
-  repo: REPO_NAME,
   headers: {
     "X-GitHub-Api-Version": "2022-11-28",
   },

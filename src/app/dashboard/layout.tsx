@@ -1,6 +1,7 @@
-'use client'
+"use client";
 import { Button, Flex, Stack } from "@mantine/core";
 import Link from "next/link";
+import { useSelectedLayoutSegments } from "next/navigation";
 const root = "/dashboard";
 const listMenu = [
   {
@@ -8,8 +9,16 @@ const listMenu = [
     href: "/",
   },
   {
+    label: "project",
+    href: "/project",
+  },
+  {
     label: "domains",
     href: "/domains",
+  },
+  {
+    label: "process",
+    href: "/process",
   },
   {
     label: "settings",
@@ -18,8 +27,11 @@ const listMenu = [
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const segments = useSelectedLayoutSegments();
+  const current = segments[0];
+
   return (
-    <Stack gap={0} suppressHydrationWarning={true}>
+    <Stack suppressHydrationWarning={true} gap={"md"}>
       <Flex
         bg={"dark.9"}
         pos={"sticky"}
@@ -31,6 +43,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Button.Group>
           {listMenu.map((v, k) => (
             <Button
+              bg={
+                current === v.label || (current === undefined && k === 0)
+                  ? "gray.7"
+                  : "dark.9"
+              }
               variant="transparent"
               c={"white"}
               component={Link}
@@ -46,3 +63,4 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </Stack>
   );
 }
+
