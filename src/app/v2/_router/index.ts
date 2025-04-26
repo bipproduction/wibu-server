@@ -9,12 +9,41 @@ const Project = new V2ClientRouter({ prefix: "/project" }).add("/", {
   }),
 });
 
-const Git = new V2ClientRouter({ prefix: "/git" }).add("/");
+const Git = new V2ClientRouter({ prefix: "/git" }).add("/", {
+  query: z.object({
+    action: z.enum(["no-action", "create", "update", "detail"]),
+    repoId: z.string().optional(),
+  }),
+});
+
+const Settings = new V2ClientRouter({ prefix: "/settings" }).add("/", {
+  query: z.object({
+    action: z.enum(["no-action", "create", "update", "detail"]),
+    settingId: z.string().optional(),
+  }),
+});
+
+const Domains = new V2ClientRouter({ prefix: "/domains" }).add("/", {
+  query: z.object({
+    action: z.enum(["no-action", "create", "update", "detail"]),
+    domainId: z.string().optional(),
+  }),
+});
+
+const Processes = new V2ClientRouter({ prefix: "/process" }).add("/", {
+  query: z.object({
+    action: z.enum(["no-action", "create", "update", "detail"]),
+    processId: z.string().optional(),
+  }),
+});
 
 const DashboardRouter = new V2ClientRouter({ prefix: "/dashboard" })
   .add("/")
   .use("project", Project)
-  .use("git", Git);
+  .use("git", Git)
+  .use("settings", Settings)
+  .use("domains", Domains)
+  .use("process", Processes);
 
 const V2Router = new V2ClientRouter({ prefix: "/v2" }).use(
   "dashboard",

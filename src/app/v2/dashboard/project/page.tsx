@@ -11,7 +11,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { useShallowEffect } from "@mantine/hooks";
+import { useDebouncedCallback, useShallowEffect } from "@mantine/hooks";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useProxy } from "valtio/utils";
@@ -19,6 +19,7 @@ import V2Router from "../../_router";
 import v2ProjectState from "../../_state/project";
 import { IconChevronLeft, IconPlus, IconSearch } from "@tabler/icons-react";
 import ProjectCreate from "./_lib/ProjectCreate";
+import ProjectDetail from "./_lib/ProjectDetail";
 
 const Page = () => {
   const { action } = V2Router.routes.dashboard.project.parse(useSearchParams());
@@ -67,48 +68,22 @@ const ProjectView = ({ children }: { children: React.ReactNode }) => {
 
 const ProjectListView = () => {
   const projectProxy = useProxy(v2ProjectState);
-
-  useShallowEffect(() => {
+  const flush = useDebouncedCallback(() => {
     projectProxy.findMany.load();
-  }, []);
-
-  const List = () => {
-    if (!projectProxy.findMany.data) {
-      return (
-        <Stack>
-          {Array.from({ length: 5 }).map((v, k) => (
-            <Skeleton key={k} h={40} />
-          ))}
-        </Stack>
-      );
-    }
-
-    return (
-      <Stack>
-        {projectProxy.findMany.data?.map((project) => (
-          <Paper key={project.id}>
-            <Stack>
-              <Text
-                component={Link}
-                href={V2Router.routes.dashboard.project.query({
-                  action: "detail",
-                  projectId: project.id,
-                })}
-                fw={"bold"}
-              >
-                {project.name}
-              </Text>
-            </Stack>
-          </Paper>
-        ))}
-      </Stack>
-    );
-  };
+  }, 300);
 
   return (
     <Stack>
       <Flex gap={"md"} align={"center"}>
-        <TextInput placeholder="Search" rightSection={<IconSearch />} />
+        <TextInput
+          value={projectProxy.findMany.q}
+          onChange={(e) => {
+            projectProxy.findMany.q = e.target.value;
+            flush();
+          }}
+          placeholder="Search"
+          rightSection={<IconSearch />}
+        />
         <Button
           leftSection={<IconPlus />}
           variant="light"
@@ -125,14 +100,45 @@ const ProjectListView = () => {
   );
 };
 
-const ProjectDetail = () => {
-  const { projectId } =
-    V2Router.routes.dashboard.project.parse(useSearchParams());
+const List = () => {
+  const projectProxy = useProxy(v2ProjectState);
+  useShallowEffect(() => {
+    projectProxy.findMany.load();
+  }, []);
+  if (!projectProxy.findMany.data) {
+    return (
+      <Stack>
+        {Array.from({ length: 5 }).map((v, k) => (
+          <Skeleton key={k} h={40} />
+        ))}
+      </Stack>
+    );
+  }
+
   return (
     <Stack>
-      <Text>detail {projectId}</Text>
+      {projectProxy.findMany.data?.map((project) => (
+        <Paper
+          c={"white"}
+          key={project.id}
+          withBorder
+          p={"xs"}
+          component={Link}
+          href={V2Router.routes.dashboard.project.query({
+            action: "detail",
+            projectId: project.id,
+          })}
+        >
+          <Stack>
+            <Text fw={"bold"}>{project.name}</Text>
+            <Text fw={"lighter"}>{project.full_name}</Text>
+          </Stack>
+        </Paper>
+      ))}
     </Stack>
   );
 };
+
+
 
 export default Page;

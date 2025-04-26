@@ -93,6 +93,7 @@ model Repos {
   isActive    Boolean    @default(true)
   deletedAt   DateTime?
   Branches    Branches[]
+  Sha         Sha[]
 
   @@map("repos")
 }
@@ -188,6 +189,21 @@ model Branches {
   repo      Repos?   @relation(fields: [repoId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Sha       Sha[]
 
   @@map("branches")
+}
+
+model Sha {
+  id        String   @id @default(cuid())
+  branchId  String
+  repoId    String
+  repo      Repos?   @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  branch    Branches @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime? 
+  json      Json     @default("{}") @db.Json
+
+  @@map("sha")
 }

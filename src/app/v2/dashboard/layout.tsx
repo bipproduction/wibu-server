@@ -15,14 +15,26 @@ const listMenu = [
   },
   {
     name: "Git",
-    href: V2Router.routes.dashboard.git.get(),
+    href: V2Router.routes.dashboard.git.query({ action: "no-action" }),
   },
+  {
+    name: "Domains",
+    href: V2Router.routes.dashboard.domains.query({ action: "no-action" }),
+  },
+  {
+    name: "Process",
+    href: V2Router.routes.dashboard.process.query({ action: "no-action" }),
+  },
+  {
+    name: "Settings",
+    href: V2Router.routes.dashboard.settings.query({ action: "no-action" }),
+  }
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const segments = useSelectedLayoutSegments();
   return (
-    <Stack >
+    <Stack>
       <Paper
         withBorder
         p={"xs"}

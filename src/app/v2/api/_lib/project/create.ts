@@ -13,7 +13,9 @@ const projectCreate = async (context: Context) => {
   });
 
   if (project) {
-    return context.error(409, "Project already exists");
+    return context.error(409, {
+      message: "Project already exists",
+    });
   }
 
   const config = await v2ConfigGenerator({

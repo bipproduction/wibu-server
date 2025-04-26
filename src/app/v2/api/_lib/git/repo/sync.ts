@@ -87,9 +87,8 @@ export async function reposGet({
   per_page: number;
 }): Promise<RepoData[]> {
   try {
-    const response = await v2Octokit.request("GET /users/{username}/repos", {
+    const response = await v2Octokit.request("GET /user/repos", {
       ...options,
-      username: options.owner,
       type: "owner",
       page: Number(page),
       per_page: Number(per_page),

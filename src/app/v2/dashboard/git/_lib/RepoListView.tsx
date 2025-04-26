@@ -1,28 +1,26 @@
+import V2Router from "@/app/v2/_router";
 import V2GitState from "@/app/v2/_state/git";
 import {
-  ActionIcon,
   Container,
   Flex,
-  Group,
   Paper,
+  SimpleGrid,
   Skeleton,
   Stack,
   Text,
-  TextInput,
+  TextInput
 } from "@mantine/core";
 import { useDebouncedCallback, useShallowEffect } from "@mantine/hooks";
 import { Prisma } from "@prisma/client";
-import { IconGitBranch, IconRefresh, IconSearch } from "@tabler/icons-react";
+import { IconSearch } from "@tabler/icons-react";
 import Link from "next/link";
-import { useState } from "react";
 import { useProxy } from "valtio/utils";
 import RepoSyncButton from "./RepoSyncButton";
 
 const RepoListView = () => {
   const gitSt = useProxy(V2GitState);
-  const flush = useDebouncedCallback((q: string) => {
-    gitSt.repo.search.q = q;
-    gitSt.repo.search.load();
+  const flush = useDebouncedCallback(() => {
+    gitSt.repo.findMany.load();
   }, 500);
 
   useShallowEffect(() => {
@@ -46,13 +44,24 @@ const RepoListView = () => {
           <TextInput
             rightSection={<IconSearch />}
             placeholder="Search"
-            onChange={(e) => flush(e.target.value)}
+            value={gitSt.repo.findMany.q}
+            onChange={(e) => {
+              gitSt.repo.findMany.q = e.target.value;
+              flush()
+            }}
           />
           <RepoSyncButton />
         </Flex>
-        {gitSt.repo.findMany.data.map((repo) => (
-          <RepoItem key={repo.id} repo={repo} gitSt={gitSt} />
-        ))}
+        <SimpleGrid
+          cols={{
+            base: 1,
+            sm: 2,
+          }}
+        >
+          {gitSt.repo.findMany.data.map((repo) => (
+            <RepoItem key={repo.id} repo={repo} />
+          ))}
+        </SimpleGrid>
       </Stack>
     </Container>
   );
@@ -60,40 +69,29 @@ const RepoListView = () => {
 
 const RepoItem = ({
   repo,
-  gitSt,
 }: {
   repo: Prisma.ReposGetPayload<{
     omit: { isActive: true };
     include: { _count: { select: { Branches: true } } };
   }>;
-  gitSt: typeof V2GitState;
 }) => {
-  const [loading, setLoading] = useState(false);
   return (
-    <Paper p={"xs"} withBorder>
+    <Paper
+      c={"white"}
+      p={"xs"}
+      withBorder
+      component={Link}
+      href={V2Router.routes.dashboard.git.query({
+        action: "detail",
+        repoId: repo.id,
+      })}
+    >
       <Stack gap={"xs"}>
         <Text fw={"bold"}>{repo.name}</Text>
-        <Link href={repo.html_url} target="_blank">
-          {repo.html_url}
-        </Link>
-        <Group align={"center"} bg={"dark"} gap={"md"} p={"sm"}>
-          <Text>{repo._count.Branches}</Text>
-          <IconGitBranch />
-          <ActionIcon
-            loading={loading}
-            variant="subtle"
-            onClick={async () => {
-              setLoading(true);
-              await gitSt.branch.sync.submit(repo.id);
-              setLoading(false);
-            }}
-          >
-            <IconRefresh />
-          </ActionIcon>
-        </Group>
       </Stack>
     </Paper>
   );
 };
+
 
 export default RepoListView;
