@@ -21,7 +21,10 @@ const shaState = proxy({
           });
           toast.success(`Successfully synced shas [${data?.data}] shas`);
           shaState.sync.loading = false;
-          shaState.findMany.load();
+          shaState.findMany.load({
+            repoId: shaState.sync.repoId,
+            branchId: shaState.sync.branchId,
+          });
         } catch (error) {
           console.log(error);
           throw new Error("Failed to sync shas");
@@ -32,24 +35,24 @@ const shaState = proxy({
     },
     findMany: {
       loading: false,
-      repoId: null as string | null,
-      branchId: null as string | null,
+    //   repoId: null as string | null,
+    //   branchId: null as string | null,
       data: null as
         | Prisma.ShaGetPayload<{
             select: { id: true; name: true; repoId: true; branchId: true, json: true };
           }>[]
         | null,
-      load: async () => {
+      load: async ({ repoId, branchId }: { repoId: string; branchId: string }) => {
         try {
-          if (!shaState.findMany.repoId || !shaState.findMany.branchId) {
+          if (!repoId || !branchId) {
             toast.error("Missing repoId or branchId");
             return;
           }
           shaState.findMany.loading = true;
           const { data, status } = await V2ApiFetch.v2.api.git.sha.findMany.get({
             query: {
-              repoId: shaState.findMany.repoId,
-              branchId: shaState.findMany.branchId,
+              repoId,
+              branchId,
             },
           });
           if (status === 200) {

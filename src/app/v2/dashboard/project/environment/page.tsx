@@ -51,7 +51,18 @@ const ShaView = () => {
   const state = useProxy(v2State);
   useShallowEffect(() => {
     if (!environmentId) return;
-    state.git.sha.findMany.load();
+    async function load(){
+      const repo = await state.project.environment.findUnique.load({
+        environmentId: environmentId as string,
+      });
+
+      if (!repo) return;
+      state.git.sha.findMany.load({
+        repoId: repo.repoId,
+        branchId: repo.branchId,
+      });
+    }
+    load();
   }, []);
   return <Stack>{JSON.stringify(state.git.sha.findMany.data)}</Stack>;
 };
