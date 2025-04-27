@@ -2,12 +2,23 @@
 import { z } from "zod";
 import V2ClientRouter from "../_lib/v2-client-router";
 
-const Project = new V2ClientRouter({ prefix: "/project" }).add("/", {
+const Environment = new V2ClientRouter({ prefix: "/environment" }).add("/", {
   query: z.object({
     action: z.enum(["no-action", "create", "update", "detail"]),
+    environmentId: z.string().optional(),
     projectId: z.string().optional(),
   }),
 });
+
+const Project = new V2ClientRouter({ prefix: "/project" })
+  .add("/", {
+    query: z.object({
+      action: z.enum(["no-action", "create", "update", "detail", "delete"]),
+      projectId: z.string().optional(),
+      environmentId: z.string().optional(),
+    }),
+  })
+  .use("environment", Environment);
 
 const Git = new V2ClientRouter({ prefix: "/git" }).add("/", {
   query: z.object({

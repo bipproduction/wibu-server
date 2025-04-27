@@ -1,9 +1,7 @@
 import Elysia, { t } from "elysia";
-import projectFindMany from "./find-many";
 import projectCreate from "./create";
-import projectFindUniq from "./find-uniq";
-import projectEnvironmentFindMany from "./environment/find-many";
-import projectEnvironmentFindFirst from "./environment/find-first";
+import projectFindMany from "./findMany";
+import projectFindUniq from "./findUniq";
 
 const ApiProject = new Elysia({
   prefix: "/project",
@@ -11,7 +9,7 @@ const ApiProject = new Elysia({
     tags: ["Project"],
   },
 })
-  .get("/find-many", projectFindMany, {
+  .get("/findMany", projectFindMany, {
     query: t.Optional(
       t.Object({
         q: t.String({ default: "" }),
@@ -23,29 +21,12 @@ const ApiProject = new Elysia({
       summary: "Find many projects",
     },
   })
-  .get("/find-uniq", projectFindUniq, {
+  .get("/findUniq", projectFindUniq, {
     query: t.Object({
       projectId: t.Required(t.String()),
     }),
     detail: {
       summary: "Find project",
-    },
-  })
-  .get("/environment-find-many", projectEnvironmentFindMany, {
-    query: t.Object({
-      projectId: t.Required(t.String()),
-    }),
-    detail: {
-      summary: "Find project environments",
-    },
-  })
-  .get("/environment-find-first", projectEnvironmentFindFirst, {
-    query: t.Object({
-      projectId: t.Required(t.String()),
-      name: t.Required(t.String()),
-    }),
-    detail: {
-      summary: "Find project environment",
     },
   })
   .post("/create", projectCreate, {

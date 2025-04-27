@@ -1,11 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { Context } from "elysia";
+import { TypeApiEnvironmentFindUnique } from ".";
 
 const projectEnvironmentFindUniq = async (context: Context) => {
-  const { id } = context.query;
+  const { environmentId } = context.query as TypeApiEnvironmentFindUnique;
   const data = await prisma.projectEnvironment.findUnique({
     where: {
-      id,
+      id: environmentId,
     },
   });
   return {
